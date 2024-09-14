@@ -21,6 +21,7 @@
     "@gluestack-ui/nativewind-utils": "^1.0.23",
     "@gluestack-ui/overlay": "^0.1.15",
     "@gluestack-ui/toast": "^1.0.7",
+    "@react-navigation/drawer": "^6.7.2",
     "@react-navigation/native": "^6.0.2",
     "axios": "^1.7.7",
     "babel-plugin-module-resolver": "^5.0.2",

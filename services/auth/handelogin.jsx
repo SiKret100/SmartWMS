@@ -2,6 +2,7 @@ import { Platform, StyleSheet, Text, View } from "react-native";
 import React from "react";
 import axios from "axios";
 import * as SecureStore from 'expo-secure-store';
+import { router } from "expo-router";
 
 const handleLoginStatus = (error) => {
   switch (error.status) {
@@ -21,7 +22,7 @@ const handelogin = async (email, password, error, setError, setLoading) => {
   try {
     setLoading(true);
 
-    //await new Promise((resolve) => setTimeout(resolve, 4000));
+    
 
     const response = await axios.post(
       `${myip}/login${Platform.OS ==='web' ? '?useCookies=true' : ''}`,
@@ -40,8 +41,11 @@ const handelogin = async (email, password, error, setError, setLoading) => {
         await SecureStore.setItemAsync('token', response.data.accessToken);//saving token to securestore for IOS
         const token = await SecureStore.getItemAsync('token');//getting token from securestore for IOS
         setError("token " + token);
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+        router.push("/home/profile");
     }else{
         setError("Zalogowano");
+        
     }
     
     setLoading(false);
