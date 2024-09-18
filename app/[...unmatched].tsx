@@ -1,18 +1,12 @@
-import { Link, Stack } from 'expo-router';
+import { Link } from 'expo-router';
 import {
   SafeAreaView,
-  KeyboardAvoidingView,
-  StyleSheet,
   View,
-  TouchableWithoutFeedback,
-  Keyboard,
-  Platform,
   Text,
-  Image,
   Pressable,
 } from "react-native";
 
-export default function NotFoundScreen() {
+const NotFoundScreen = () => {
   return (
     <SafeAreaView className="flex-1 bg-white">
       <View className="flex-1 justify-center items-center">
@@ -24,4 +18,6 @@ export default function NotFoundScreen() {
       </View>
     </SafeAreaView>
   );
-}
+};
+
+export default NotFoundScreen;
