@@ -22,11 +22,14 @@ import {
     Text,
     Image,
     Pressable,
+    Button,
   } from "react-native";
   import FormField from "../components/FormField";
   import CustomButton from "../components/CustomButton";
   import handelogin from "../services/auth/handelogin";
   import "react-native-reanimated";
+import alertService from "../services/dataServices/alertService";
+import { useSafeAreaFrame } from "react-native-safe-area-context";
 
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
@@ -37,14 +40,16 @@ export default function RootLayout() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleLoginPress = async () => {
-    await handelogin(form.email, form.password, error, setError, setLoading);
-  };
-
   const [form, setForm] = useState({
     email: "",
     password: "",
   });
+
+  const handleLoginPress = async () => {
+    await handelogin(form.email, form.password, error, setError, setLoading);
+  };
+
+  
   
   const [loaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
@@ -60,6 +65,8 @@ export default function RootLayout() {
   if (!loaded) {
     return null;
   }
+
+  
   //------------------------------------------------------------
 
   return (
@@ -71,7 +78,8 @@ export default function RootLayout() {
           <View className={`items-center justify-center`}>
             <View className="items-center justify-center w-full h-40">
               <Image
-                style={{ width: "100%", height: "100%", objectFit: "contain" }}
+                //style={{ width: "100%", height: "100%", objectFit: "contain" }}
+                className="w-full justify-center items-center h-full px-4"
                 source={require("../img/logo.png")}
               />
             </View>
@@ -106,9 +114,8 @@ export default function RootLayout() {
             <Text className="text-white">{error}</Text>
           </View>
 
-          <Link href="/home/profile">Go to profile</Link>
-          <Link href="/home/test">Go to </Link>
-          
+          <Link href="/home/">Home Page</Link>
+
         </KeyboardAvoidingView>
       </SafeAreaView>
   );
