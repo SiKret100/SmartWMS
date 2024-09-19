@@ -6,6 +6,14 @@ const RootLayout = () => {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <Drawer>
         <Drawer.Screen 
+          name='index' 
+          options={{
+            drawerLabel: 'Strona główna',
+            title: 'Strona główna',
+          }}
+        />
+        
+        <Drawer.Screen 
           name='alerts' 
           options={{
             drawerLabel: 'Alerty',
