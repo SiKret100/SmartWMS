@@ -1,11 +1,10 @@
-import { Text, View } from 'react-native'
+import AlertDisplayer from "../../../components/AlertsDisplayer";
 
-const AlertMain = () => {
-  return (
-    <View>
-      <Text>Wszystkie alerty</Text>
-    </View>
-  )
-}
 
-export default AlertMain
+const AlertIndex = () => {
+  return(
+    <AlertDisplayer/>
+  );
+};
+
+export default AlertIndex;

@@ -37,9 +37,9 @@ const handelogin = async (email, password, error, setError, setLoading) => {
     if(Platform.OS !== 'web'){
         await SecureStore.setItemAsync('token', response.data.accessToken);//saving token to securestore for IOS
         const token = await SecureStore.getItemAsync('token');//getting token from securestore for IOS
-        setError("token " + token);
-        await new Promise((resolve) => setTimeout(resolve, 2000));
-        //router.push("/home/profile");
+        //setError("token " + token);
+        //await new Promise((resolve) => setTimeout(resolve, 2000));
+        router.push("/home");
     }else{
         setError("Zalogowano");
         
