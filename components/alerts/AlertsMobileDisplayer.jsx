@@ -1,10 +1,10 @@
 import { SafeAreaView, Text, View } from 'react-native';
 import { useState, useEffect } from 'react';
 import { ActivityIndicator } from "react-native";
-import alertService from '../services/dataServices/alertService';
+import alertService from '../../services/dataServices/alertService';
 
 
-const AlertDisplayer = () => {
+const AlertMobileDisplayer = () => {
   const [data, setData] = useState([]);
   const [err, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -50,4 +50,4 @@ const AlertDisplayer = () => {
   )
 }
 
-export default AlertDisplayer;
+export default AlertMobileDisplayer;

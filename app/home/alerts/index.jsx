@@ -1,9 +1,9 @@
-import AlertDisplayer from "../../../components/AlertsDisplayer";
+import AlertMobileDisplayer from "../../../components/alerts/AlertsMobileDisplayer";
 
 
 const AlertIndex = () => {
   return(
-    <AlertDisplayer/>
+    <AlertMobileDisplayer/>
   );
 };
 
