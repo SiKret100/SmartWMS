@@ -14,8 +14,8 @@ import {
 } from "react-native";
 import FormField from "../components/FormField";
 import CustomButton from "../components/CustomButton";
-import handelogin from "../services/auth/handelogin";
 import "react-native-reanimated";
+import authService from "../services/auth/authService";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -32,7 +32,7 @@ const LoginForm = () => {
     });
 
     const handleLoginPress = async () => {
-        await handelogin(form.email, form.password, error, setError, setLoading);
+        await authService.handeLogin(form.email, form.password, error, setError, setLoading);
     };
 
     const [loaded] = useFonts({
