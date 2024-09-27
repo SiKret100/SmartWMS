@@ -9,14 +9,6 @@ axios.defaults.withCredentials = true;
 export default class authService {
 
   static ip = process.env.EXPO_PUBLIC_IP;
-  static token = Platform.OS !== "web" ? SecureStore.getItem('token') : "";
-  static config = {
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${this.token}`
-    }
-  };
-
 
   static handleLoginStatus = (error) => {
     switch (error.status) {
@@ -33,8 +25,6 @@ export default class authService {
     try {
       setLoading(true);
 
-
-
       const response = await axios.post(
         `${this.ip}/login${Platform.OS === 'web' ? '?useCookies=true' : ''}`,
         {
@@ -48,7 +38,7 @@ export default class authService {
       if (Platform.OS !== 'web') {
         await SecureStore.setItemAsync('token', response.data.accessToken);//saving token to securestore for IOS
         //setError("token " + token);
-        //await new Promise((resolve) => setTimeout(resolve, 2000));
+        //await new Promise((resolve) => setTimeout(resolve, 1000));
         router.push("/home");
       } else {
         setError("Zalogowano");
@@ -65,13 +55,22 @@ export default class authService {
   };
 
   static getUserInfo = async () => {
+
+    const token = Platform.OS !== "web" ? SecureStore.getItem('token') : "";
+    const config = {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`
+    }
+  };
+
     try {
       let response;
       if (Platform.OS === "web") {
         response = await axios.get(`${this.ip}/api/User/getAuthorizedUser`);
       }
       else {
-        response = await axios.get(`${this.ip}/api/User/getAuthorizedUser`, this.config);
+        response = await axios.get(`${this.ip}/api/User/getAuthorizedUser`, config);
       }
 
       console.log(response.data);

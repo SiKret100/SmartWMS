@@ -18,16 +18,19 @@ const getCookieByName = (name) => {
 }
 
 export default class alertService{
+
     static ip = process.env.EXPO_PUBLIC_IP;
-    static token = Platform.OS !== "web" ? SecureStore.getItem('token') : "";
-    static config = {
+
+    static Add = async (alertData) => {
+
+    const token = Platform.OS !== "web" ? SecureStore.getItem('token') : "";
+    const config = {
         headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${this.token}`
+            Authorization: `Bearer ${token}`
         }
     };
 
-    static Add = async (alertData) => {
         try{
             const alertDto = new AlertDto(alertData);
 
@@ -36,7 +39,7 @@ export default class alertService{
                 response = await axios.post(`${this.ip}/api/Alert`, alertDto);
             }
             else{
-                response = await axios.post(`${this.ip}/api/Alert`, alertDto, this.config);
+                response = await axios.post(`${this.ip}/api/Alert`, alertDto, config);
             }
 
             console.log(response);
@@ -48,13 +51,22 @@ export default class alertService{
     }
    
     static GetAll = async () => {
+
+    const token = Platform.OS !== "web" ? SecureStore.getItem('token') : "";
+    const config = {
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+        }
+    };
+
         try{
             let response;
             if(Platform.OS === "web"){
                 response = await axios.get(`${this.ip}/api/Alert`);
             }
             else{
-                response = await axios.get(`${this.ip}/api/Alert`, this.config);
+                response = await axios.get(`${this.ip}/api/Alert`, config);
             }
 
             console.log(response);
@@ -66,13 +78,22 @@ export default class alertService{
     }
 
     static Get = async (id) => {
+
+        const token = Platform.OS !== "web" ? SecureStore.getItem('token') : "";
+        const config = {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`
+            }
+        };
+
         try{
             let response;
             if(Platform.OS === "web"){
                 response = await axios.get(`${this.ip}/api/Alert/${id}`);
             }
             else{
-                response = await axios.get(`${this.ip}/api/Alert/${id}`, this.config);
+                response = await axios.get(`${this.ip}/api/Alert/${id}`, config);
             }
 
             console.log(response);
@@ -84,6 +105,15 @@ export default class alertService{
     }
 
     static Update = async (id, alertData) => {
+
+        const token = Platform.OS !== "web" ? SecureStore.getItem('token') : "";
+        const config = {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`
+            }
+        };
+
         try{
             const alertDto = new AlertDto(alertData);
 
@@ -92,7 +122,7 @@ export default class alertService{
                 response = await axios.put(`${this.ip}/api/Alert/${id}`, alertDto);
             }
             else{
-                response = await axios.put(`${this.ip}/api/Alert/${id}`, alertDto, this.config);
+                response = await axios.put(`${this.ip}/api/Alert/${id}`, alertDto, config);
             }
 
             console.log(response);
@@ -104,13 +134,22 @@ export default class alertService{
     }
 
     static Delete = async (id) => {
+
+        const token = Platform.OS !== "web" ? SecureStore.getItem('token') : "";
+        const config = {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`
+            }
+        };
+
         try{
             let response;
             if(Platform.OS === "web"){
                 response = await axios.delete(`${this.ip}/api/Alert/${id}`);
             }
             else{
-                response = await axios.delete(`${this.ip}/api/Alert/${id}`, this.config);
+                response = await axios.delete(`${this.ip}/api/Alert/${id}`, config);
             }
 
             console.log(response);
@@ -122,13 +161,22 @@ export default class alertService{
     }
 
     static Seen = async (id) => {
+
+        const token = Platform.OS !== "web" ? SecureStore.getItem('token') : "";
+        const config = {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`
+            }
+        };
+
         try{
             let response;
             if(Platform.OS === "web"){
                 response = await axios.put(`${this.ip}/api/Alert/seen/${id}`);
             }
             else{
-                response = await axios.put(`${this.ip}/api/Alert/${id}`, this.config);
+                response = await axios.put(`${this.ip}/api/Alert/${id}`, config);
             }
 
             console.log(response);
