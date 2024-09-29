@@ -4,13 +4,10 @@ import { Button } from 'react-native-elements'
 import { Feather } from '@expo/vector-icons'
 import alertService from '../../services/dataServices/alertService'
 
-const DeleteButton = (id) => {
-    let removeAlert = async () => {
-        let res = await alertService.Delete(id);
-    }
+const DeleteButton = ({onDelete}) => {
 
   return (
-    <Button type='clear' icon={
+    <Button onPress={onDelete} type='clear' icon={
         <Feather name="trash" size={24} color="red" />
       }
       />
