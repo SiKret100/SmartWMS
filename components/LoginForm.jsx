@@ -13,7 +13,7 @@ import {
     Image
 } from "react-native";
 import FormField from "../components/FormField";
-import CustomButton from "../components/CustomButton";
+import CustomButton from "./buttons/CustomButton";
 import "react-native-reanimated";
 import authService from "../services/auth/authService";
 

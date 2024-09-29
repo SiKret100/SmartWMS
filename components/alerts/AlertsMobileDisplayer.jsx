@@ -2,7 +2,10 @@ import { SafeAreaView, Text, View } from 'react-native';
 import { useState, useEffect } from 'react';
 import { ActivityIndicator } from "react-native";
 import alertService from '../../services/dataServices/alertService';
-
+import Feather from "react-native-vector-icons/Feather";
+import { Button } from 'react-native-elements';
+import DeleteButton from '../buttons/DeleteButton';
+import EditButton from '../buttons/EditButton';
 
 const AlertMobileDisplayer = () => {
   const [data, setData] = useState([]);
@@ -10,7 +13,7 @@ const AlertMobileDisplayer = () => {
   const [loading, setLoading] = useState(false);
 
   const fetchData = async () => {
-    try{
+    try {
       await new Promise((resolve) => setTimeout(resolve, 1000));
       const response = await alertService.GetAll();
       console.log(`Response: ${JSON.stringify(response)}`);
@@ -18,7 +21,7 @@ const AlertMobileDisplayer = () => {
       console.log(data);
       setLoading(true);
     }
-    catch(err){
+    catch (err) {
       setError(err);
       console.log(`Wystąpił błąd: ${err}`);
     }
@@ -30,19 +33,25 @@ const AlertMobileDisplayer = () => {
 
   return (
     <SafeAreaView className={'flex-1 justify-start align-center'}>
-      { !loading ? (
+      {!loading ? (
         <View className={'justify-center align-center'}>
-          <ActivityIndicator size="small" color="#000"/>
+          <ActivityIndicator size="small" color="#000" />
         </View>
       ) : (
         data.map((object) => {
-          return( 
-          <View className={' flex-0.5 border-solid rounded-3xl border-2 px-2 py-2 mx-4 mt-4'}> 
-            <Text key={object.title} className={'text-center'}>{object.title}</Text>
-            <Text key={object.description} className={'text-center'}>{object.description}</Text>
-            <Text key={object.alertDate} className={'text-center'}>{object.alertDate}</Text>
-            <Text key={object.seen} className={'text-center'}> {object.seen === 0 ? ("Widziano") : ("Nie widziano") } </Text>
-          </View>
+          return (
+            <View className={' flex-row justify-center items-center flex-0.5 border-solid rounded-3xl border-2 px-2 py-2 mx-4 mt-4 bg-slate-200'}>
+              <EditButton/>
+              <View className={' px-2 py-2 mx-4 '}>
+                <View>
+                  <Text key={object.title} className={'text-center'}>{object.title}</Text>
+                  <Text key={object.description} className={'text-center'}>{object.description}</Text>
+                  <Text key={object.alertDate} className={'text-center'}>{object.alertDate}</Text>
+                  <Text key={object.seen} className={'text-center'}> {object.seen === 0 ? ("Widziano") : ("Nie widziano")} </Text>
+                </View>
+              </View>
+              <DeleteButton/>
+            </View>
           )
         })
       )}
