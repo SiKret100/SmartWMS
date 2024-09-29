@@ -176,7 +176,7 @@ export default class alertService{
                 response = await axios.put(`${this.ip}/api/Alert/seen/${id}`);
             }
             else{
-                response = await axios.put(`${this.ip}/api/Alert/${id}`, config);
+                response = await axios.put(`${this.ip}/api/Alert/seen/${id}`, config);
             }
 
             console.log(response);
