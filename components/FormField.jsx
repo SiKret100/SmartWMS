@@ -5,7 +5,6 @@ const FormField = ({ title, value, placeholder, handleChangeText, otherStyles, .
     const [showPassword, setShowPassword] = useState(false);
     const [isFocused, setIsFocused] = useState(false);
 
-
     return (
         <View className={`space-y-2 ${otherStyles}`}>
 

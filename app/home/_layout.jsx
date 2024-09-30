@@ -30,8 +30,8 @@ const RootLayout = () => {
           <Drawer.Screen 
             name='index' 
             options={{
-              drawerLabel: 'Strona główna',
-              title: 'Strona główna',
+              drawerLabel: 'HomePage',
+              title: 'Home Page',
             }}
           />
 
@@ -39,80 +39,80 @@ const RootLayout = () => {
             name='alerts'
             redirect={userData.role == 'Employee'}
             options={{
-              drawerLabel: 'Alerty',
-              title: 'Alerty',
+              drawerLabel: 'Alerts',
+              title: 'Alerts',
             }}
           />
 
           <Drawer.Screen 
             name='categories' 
             options={{
-              drawerLabel: 'Kategorie',
-              title: 'Kategorie',
+              drawerLabel: 'Categories',
+              title: 'Categories',
             }}
           />
 
           <Drawer.Screen 
             name='orders' 
             options={{
-              drawerLabel: 'Zamówienia',
-              title: 'Zamówienia',
+              drawerLabel: 'Orders',
+              title: 'Orders',
             }}
           />
 
           <Drawer.Screen 
             name='products' 
             options={{
-              drawerLabel: 'Produkty',
-              title: 'Produkty',
+              drawerLabel: 'Products',
+              title: 'Products',
             }}
           />
 
           <Drawer.Screen 
             name='reports' 
             options={{
-              drawerLabel: 'Raporty',
-              title: 'Raporty',
+              drawerLabel: 'Reports',
+              title: 'Reports',
             }}
           />
           
           <Drawer.Screen 
             name='shelves' 
             options={{
-              drawerLabel: 'Półki',
-              title: 'Półki',
+              drawerLabel: 'Shelves',
+              title: 'Shelves',
             }}
           />
 
           <Drawer.Screen 
             name='subcategories' 
             options={{
-              drawerLabel: 'Podkategorie',
-              title: 'Podkategorie',
+              drawerLabel: 'Subcategories',
+              title: 'Subcategories',
             }}
           />
 
           <Drawer.Screen 
             name='tasks' 
             options={{
-              drawerLabel: 'Zadania',
-              title: 'Zadania',
+              drawerLabel: 'Tasks',
+              title: 'Tasks',
             }}
           />
 
           <Drawer.Screen 
             name='users' 
             options={{
-              drawerLabel: 'Użytkownicy',
-              title: 'Użytkownicy',
+              drawerLabel: 'Users',
+              title: 'Users',
             }}
           />
 
           <Drawer.Screen 
             name='waybills' 
             options={{
-              drawerLabel: 'Listy przewozowe',
-              title: 'Listy przewozowe',
+              drawerLabel: 'Waybills',
+              title: 'Waybills',
             }}
           />
         </Drawer>

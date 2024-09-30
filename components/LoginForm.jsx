@@ -50,7 +50,7 @@ const LoginForm = () => {
         return null;
     }
     return (
-        <SafeAreaView className="h-full items-center bg-smartwms">
+       <SafeAreaView className="h-full items-center bg-smartwms">
         <KeyboardAvoidingView
           behavior="padding"
           className={`bg-smartwms h-full px-4 justify-center ${Platform.OS === "web" ? "w-96" : "w-full"}`}
@@ -79,7 +79,7 @@ const LoginForm = () => {
             handleChangeText={(e) => setForm({ ...form, password: e })}
             otherStyles="mt-7"
           />
-
+ 
           <CustomButton
             title="Log in"
             handlePress={handleLoginPress}

@@ -4,8 +4,8 @@ import LoginForm from "../components/LoginForm";
   //------------------------------------------------------------
 const RootLayout = () => {
   return (
-    <LoginForm></LoginForm>
-);
+    <LoginForm/>
+  );
 }
 
 export default RootLayout;

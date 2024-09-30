@@ -1,10 +1,9 @@
 import { Text, View } from 'react-native'
+import AlertMobileAdd from '../../../components/alerts/AlertMobileAdd';
 
 const AlertAdd = () => {
   return (
-    <View>
-      <Text>Dodaj alert</Text>
-    </View>
+    <AlertMobileAdd/>
   )
 }
 

@@ -5,6 +5,7 @@ import * as SecureStore from 'expo-secure-store';
 import { router } from "expo-router";
 
 axios.defaults.withCredentials = true;
+axios.defaults.timeout = 5000;
 
 export default class authService {
 
@@ -27,7 +28,9 @@ export default class authService {
 
       const response = await axios.post(
         `${this.ip}/login${Platform.OS === 'web' ? '?useCookies=true' : ''}`,
+        
         {
+          
           email: email,
           password: password
         }
@@ -49,7 +52,7 @@ export default class authService {
 
     } catch (error) {
       console.log(error);
-      setError(handleLoginStatus(error));
+      setError(this.handleLoginStatus(error));
       setLoading(false);
     }
   };
