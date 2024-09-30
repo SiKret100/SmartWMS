@@ -1,4 +1,4 @@
-import { SafeAreaView, Text, View } from "react-native";
+import { SafeAreaView, Text, View, Modal } from "react-native";
 import { useState, useEffect, useCallback } from "react";
 import { ActivityIndicator } from "react-native";
 import alertService from "../../services/dataServices/alertService";
@@ -15,6 +15,7 @@ const AlertMobileDisplayer = () => {
   const [loading, setLoading] = useState(false);
   const [isDeletedItem, setIsDeletedItem] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
@@ -41,7 +42,7 @@ const AlertMobileDisplayer = () => {
     useCallback(() => {
       fetchData();
     }, [])
-  )
+  );
 
   useEffect(() => {
     fetchData();
@@ -58,6 +59,10 @@ const AlertMobileDisplayer = () => {
       console.log(err);
     }
     setIsDeletedItem(true);
+  };
+
+  const handleEdit = async (id) => {
+    setIsModalVisible(true);
   };
 
   return (
@@ -78,13 +83,14 @@ const AlertMobileDisplayer = () => {
         ) : (
           data.reverse().map((object) => {
             return (
+              <>
               <View
                 key={object.alertId}
                 className={
                   " flex-row justify-between items-center flex-0.5 border-solid rounded-3xl border-2 px-2 py-2 mx-4 mt-4 bg-slate-200"
                 }
               >
-                <EditButton />
+                <EditButton onEdit={() => handleEdit(object.alertId)} />
                 <View className={" px-2 py-2 mx-4 "}>
                   <View>
                     <Text key={object.title} className={"text-center"}>
@@ -104,6 +110,24 @@ const AlertMobileDisplayer = () => {
                 </View>
                 <DeleteButton onDelete={() => handleDelete(object.alertId)} />
               </View>
+
+
+              <View>
+
+                <Modal 
+                  visible= {isModalVisible}
+                  animationType = "slide"
+                  presentationStyle="pageSheet"
+                  onRequestClose={() => setIsModalVisible(false)}
+                >
+                  <View className = "flex-auto py-28 bg-slate-500">
+                  <Text>Jebanie Monia</Text>
+                  </View>
+                </Modal>
+
+              </View>
+
+              </>
             );
           })
         )}
