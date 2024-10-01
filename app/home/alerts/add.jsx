@@ -1,9 +1,9 @@
 import { Text, View } from 'react-native'
-import AlertMobileAdd from '../../../components/alerts/AlertMobileAdd';
+import AlertMobileForm from '../../../components/alerts/AlertMobileForm';
 
 const AlertAdd = () => {
   return (
-    <AlertMobileAdd/>
+    <AlertMobileForm header="Add"/>
   )
 }
 
