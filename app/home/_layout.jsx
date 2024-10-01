@@ -41,6 +41,7 @@ const RootLayout = () => {
             options={{
               drawerLabel: 'Alerts',
               title: 'Alerts',
+              headerStyle: { backgroundColor: 'bg-slate-200' }
             }}
           />
 
@@ -49,6 +50,8 @@ const RootLayout = () => {
             options={{
               drawerLabel: 'Categories',
               title: 'Categories',
+              headerStyle: { backgroundColor: 'bg-slate-200' }
+
             }}
           />
 
@@ -57,6 +60,8 @@ const RootLayout = () => {
             options={{
               drawerLabel: 'Orders',
               title: 'Orders',
+              headerStyle: { backgroundColor: 'bg-slate-200' }
+
             }}
           />
 
@@ -65,6 +70,8 @@ const RootLayout = () => {
             options={{
               drawerLabel: 'Products',
               title: 'Products',
+              headerStyle: { backgroundColor: 'bg-slate-200' }
+
             }}
           />
 
@@ -73,6 +80,8 @@ const RootLayout = () => {
             options={{
               drawerLabel: 'Reports',
               title: 'Reports',
+              headerStyle: { backgroundColor: 'bg-slate-200' }
+
             }}
           />
           
@@ -81,6 +90,8 @@ const RootLayout = () => {
             options={{
               drawerLabel: 'Shelves',
               title: 'Shelves',
+              headerStyle: { backgroundColor: 'bg-slate-200' }
+
             }}
           />
 
@@ -89,6 +100,8 @@ const RootLayout = () => {
             options={{
               drawerLabel: 'Subcategories',
               title: 'Subcategories',
+              headerStyle: { backgroundColor: 'bg-slate-200' }
+
             }}
           />
 
@@ -97,6 +110,8 @@ const RootLayout = () => {
             options={{
               drawerLabel: 'Tasks',
               title: 'Tasks',
+              headerStyle: { backgroundColor: 'bg-slate-200' }
+
             }}
           />
 
@@ -105,6 +120,8 @@ const RootLayout = () => {
             options={{
               drawerLabel: 'Users',
               title: 'Users',
+              headerStyle: { backgroundColor: 'bg-slate-200' }
+
             }}
           />
 
@@ -113,6 +130,8 @@ const RootLayout = () => {
             options={{
               drawerLabel: 'Waybills',
               title: 'Waybills',
+              headerStyle: { backgroundColor: 'bg-slate-200' }
+
             }}
           />
         </Drawer>
