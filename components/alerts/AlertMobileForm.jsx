@@ -1,7 +1,7 @@
 import { Text, View } from "react-native";
 import React from "react";
 import FormField from "../FormField";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { SafeAreaView } from "react-native";
 import { KeyboardAvoidingView } from "react-native";
 import { Platform } from "react-native";
@@ -11,18 +11,40 @@ import { SelectList } from "react-native-dropdown-select-list";
 import alertTypeMap from "../../data/Mappers/alertType";
 import CustomSelectList from "../CustomSelectList";
 
-const AlertMobileAdd = () => {
+const AlertMobileForm = ({object = {}, header}) => {
   const [errors, setErrors] = useState({});
   const [selectKey, setSelectKey] = useState(0);
 
 
 
   const [form, setForm] = useState({
-    title: "",
-    description: "",
-    alertType: -1
+    title: object?.title || "",
+    description: object?.description || "",
+    alertType: object?.alertType || -1 
   });
 
+  const handleEdit = async (id, form) => {
+    try {
+      const result = await alertService.Update(id, form);
+      console.log(result.errors)
+      if (result.errors) {
+        setErrors(result.errors);
+        console.log(`Błędy przechwycone: ${JSON.stringify(result.errors)}`);
+      } else {
+        setErrors({});
+        setForm({
+          title: "",
+          description: "",
+          alertType: -1
+        });
+        setSelectKey((prevKey) => prevKey + 1);
+      }
+    } catch (err) {
+      //console.log(err)
+      setErrors(err);
+    }
+  }
+  
   const handleAdd = async (form) => {
     try {
       const result = await alertService.Add(form);
@@ -39,26 +61,29 @@ const AlertMobileAdd = () => {
         });
         setSelectKey((prevKey) => prevKey + 1);
       }
-
-
-
     } catch (err) {
       //console.log(err)
       setErrors(err);
     }
   };
 
+  useEffect(() => {
+    console.log(`Otrzymano obiekt: ${JSON.stringify(object)}`);
+  }, [])
+
   return (
-    <SafeAreaView className="h-full bg-smartwms">
+    <SafeAreaView className="h-full">
       <KeyboardAvoidingView
         behavior="padding"
-        className={`bg-smartwms h-full px-4 ${Platform.OS === "web" ? "w-96" : "w-full"}`}
+        className={`h-full px-4 ${Platform.OS === "web" ? "w-96" : "w-full"}`}
       >
+        <Text className = "my-5 text-3xl font-bold">{header}</Text>
+
         <FormField
           title="Title"
           value={form.title}
           handleChangeText={(e) => setForm({ ...form, title: e })}
-          otherStyles="mt-7"
+          otherStyles=""
           keyboardType="email-address"
         />
 
@@ -68,41 +93,19 @@ const AlertMobileAdd = () => {
           handleChangeText={(e) => setForm({ ...form, description: e })}
           otherStyles="mt-7"
         />
-        {/*}
-        <View className="mt-8">
-        <SelectList 
-            key={selectKey}
-            setSelected={(val) => setForm({...form, alertType: val})}
-            data = {alertTypeMap}
-            save="key"
-            placeholder="Select type..."
-            boxStyles={{
-              borderColor: 'black',
-              borderWidth: 2, 
-              height: 56, 
-              borderRadius: 13, 
-              alignItems: 'center'
-            }}
-            inputStyles={{fontSize: 16}}
-            dropdownTextStyles={{fontSize: 16}}
-          />
-
-        </View>
-        */}
 
         <View className = "mt-8">
           <CustomSelectList
             selectKey={selectKey}
             setForm={setForm}
             alertTypeMap={alertTypeMap}
+            form={form}
           />
         </View>
 
-
-
         <CustomButton
-          title="Add"
-          handlePress={() => handleAdd(form)}
+          title="Save"
+          handlePress={() => { if(object?.alertId) handleEdit(object.alertId, form); else handleAdd(form); }}
           containerStyles="w-full mt-7"
           textStyles={"text-white"}
         />
@@ -125,4 +128,4 @@ const AlertMobileAdd = () => {
   );
 };
 
-export default AlertMobileAdd;
+export default AlertMobileForm;

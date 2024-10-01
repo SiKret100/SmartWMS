@@ -9,6 +9,7 @@ import EditButton from "../buttons/EditButton";
 import { RefreshControl, ScrollView } from "react-native-gesture-handler";
 import { useFocusEffect } from "expo-router";
 import alertTypeMap from "../../data/Mappers/alertType";
+import AlertMobileForm from "components/alerts/AlertMobileForm.jsx";
 
 const AlertMobileDisplayer = () => {
   const [data, setData] = useState([]);
@@ -17,6 +18,7 @@ const AlertMobileDisplayer = () => {
   const [isDeletedItem, setIsDeletedItem] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [currentEditItem, setCurrentEditItem] = useState(null);
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
@@ -30,7 +32,7 @@ const AlertMobileDisplayer = () => {
       //await new Promise((resolve) => setTimeout(resolve, 1000));
       const response = await alertService.GetAll();
       console.log(`Response: ${JSON.stringify(response)}`);
-      setData(response.data);
+      setData(response.data.reverse());
       console.log(data);
       setLoading(true);
     } catch (err) {
@@ -62,9 +64,11 @@ const AlertMobileDisplayer = () => {
     setIsDeletedItem(true);
   };
 
-  const handleEdit = async (id) => {
+  const handleModalEdit = async (object) => {
+    setCurrentEditItem(object)
     setIsModalVisible(true);
   };
+
 
   return (
     <SafeAreaView className={"flex-1 justify-start align-center"}>
@@ -82,7 +86,7 @@ const AlertMobileDisplayer = () => {
             <Text className={"text-center my-5"}>Brak alertów</Text>
           </View>
         ) : (
-          data.reverse().map((object) => {
+          data.map((object) => {
             return (
               <>
               <View
@@ -91,7 +95,7 @@ const AlertMobileDisplayer = () => {
                   " flex-row justify-between items-center flex-0.5 border-solid rounded-3xl border-2 px-2 py-2 mx-4 mt-4 bg-slate-200"
                 }
               >
-                <EditButton onEdit={() => handleEdit(object.alertId)} />
+                <EditButton onEdit={() => handleModalEdit(object)} />
                 <View className={" px-2 py-2 mx-4 "}>
                   <View>
                     <Text key={object.title} className={"text-center"}>
@@ -124,9 +128,10 @@ const AlertMobileDisplayer = () => {
                   presentationStyle="pageSheet"
                   onRequestClose={() => setIsModalVisible(false)}
                 >
-                  <View className = "flex-auto py-28 bg-slate-500">
-                  <Text>Jebanie Monia</Text>
+                  <View className = "flex-auto mt-5">
+                  <AlertMobileForm object = {currentEditItem} header = "Edit" />
                   </View>
+
                 </Modal>
 
               </View>
