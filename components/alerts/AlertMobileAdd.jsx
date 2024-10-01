@@ -7,13 +7,19 @@ import { KeyboardAvoidingView } from "react-native";
 import { Platform } from "react-native";
 import CustomButton from "../buttons/CustomButton";
 import alertService from "../../services/dataServices/alertService";
+import { SelectList } from "react-native-dropdown-select-list";
+import alertTypeMap from "../../data/Mappers/alertType";
 
 const AlertMobileAdd = () => {
   const [errors, setErrors] = useState({});
+  const [selectKey, setSelectKey] = useState(0);
+  
+  
 
   const [form, setForm] = useState({
     title: "",
     description: "",
+    alertType: -1
   });
 
   const handleAdd = async (form) => {
@@ -25,10 +31,15 @@ const AlertMobileAdd = () => {
         console.log(`Błędy przechwycone: ${JSON.stringify(result.errors)}`);
       } else {
         setErrors({});
-        setForm({});
+        setForm({
+          title: "",
+          description: "",
+          alertType: -1
+        });
+        setSelectKey((prevKey) => prevKey + 1);
       } 
 
-
+      
 
     } catch (err) {
       //console.log(err)
@@ -56,6 +67,25 @@ const AlertMobileAdd = () => {
           handleChangeText={(e) => setForm({ ...form, description: e })}
           otherStyles="mt-7"
         />
+
+        <View className="mt-8">
+          <SelectList 
+            key={selectKey}
+            setSelected={(val) => setForm({...form, alertType: val})}
+            data = {alertTypeMap}
+            save="key"
+            placeholder="Select type..."
+            boxStyles={{
+              borderColor: 'black',
+              borderWidth: 2, 
+              height: 56, borderRadius: 13, 
+              alignItems: 'center'
+            }}
+            inputStyles={{fontSize: 16}}
+            dropdownTextStyles={{fontSize: 16}}
+          />
+        </View>
+          
 
         <CustomButton
           title="Add"
