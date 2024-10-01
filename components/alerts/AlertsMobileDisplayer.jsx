@@ -8,6 +8,7 @@ import DeleteButton from "../buttons/DeleteButton";
 import EditButton from "../buttons/EditButton";
 import { RefreshControl, ScrollView } from "react-native-gesture-handler";
 import { useFocusEffect } from "expo-router";
+import alertTypeMap from "../../data/Mappers/alertType";
 
 const AlertMobileDisplayer = () => {
   const [data, setData] = useState([]);
@@ -105,6 +106,9 @@ const AlertMobileDisplayer = () => {
                     <Text key={object.seen} className={"text-center"}>
                       {" "}
                       {object.seen === 0 ? "Widziano" : "Nie widziano"}{" "}
+                    </Text>
+                    <Text key={object.alertType} className={"text-center"}>
+                      {alertTypeMap.find(alert => alert.key === object.alertType)?.value || "Unknown"}
                     </Text>
                   </View>
                 </View>
