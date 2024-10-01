@@ -20,7 +20,7 @@ const AlertMobileForm = ({object = {}, header}) => {
   const [form, setForm] = useState({
     title: object?.title || "",
     description: object?.description || "",
-    alertType: object?.alertType || -1 
+    alertType: object?.alertType !== undefined && object.alertType !== null ? object.alertType : -1
   });
 
   const handleEdit = async (id, form) => {
@@ -69,6 +69,7 @@ const AlertMobileForm = ({object = {}, header}) => {
 
   useEffect(() => {
     console.log(`Otrzymano obiekt: ${JSON.stringify(object)}`);
+    console.log(form.alertType)
   }, [])
 
   return (
