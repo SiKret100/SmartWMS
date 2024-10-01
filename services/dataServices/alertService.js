@@ -73,7 +73,7 @@ export default class alertService {
       console.log(response);
       return response;
     } catch (err) {
-      console.log(err);
+      return err.response.data;
     }
   };
 
@@ -97,7 +97,7 @@ export default class alertService {
       console.log(response);
       return response;
     } catch (err) {
-      console.log(err);
+      return err.response.data;
     }
   };
 
@@ -127,7 +127,7 @@ export default class alertService {
       console.log(response);
       return response;
     } catch (err) {
-      console.log(err);
+      return err.response.data;
     }
   };
 
@@ -151,7 +151,7 @@ export default class alertService {
       console.log(response);
       return response;
     } catch (err) {
-      console.log(err);
+      return err.response.data;
     }
   };
 
@@ -175,7 +175,7 @@ export default class alertService {
       console.log(response);
       return response;
     } catch (err) {
-      console.log(err);
+      return err.response.data;
     }
   };
 }
