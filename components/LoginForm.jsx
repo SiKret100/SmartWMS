@@ -27,8 +27,8 @@ const LoginForm = () => {
     const [loading, setLoading] = useState(false);
 
     const [form, setForm] = useState({
-        email: "",
-        password: "",
+        email: "Admin",
+        password: "Admin123@",
     });
 
     const handleLoginPress = async () => {
