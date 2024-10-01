@@ -9,12 +9,13 @@ import CustomButton from "../buttons/CustomButton";
 import alertService from "../../services/dataServices/alertService";
 import { SelectList } from "react-native-dropdown-select-list";
 import alertTypeMap from "../../data/Mappers/alertType";
+import CustomSelectList from "../CustomSelectList";
 
 const AlertMobileAdd = () => {
   const [errors, setErrors] = useState({});
   const [selectKey, setSelectKey] = useState(0);
-  
-  
+
+
 
   const [form, setForm] = useState({
     title: "",
@@ -25,7 +26,7 @@ const AlertMobileAdd = () => {
   const handleAdd = async (form) => {
     try {
       const result = await alertService.Add(form);
-      
+
       if (result.errors) {
         setErrors(result.errors);
         console.log(`Błędy przechwycone: ${JSON.stringify(result.errors)}`);
@@ -37,9 +38,9 @@ const AlertMobileAdd = () => {
           alertType: -1
         });
         setSelectKey((prevKey) => prevKey + 1);
-      } 
+      }
 
-      
+
 
     } catch (err) {
       //console.log(err)
@@ -67,9 +68,9 @@ const AlertMobileAdd = () => {
           handleChangeText={(e) => setForm({ ...form, description: e })}
           otherStyles="mt-7"
         />
-
+        {/*}
         <View className="mt-8">
-          <SelectList 
+        <SelectList 
             key={selectKey}
             setSelected={(val) => setForm({...form, alertType: val})}
             data = {alertTypeMap}
@@ -78,14 +79,26 @@ const AlertMobileAdd = () => {
             boxStyles={{
               borderColor: 'black',
               borderWidth: 2, 
-              height: 56, borderRadius: 13, 
+              height: 56, 
+              borderRadius: 13, 
               alignItems: 'center'
             }}
             inputStyles={{fontSize: 16}}
             dropdownTextStyles={{fontSize: 16}}
           />
+
         </View>
-          
+        */}
+
+        <View className = "mt-8">
+          <CustomSelectList
+            selectKey={selectKey}
+            setForm={setForm}
+            alertTypeMap={alertTypeMap}
+          />
+        </View>
+
+
 
         <CustomButton
           title="Add"
