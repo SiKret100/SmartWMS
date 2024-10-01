@@ -1,3 +1,5 @@
+const moment = require('moment-timezone')
+
 export default class AlertDto{
     seen;
     title;
@@ -9,7 +11,7 @@ export default class AlertDto{
         this.seen = false;
         this.title = data.title;
         this.description = data.description;
-        this.alertDate = "2024-09-30T12:54:06.275Z";
-        this.alertType = 0;
+        this.alertDate = moment().tz("Europe/Warsaw").toISOString(true);
+        this.alertType = data.alertType;
     }
 }
