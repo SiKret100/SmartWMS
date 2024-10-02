@@ -69,7 +69,6 @@ const AlertMobileForm = ({object = {}, header}) => {
 
   useEffect(() => {
     console.log(`Otrzymano obiekt: ${JSON.stringify(object)}`);
-    console.log(form.alertType)
   }, [])
 
   return (
