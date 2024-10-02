@@ -12,7 +12,7 @@ const CustomSelectList = ({selectKey, setForm, alertTypeMap, form}) => {
       key={selectKey}
       setSelected={(val) => setForm((prevForm) => ({ ...prevForm, alertType: val }))}
       data={alertTypeMap}
-      save="key"
+      save="key" 
       placeholder="Select type..."
       boxStyles={{
         borderColor: 'black',
