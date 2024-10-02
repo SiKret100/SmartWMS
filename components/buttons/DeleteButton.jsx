@@ -14,8 +14,9 @@ const DeleteButton = ({onDelete}) => {
         style: 'cancel'
       },
       {
-        text: 'Ok',
-        onPress: () => onDelete()
+        text: 'Delete',
+        onPress: () => onDelete(),
+        style: 'destructive'
       }
     ])
   }
