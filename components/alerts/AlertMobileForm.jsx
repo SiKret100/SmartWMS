@@ -11,11 +11,9 @@ import { SelectList } from "react-native-dropdown-select-list";
 import alertTypeMap from "../../data/Mappers/alertType";
 import CustomSelectList from "../CustomSelectList";
 
-const AlertMobileForm = ({object = {}, header}) => {
+const AlertMobileForm = ({object = {}, header, setIsModalVisible}) => {
   const [errors, setErrors] = useState({});
   const [selectKey, setSelectKey] = useState(0);
-
-
 
   const [form, setForm] = useState({
     title: object?.title || "",
@@ -37,6 +35,7 @@ const AlertMobileForm = ({object = {}, header}) => {
           description: "",
           alertType: -1
         });
+        setIsModalVisible(false);
         setSelectKey((prevKey) => prevKey + 1);
       }
     } catch (err) {
@@ -105,7 +104,10 @@ const AlertMobileForm = ({object = {}, header}) => {
 
         <CustomButton
           title="Save"
-          handlePress={() => { if(object?.alertId) handleEdit(object.alertId, form); else handleAdd(form); }}
+          handlePress={() => { 
+            if(object?.alertId) 
+            handleEdit(object.alertId, form); 
+            else handleAdd(form); }}
           containerStyles="w-full mt-7"
           textStyles={"text-white"}
         />

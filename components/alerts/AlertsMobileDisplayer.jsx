@@ -44,7 +44,7 @@ const AlertMobileDisplayer = () => {
   useFocusEffect(
     useCallback(() => {
       fetchData();
-    }, [])
+    }, [isModalVisible])
   );
 
   useEffect(() => {
@@ -129,7 +129,7 @@ const AlertMobileDisplayer = () => {
                   onRequestClose={() => setIsModalVisible(false)}
                 >
                   <View className = "flex-auto mt-5">
-                  <AlertMobileForm object = {currentEditItem} header = "Edit" />
+                  <AlertMobileForm object = {currentEditItem} header = "Edit" setIsModalVisible={setIsModalVisible}/>
                   </View>
 
                 </Modal>
