@@ -9,7 +9,7 @@ import CustomButton from "../buttons/CustomButton";
 import alertService from "../../services/dataServices/alertService";
 import { SelectList } from "react-native-dropdown-select-list";
 import alertTypeMap from "../../data/Mappers/alertType";
-import CustomSelectList from "../CustomSelectList";
+import CustomSelectList from "../selects/CustomSelectList";
 
 const AlertMobileForm = ({object = {}, header, setIsModalVisible}) => {
   const [errors, setErrors] = useState({});
