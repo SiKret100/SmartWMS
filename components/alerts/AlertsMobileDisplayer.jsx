@@ -37,7 +37,9 @@ const AlertMobileDisplayer = () => {
       setLoading(false);
       const response = await alertService.GetAll();
       setData(response.data.reverse());
+
       loadSelected();
+
       if (selected !== null) {
         const parsedSelected = parseInt(selected);
         setSelected(parsedSelected);
@@ -61,7 +63,7 @@ const AlertMobileDisplayer = () => {
   useFocusEffect(
     useCallback(() => {
       fetchData();
-      loadSelected(); 
+      //loadSelected(); 
     }, [isModalVisible])
   );
 
@@ -97,7 +99,6 @@ const saveSelected = async () => {
 
 
   const loadSelected = async () => {
-    console.log("Loading selected filter");
     try {
       const savedSelected = await AsyncStorage.getItem('selectedFilter');
       if (savedSelected !== null) {
@@ -115,7 +116,6 @@ const saveSelected = async () => {
     } catch (err) {
       console.log(err);
     }
-    fetchData();
     setIsDeletedItem(true);
   };
 
