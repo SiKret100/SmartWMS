@@ -1,11 +1,17 @@
-import { Text, View } from 'react-native'
+import { StyleSheet, Text, View } from 'react-native'
+import React from 'react'
+import CustomButton from '../../../components/buttons/CustomButton'
 
-const AlertAdd = () => {
+const UserAdd = () => {
   return (
     <View>
-      <Text>Dodaj alert</Text>
+      <Text>UserAdd
+      
+      </Text>
     </View>
   )
 }
 
-export default AlertAdd;
+export default UserAdd
+
+const styles = StyleSheet.create({})

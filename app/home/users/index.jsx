@@ -1,11 +1,12 @@
 import { Text, View } from 'react-native'
+import UserMobileDisplayer from 'components/users/UserMobileDisplayer.jsx'
 
-const AlertMain = () => {
+const UserMain = () => {
   return (
     <View>
-      <Text>Wszystkie alerty</Text>
+      <UserMobileDisplayer/>
     </View>
   )
 }
 
-export default AlertMain
+export default UserMain;
