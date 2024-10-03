@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { Animated, Easing, View, StyleSheet } from 'react-native';
+import { Animated, View, StyleSheet } from 'react-native';
 
 const FallingTiles = (props) => {
   const fallAnim = useRef(new Animated.Value(0)).current; // Początkowa wartość pozycji Y
@@ -7,15 +7,15 @@ const FallingTiles = (props) => {
 
   useEffect(() => {
     Animated.parallel([
-      Animated.timing(fallAnim, {
+      Animated.spring(fallAnim, {
         toValue: 1, // Kafelki spadają do określonego miejsca
-        duration: 380, // Czas animacji
-        easing: Easing.bezier(0.42, 0, 0.58, 1), // Użycie niestandardowej funkcji easing
+        friction: 4, // Większa wartość = mniejszy efekt sprężystości
+        tension: 20, // Im większa wartość, tym bardziej dynamiczny ruch
         useNativeDriver: true,
       }),
       Animated.timing(fadeAnim, {
         toValue: 1, // Przezroczystość przechodzi do 1
-        duration: 500,
+        duration: 500, // Czas zanikania
         useNativeDriver: true,
       }),
     ]).start();
@@ -26,7 +26,7 @@ const FallingTiles = (props) => {
       {
         translateY: fallAnim.interpolate({
           inputRange: [0, 1],
-          outputRange: [-20, 0], // Kafelki spadają z -20 na 0
+          outputRange: [-50, 0], // Kafelki spadają z -50 na 0 (można dostosować)
         }),
       },
     ],
