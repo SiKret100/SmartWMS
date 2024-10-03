@@ -1,4 +1,4 @@
-import { SafeAreaView, Text, View, Modal } from "react-native";
+import { SafeAreaView, Text, View, Modal, Platform } from "react-native";
 import { useState, useEffect, useCallback } from "react";
 import { ActivityIndicator } from "react-native";
 import alertService from "../../services/dataServices/alertService";
@@ -139,7 +139,7 @@ const AlertMobileDisplayer = () => {
             </View>
 
 
-            {filteredData.map((object) => (
+            {filteredData.reverse().map((object) => (
               <>
                 <View
                   className={
@@ -165,7 +165,8 @@ const AlertMobileDisplayer = () => {
 
                 <Modal
                   visible={isModalVisible}
-                  animationType="slide"
+                
+                  animationType={Platform.OS !== "ios" ? "" : "slide"}
                   presentationStyle="pageSheet"
                   onRequestClose={() => setIsModalVisible(false)}
                 >
