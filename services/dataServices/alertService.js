@@ -70,7 +70,7 @@ export default class alertService {
         response = await axios.get(`${this.ip}/api/Alert`, config);
       }
 
-      console.log(response);
+      //console.log(response);
       return response;
     } catch (err) {
       return err.response.data;
