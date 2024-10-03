@@ -99,6 +99,7 @@ const AlertMobileForm = ({object = {}, header, setIsModalVisible}) => {
             setForm={setForm}
             alertTypeMap={alertTypeMap}
             form={form}
+            
           />
         </View>
 

@@ -10,7 +10,7 @@ const FormField = ({ title, value, placeholder, handleChangeText, otherStyles, .
 
             <Text className='text-base font-pmedium'>{title}</Text>
 
-            <View className={`border-2 w-full h-16 px-4 rounded-2xl items-start transition duration-150 ease-in-out ${isFocused ? 'border-smartwms-blue' :' border-black'}`  }>
+            <View className={` bg-slate-200  w-full h-16 px-4 rounded-2xl items-start transition duration-150 ease-in-out shadow ${isFocused ? 'border-smartwms-blue border-2' :''}`  }>
                 <TextInput
                     className='flex-1 w-full h-full text-black-100 outline-none'
                     value={value}

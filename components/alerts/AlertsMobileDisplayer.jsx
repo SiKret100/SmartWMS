@@ -11,6 +11,7 @@ import { useFocusEffect } from "expo-router";
 import alertTypeMap from "../../data/Mappers/alertType";
 import AlertMobileForm from "components/alerts/AlertMobileForm.jsx";
 import { SelectList } from 'react-native-dropdown-select-list'
+import moment from 'moment-timezone';
 
 const AlertMobileDisplayer = () => {
   const [data, setData] = useState([]);
@@ -22,6 +23,9 @@ const AlertMobileDisplayer = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [currentEditItem, setCurrentEditItem] = useState(null);
   const [selected, setSelected] = useState(-1);
+
+
+
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
@@ -47,18 +51,18 @@ const AlertMobileDisplayer = () => {
 
   useFocusEffect(
     useCallback(() => {
-      fetchData();    
+      fetchData();
     }, [isModalVisible])
   );
 
   useEffect(() => {
     fetchData();
-    if (isDeletedItem) 
+    if (isDeletedItem)
       setIsDeletedItem(false);
   }, [isDeletedItem]);
 
   useEffect(() => {
-    if(selected !== -1)
+    if (selected !== -1)
       setFilteredData(data.filter(record => record.alertType === selected));
     else
       setFilteredData(data);
@@ -96,29 +100,50 @@ const AlertMobileDisplayer = () => {
             <Text className={"text-center my-5"}>Brak alertów</Text>
           </View>
         ) : (
+
+
           <View>
-            <View className={"mx-4 mt-4"}>
-              <SelectList 
+            <View className={"mx-2 mt-2 mb-10"}>
+              <SelectList
                 boxStyles={{
                   borderColor: 'black',
-                  borderWidth: 2,
+                  borderWidth: 0,
                   height: 56,
                   borderRadius: 13,
-                  alignItems: 'center'
+                  alignItems: 'center',
+                  shadowColor: '#000', 
+                  shadowOffset: { width: 0, height: 2 }, 
+                  shadowOpacity: 0.3, 
+                  shadowRadius: 4, 
+                  elevation: 5, // Dla Androida
+                  backgroundColor: '#E2E8F0',
                 }}
                 inputStyles={{ fontSize: 16 }}
                 dropdownTextStyles={{ fontSize: 16 }}
-                data={[{key: -1, value: 'All'} ,...alertTypeMap]}
+                dropdownStyles={{
+                  backgroundColor: '#E2E8F0',
+                  borderWidth: 1,
+                  shadowColor: '#000', 
+                  shadowOffset: { width: 0, height: 2 }, 
+                  shadowOpacity: 0.3, 
+                  shadowRadius: 4, 
+                  elevation: 5, 
+                  backgroundColor: '#E2E8F0',
+                }}
+               
+                data={[{ key: -1, value: 'All' }, ...alertTypeMap]}
                 setSelected={(val) => setSelected(val)}
                 save="key"
-                defaultOption={{key: -1, value: 'All'}}
+                defaultOption={{ key: -1, value: 'All' }}
               />
             </View>
+
+
             {filteredData.map((object) => (
               <>
                 <View
                   className={
-                    "flex-row justify-between items-center flex-0.5 border-solid rounded-3xl border-2 px-2 py-2 mx-4 mt-4 bg-slate-200"
+                    "flex-row justify-between items-center flex-0.5 px-2 py-2 mx-2 my-2 shadow rounded-lg bg-slate-200"
                   }
                 >
                   <EditButton onEdit={() => handleModalEdit(object)} />
@@ -126,7 +151,7 @@ const AlertMobileDisplayer = () => {
                     <View>
                       <Text className={"text-center"}>{object.title}</Text>
                       <Text className={"text-center"}>{object.description}</Text>
-                      <Text className={"text-center"}>{object.alertDate}</Text>
+                      <Text className={"text-center"}>{moment(object.alertDate).format("DD MMMM YYYY")}</Text>
                       <Text className={"text-center"}>
                         {object.seen === 0 ? "Widziano" : "Nie widziano"}
                       </Text>
@@ -137,7 +162,7 @@ const AlertMobileDisplayer = () => {
                   </View>
                   <DeleteButton onDelete={() => handleDelete(object.alertId)} />
                 </View>
-  
+
                 <Modal
                   visible={isModalVisible}
                   animationType="slide"
@@ -152,13 +177,13 @@ const AlertMobileDisplayer = () => {
                     />
                   </View>
                 </Modal>
-                </>
+              </>
             ))}
           </View>
         )}
       </ScrollView>
     </SafeAreaView>
   );
-}  
+}
 
 export default AlertMobileDisplayer;
