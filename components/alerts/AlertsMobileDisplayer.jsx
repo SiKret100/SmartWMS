@@ -24,7 +24,7 @@ const AlertMobileDisplayer = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [currentEditItem, setCurrentEditItem] = useState(null);
-  const [selected, setSelected] = useState();
+  const [selected, setSelected] = useState(undefined);
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
@@ -51,7 +51,7 @@ const AlertMobileDisplayer = () => {
       } else {
         setFilteredData(response.data);
       }
-      console.log("Fetched data");//POBIERANIE DANYCH NIE POWIODŁO SIĘ !!!!!!!!! - jednak w koncu sie powiodlo 
+      console.log("Fetched data");
 
       setLoading(true);
     } catch (err) {
@@ -78,8 +78,11 @@ const AlertMobileDisplayer = () => {
     else
       setFilteredData(data);
 
-    saveSelected(); 
+    if (selected !== undefined && selected !== null && !isNaN(selected)) {
+    saveSelected();
+  } 
   }, [selected]);
+
 
  // Save selected value to AsyncStorage
 const saveSelected = async () => {
@@ -101,9 +104,12 @@ const saveSelected = async () => {
   const loadSelected = async () => {
     try {
       const savedSelected = await AsyncStorage.getItem('selectedFilter');
-      if (savedSelected !== null) {
+      
+      if (savedSelected !== null && savedSelected !== undefined && savedSelected !== NaN && !isNaN(savedSelected)) {
         setSelected(parseInt(savedSelected));
         console.log('Selected value after loading:', savedSelected);
+      } else {
+        setSelected(-1);
       }
     } catch (error) {
       console.log('Error loading selected filter: ', error);
@@ -180,6 +186,7 @@ const saveSelected = async () => {
             data={[{ key: -1, value: 'All' }, ...alertTypeMap]}
             setSelected={(val) => setSelected(val)}
             save="key"
+            defaultOption={selected}
           />
         </View>
       </View>
