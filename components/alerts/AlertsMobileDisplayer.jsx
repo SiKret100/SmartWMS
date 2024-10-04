@@ -25,6 +25,7 @@ const AlertMobileDisplayer = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [currentEditItem, setCurrentEditItem] = useState(null);
   const [selected, setSelected] = useState(undefined);
+  const [defaultOption, setDefaultOption] = useState();
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
@@ -106,9 +107,17 @@ const saveSelected = async () => {
       const savedSelected = await AsyncStorage.getItem('selectedFilter');
       
       if (savedSelected !== null && savedSelected !== undefined && savedSelected !== NaN && !isNaN(savedSelected)) {
-        setSelected(parseInt(savedSelected));
+        const parsedSelected = parseInt(savedSelected);
+
+        setSelected(parsedSelected);
         console.log('Selected value after loading:', savedSelected);
+        
+        const foundOption = alertTypeMap.find(alert => alert.key === parsedSelected );
+
+        setDefaultOption( foundOption )
+        
       } else {
+        setDefaultOption({ key: -1, value: "Test pokazywania" });
         setSelected(-1);
       }
     } catch (error) {
@@ -186,7 +195,7 @@ const saveSelected = async () => {
             data={[{ key: -1, value: 'All' }, ...alertTypeMap]}
             setSelected={(val) => setSelected(val)}
             save="key"
-            defaultOption={selected}
+            defaultOption={defaultOption}
           />
         </View>
       </View>
