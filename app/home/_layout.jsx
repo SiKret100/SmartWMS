@@ -11,11 +11,11 @@ const RootLayout = () => {
 
   useEffect(() => {
     const fetchUserInfo = async () => {
-      try{
+      try {
         const res = await authService.getUserInfo();
         setUserData(res.data);
       }
-      catch(err){
+      catch (err) {
         console.log(err)
       }
     }
@@ -23,19 +23,19 @@ const RootLayout = () => {
   }, [])
 
   return (
-    
-        <GestureHandlerRootView style={{ flex: 1 }}>
+
+    <GestureHandlerRootView style={{ flex: 1 }}>
       <UserDataContext.Provider value={userData}>
         <Drawer>
-          <Drawer.Screen 
-            name='index' 
+          <Drawer.Screen
+            name='index'
             options={{
               drawerLabel: 'HomePage',
               title: 'Home Page',
             }}
           />
 
-          <Drawer.Screen 
+          <Drawer.Screen
             name='alerts'
             redirect={userData.role == 'Employee'}
             options={{
@@ -45,8 +45,8 @@ const RootLayout = () => {
             }}
           />
 
-          <Drawer.Screen 
-            name='categories' 
+          <Drawer.Screen
+            name='categories'
             options={{
               drawerLabel: 'Categories',
               title: 'Categories',
@@ -55,8 +55,8 @@ const RootLayout = () => {
             }}
           />
 
-          <Drawer.Screen 
-            name='orders' 
+          <Drawer.Screen
+            name='orders'
             options={{
               drawerLabel: 'Orders',
               title: 'Orders',
@@ -65,8 +65,8 @@ const RootLayout = () => {
             }}
           />
 
-          <Drawer.Screen 
-            name='products' 
+          <Drawer.Screen
+            name='products'
             options={{
               drawerLabel: 'Products',
               title: 'Products',
@@ -75,8 +75,8 @@ const RootLayout = () => {
             }}
           />
 
-          <Drawer.Screen 
-            name='reports' 
+          <Drawer.Screen
+            name='reports'
             options={{
               drawerLabel: 'Reports',
               title: 'Reports',
@@ -84,9 +84,9 @@ const RootLayout = () => {
 
             }}
           />
-          
-          <Drawer.Screen 
-            name='shelves' 
+
+          <Drawer.Screen
+            name='shelves'
             options={{
               drawerLabel: 'Shelves',
               title: 'Shelves',
@@ -95,8 +95,8 @@ const RootLayout = () => {
             }}
           />
 
-          <Drawer.Screen 
-            name='subcategories' 
+          <Drawer.Screen
+            name='subcategories'
             options={{
               drawerLabel: 'Subcategories',
               title: 'Subcategories',
@@ -105,8 +105,8 @@ const RootLayout = () => {
             }}
           />
 
-          <Drawer.Screen 
-            name='tasks' 
+          <Drawer.Screen
+            name='tasks'
             options={{
               drawerLabel: 'Tasks',
               title: 'Tasks',
@@ -115,18 +115,20 @@ const RootLayout = () => {
             }}
           />
 
-          <Drawer.Screen 
-            name='users' 
+
+
+          <Drawer.Screen
+            name='users'
             options={{
               drawerLabel: 'Users',
               title: 'Users',
               headerStyle: { backgroundColor: 'bg-slate-200' }
-
             }}
           />
 
-          <Drawer.Screen 
-            name='waybills' 
+
+          <Drawer.Screen
+            name='waybills'
             options={{
               drawerLabel: 'Waybills',
               title: 'Waybills',
@@ -137,7 +139,7 @@ const RootLayout = () => {
         </Drawer>
       </UserDataContext.Provider>
     </GestureHandlerRootView>
-      )
+  )
 };
 
 export default RootLayout;
