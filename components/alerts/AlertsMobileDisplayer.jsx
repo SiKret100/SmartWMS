@@ -1,6 +1,5 @@
-import { SafeAreaView, Text, View, Modal, Platform } from "react-native";
+import { SafeAreaView, Text, View, Modal, Platform, ActivityIndicator, FlatList } from "react-native";
 import { useRef, useState, useEffect, useCallback } from "react";
-import { ActivityIndicator, Animated, FlatList } from "react-native";
 import alertService from "../../services/dataServices/alertService";
 import Feather from "react-native-vector-icons/Feather";
 import { Button } from "react-native-elements";
@@ -14,6 +13,7 @@ import { SelectList } from 'react-native-dropdown-select-list';
 import moment from 'moment-timezone';
 import FallingTiles from "../FallingTiles";
 import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
+import CustomSelectList from "../selects/CustomSelectList";
 
 const AlertMobileDisplayer = () => {
   const [data, setData] = useState([]);
@@ -64,7 +64,6 @@ const AlertMobileDisplayer = () => {
   useFocusEffect(
     useCallback(() => {
       fetchData();
-      //loadSelected(); 
     }, [isModalVisible])
   );
 
@@ -72,7 +71,7 @@ const AlertMobileDisplayer = () => {
     fetchData();
     if (isDeletedItem) setIsDeletedItem(false);
   }, [isDeletedItem]);
-
+  
   useEffect(() => {
     if (selected !== -1)
       setFilteredData(data.filter(record => record.alertType === selected));
@@ -83,7 +82,6 @@ const AlertMobileDisplayer = () => {
     saveSelected();
   } 
   }, [selected]);
-
 
  // Save selected value to AsyncStorage
 const saveSelected = async () => {
@@ -165,7 +163,7 @@ const saveSelected = async () => {
     <SafeAreaView className={"flex-1 justify-start align-center"}>
       <View>
         <View className={"mx-2 mt-2 mb-10"}>
-          <SelectList
+          {/* <SelectList
             boxStyles={{
               borderColor: 'black',
               borderWidth: 0,
@@ -196,7 +194,14 @@ const saveSelected = async () => {
             setSelected={(val) => setSelected(val)}
             save="key"
             defaultOption={defaultOption}
+          /> */}
+          
+          <CustomSelectList
+            typeMap={[{ key: -1, value: 'All' }, ...alertTypeMap]}
+            defaultOption={defaultOption}
+            setSelected={(val) => setSelected(val)}
           />
+          
         </View>
       </View>
 
@@ -214,7 +219,7 @@ const saveSelected = async () => {
             </View>
           ) : (
             <View className={"justify-center align-center"}>
-              <Text className={"text-center my-5"}>Brak alertów</Text>
+              <Text className={"text-center my-5"}>No alerts</Text>
             </View>
           )
         }

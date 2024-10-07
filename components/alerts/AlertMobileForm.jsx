@@ -70,6 +70,8 @@ const AlertMobileForm = ({object = {}, header, setIsModalVisible}) => {
     console.log(`Otrzymano obiekt: ${JSON.stringify(object)}`);
   }, [])
 
+  const defaultOption = form.alertType !== -1 ? alertTypeMap.find(item => item.key === form.alertType) : null;
+
   return (
     <SafeAreaView className="h-full">
       <KeyboardAvoidingView
@@ -96,10 +98,10 @@ const AlertMobileForm = ({object = {}, header, setIsModalVisible}) => {
         <View className = "mt-8">
           <CustomSelectList
             selectKey={selectKey}
-            setForm={setForm}
-            alertTypeMap={alertTypeMap}
+            setSelected={(val) => setForm((prevForm) => ({ ...prevForm, alertType: val }))}
+            typeMap={alertTypeMap}
             form={form}
-            
+            defaultOption={defaultOption}
           />
         </View>
 
