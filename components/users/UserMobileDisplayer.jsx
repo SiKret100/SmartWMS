@@ -1,83 +1,243 @@
-import { StyleSheet, Text, View } from "react-native";
-import { React, useState } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView, Text, View, Modal, Platform, ActivityIndicator, FlatList } from "react-native";
+import { useRef, useState, useEffect, useCallback } from "react";
+import { useFocusEffect } from "expo-router";
+import { SelectList } from 'react-native-dropdown-select-list';
 import { ScrollView } from "react-native-gesture-handler";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import CustomButton from "../buttons/CustomButton";
-import userService from "services/dataServices/userServices.js";
+import userService from "services/dataServices/userService.js";
 import UserDto from "data/DTOs/userDto.js";
+import userTypeMap from "data/Mappers/userType.js";
+import { RefreshControl } from "react-native-gesture-handler";
+import FallingTiles from "../FallingTiles";
+import DeleteButton from "../buttons/DeleteButton";
+import EditButton from "../buttons/EditButton";
+import Feather from "react-native-vector-icons/Feather";
 
 const UserMobileDisplayer = () => {
   const [errors, setErrors] = useState([]);
-
-  const myUser = {
-    email: "daw@daw.pl",
-    userName: "SDFasdf",
-    password: "test2#dsafasdfS"
-    };
-
+  const [selected, setSelected] = useState(undefined);
+  const [loading, setLoading] = useState(false);
+  const [data, setData] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [defaultOption, setDefaultOption] = useState();
+  const [refreshing, setRefreshing] = useState(false);
   const [err, setError] = useState("");
+  const [isDeletedItem, setIsDeletedItem] = useState(false);
 
-  const userToDelete = "a2f1c19c-5a64-4a03-87fd-4b7f91acb81c";
 
-  const handleAdd = async (userData) => {
+
+
+  const fetchData = async () => {
     try {
-      const result = await userService.Add(userData);
-      console.log(result);
-  
+      setLoading(false);
+      const response = await userService.GetAll();
+      setData(response.data.reverse());
 
-      if (result.errors) {
-        setErrors(result.errors);
-        console.log(`Validation errors: ${JSON.stringify(result.errors)}`);
-      } 
-      else if (Array.isArray(result) && result[0].description) {
-        setErrors({"info": result[0].description });
-        console.log(`Error: ${result[0].description}`);
-      } 
-      else {
-        setErrors({});
-        console.log("User added successfully");
+      loadSelected();
+
+      if (selected !== null) {
+        const parsedSelected = parseInt(selected);
+        setSelected(parsedSelected);
+
+        if (parsedSelected !== -1)
+          setFilteredData(response.data.filter(record => record.role === getRole(selected)));
+        else
+          setFilteredData(response.data);
       }
+      else
+        setFilteredData(response.data);
+      console.log("Fetched data");
+      //console.log(filteredData);
 
+      setLoading(true);
     } catch (err) {
       setError(err);
+      console.log(`Error ${err}`);
+    }
+  };
+
+  const handleDelete = async (id) => {
+
+    try{
+      await userService.Delete(id);
+    } catch (err) {
       console.log(err);
     }
+    setIsDeletedItem(true);
   }
 
-  return (
-    <SafeAreaView className="flex-1 justify-start align-middle">
-      <ScrollView>
-        <CustomButton
-          title="GetAll"
-          handlePress={() => userService.GetAll()}
-        />
-
-        <CustomButton
-          title="Add"
-          handlePress={() => handleAdd(myUser)}
-        />
-
-        <CustomButton
-          title="Exterminate"
-          handlePress={() => userService.Delete(userToDelete)}
-        />
-
-        {Object.keys(errors).length > 0 && (
-          <View
-            className={
-              "bg-red-400  mt-7 w-full h-16 rounded-2xl items-center justify-center"
-            }
-          >
-            {Object.keys(errors).map((key, index) => (
-              <Text key={index} className="text-white">
-                {errors[key]}
-              </Text>
-            ))}
-          </View>
-        )}
-      </ScrollView>
-    </SafeAreaView>
+  useEffect(() => {
+    fetchData();
+    if (isDeletedItem) setIsDeletedItem(false);
+  }, [isDeletedItem]);
+  
+  useFocusEffect(
+    useCallback(() => {
+      fetchData();
+    }, [isModalVisible])
   );
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    fetchData();
+    setRefreshing(false);
+  }, []);
+
+  const getRole = (selected) => {
+    const roleObject = userTypeMap.find(item => item.key === selected);
+    return roleObject ? roleObject.value : "Unknown role";
+  }
+
+  useEffect(() => {
+
+    const parsedSelected = parseInt(selected);
+    setSelected(parsedSelected);
+
+    if (selected !== -1)
+      setFilteredData(data.filter(record => record.role === getRole(selected)));
+
+    else
+      setFilteredData(data);
+
+    if (selected !== undefined && selected !== null && !isNaN(selected)) {
+      saveSelected();
+    }
+  }, [selected]);
+
+
+
+  const loadSelected = async () => {
+    try {
+      const savedSelected = await AsyncStorage.getItem('selectedFilter');
+
+      if (savedSelected !== null && savedSelected !== undefined && savedSelected !== NaN && !isNaN(savedSelected)) {
+        const parsedSelected = parseInt(savedSelected);
+
+        setSelected(parsedSelected);
+        console.log('Selected value after loading:', savedSelected);
+
+        const foundOption = userTypeMap.find(user => user.key === parsedSelected);
+
+        setDefaultOption(foundOption)
+
+      } else {
+        setDefaultOption({ key: -1, value: "Test pokazywania" });
+        setSelected(-1);
+      }
+    } catch (error) {
+      console.log('Error loading selected filter: ', error);
+    }
+  };
+
+  const saveSelected = async () => {
+    try {
+      if (selected !== undefined && selected !== null) {
+        await AsyncStorage.setItem('selectedFilter', selected.toString());
+        console.log('Selected value after saving:', selected);
+
+      } else {
+        console.log('Selected is undefined or null, not saving to AsyncStorage');
+      }
+    } catch (error) {
+      console.log('Error saving selected filter: ', error);
+    }
+  };
+
+
+
+
+  const renderItem = ({ item }) => (
+    <FallingTiles>
+
+      <View className={"flex-row justify-between items-center flex-0.5 px-2 py-2 mx-2 my-2 shadow rounded-lg bg-slate-200"}>
+        <Feather name="user" size={24} color={"black"} />
+        <View className={"px-2 py-2 mx-4"}>
+          <View>
+            <Text className={"text-center"}>{item.email}</Text>
+            <Text className={"text-center"}>{item.userName}</Text>
+            <Text className={"text-center"}>{item.role}</Text>
+          </View>
+        </View>
+        <DeleteButton onDelete={() => handleDelete(item.id)} />
+      </View>
+    </FallingTiles>
+  );
+
+
+  return (
+    <View>
+      <View>
+        <View className={"mx-2 mt-2 mb-10"}>
+          <SelectList
+            boxStyles={{
+              borderColor: 'black',
+              borderWidth: 0,
+              height: 56,
+              borderRadius: 13,
+              alignItems: 'center',
+              shadowColor: '#000',
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.3,
+              shadowRadius: 4,
+              elevation: 5, // Dla Androida
+              backgroundColor: '#E2E8F0',
+            }}
+            inputStyles={{ fontSize: 16 }}
+            dropdownTextStyles={{ fontSize: 16 }}
+            dropdownStyles={{
+              backgroundColor: '#E2E8F0',
+              borderWidth: 1,
+              shadowColor: '#000',
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.3,
+              shadowRadius: 4,
+              elevation: 5,
+              backgroundColor: '#E2E8F0',
+            }}
+
+            data={[{ key: -1, value: 'All' }, ...userTypeMap]}
+
+            setSelected={(val) => setSelected(val)}
+            save="key"
+            defaultOption={defaultOption}
+          />
+
+        </View>
+      </View>
+      <FlatList
+        data={filteredData}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={renderItem}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+        ListEmptyComponent={
+          !loading ? (
+            <View className={"justify-center align-center"}>
+              <ActivityIndicator size="small" color="#000" />
+            </View>
+          ) : (
+            <View className={"justify-center align-center"}>
+              <Text className={"text-center my-5"}>No users</Text>
+            </View>
+          )
+        }
+      />
+
+    </View>
+  );
+
+
+
+
+
+
+
+
+
+
 };
 
 

@@ -3,9 +3,7 @@ import UserMobileDisplayer from 'components/users/UserMobileDisplayer.jsx'
 
 const UserMain = () => {
   return (
-    <View>
       <UserMobileDisplayer/>
-    </View>
   )
 }
 
