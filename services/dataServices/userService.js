@@ -29,7 +29,7 @@ export default class userService {
           response = await axios.get(mainUrl, config);
         }
       }else{
-        const urlWithRole = `${mainUrl}/${roleName}`;
+        const urlWithRole = `${mainUrl}?roleName=${roleName}`;
         if (Platform.OS === "web") {
             response = await axios.get(urlWithRole);
           } else {
@@ -38,7 +38,7 @@ export default class userService {
 
       }
 
-      console.log(response);
+      //console.log(response);
       return response;
     } catch (err) {
         console.log(err);

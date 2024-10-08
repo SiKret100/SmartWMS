@@ -8,6 +8,7 @@ export default function CustomButton({
   containerStyles,
   textStyles,
   isLoading,
+  showLoading = true,
 }) {
   return (
     <TouchableOpacity
@@ -17,10 +18,12 @@ export default function CustomButton({
       disabled={isLoading}
     >
       <View className= "flex-row">
-
+{/* 
         {isLoading && (
           <ActivityIndicator size="small" color="#fff"/>
-        )}
+        )} */}
+
+        {showLoading & isLoading ?   <ActivityIndicator size="small" color="#fff"/> : null}
 
         <Text className={`text-lg ${textStyles} ${isLoading ? "ml-2" : ""}`}>
           {title}

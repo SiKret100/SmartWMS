@@ -1,17 +1,13 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import CustomButton from '../../../components/buttons/CustomButton'
+import UserMobileForm from '../../../components/users/UserMobileForm'
 
 const UserAdd = () => {
   return (
-    <View>
-      <Text>UserAdd
-      
-      </Text>
-    </View>
+    <UserMobileForm header = "Add"/>
   )
 }
 
 export default UserAdd
 
-const styles = StyleSheet.create({})

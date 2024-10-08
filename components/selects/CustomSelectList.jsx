@@ -3,10 +3,14 @@ import React, { useState } from 'react'
 import { SelectList } from 'react-native-dropdown-select-list'
 
 
-const CustomSelectList = ({selectKey, setSelected, typeMap, defaultOption}) => {
+const CustomSelectList = ({selectKey, setSelected, typeMap, defaultOption, ...props}) => {
 
   return (
-    <SelectList
+    <View>
+      {props.title && (
+        <Text>{props.title}</Text>
+      )}
+      <SelectList
       key={selectKey}
       setSelected={setSelected}
       data={typeMap}
@@ -38,7 +42,11 @@ const CustomSelectList = ({selectKey, setSelected, typeMap, defaultOption}) => {
       inputStyles={{ fontSize: 16 }}
       dropdownTextStyles={{ fontSize: 16 }}
       defaultOption = {defaultOption}
+      onSelect={props.onSelect}
     />
+    </View>
+
+    
   )
 }
 
