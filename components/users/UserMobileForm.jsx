@@ -24,11 +24,11 @@ const UserMobileForm = ({ object = {}, header }) => {
     const [errors, setErrors] = useState({});
     const [selectKey, setSelectKey] = useState(0);
     const [managers, setManagers] = useState([])
-    const [emailError, setEmailError] = useState(false);
-    const [passwordError, setPasswordError] = useState(false);
-    const [usernameError, setUsernameError] = useState(false);
+    const [emailError, setEmailError] = useState(true);
+    const [passwordError, setPasswordError] = useState(true);
+    const [usernameError, setUsernameError] = useState(true);
     const [roleError, setRoleError] = useState(true);
-    const [managerError, setManagerError] = useState(false);
+    const [managerError, setManagerError] = useState(true);
 
 
     const handleEmail = (e) => {
