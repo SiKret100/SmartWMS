@@ -163,45 +163,11 @@ const saveSelected = async () => {
     <SafeAreaView className={"flex-1 justify-start align-center"}>
       <View>
         <View className={"mx-2 mt-2 mb-10"}>
-          {/* <SelectList
-            boxStyles={{
-              borderColor: 'black',
-              borderWidth: 0,
-              height: 56,
-              borderRadius: 13,
-              alignItems: 'center',
-              shadowColor: '#000',
-              shadowOffset: { width: 0, height: 2 },
-              shadowOpacity: 0.3,
-              shadowRadius: 4,
-              elevation: 5, // Dla Androida
-              backgroundColor: '#E2E8F0',
-            }}
-            inputStyles={{ fontSize: 16 }}
-            dropdownTextStyles={{ fontSize: 16 }}
-            dropdownStyles={{
-              backgroundColor: '#E2E8F0',
-              borderWidth: 1,
-              shadowColor: '#000',
-              shadowOffset: { width: 0, height: 2 },
-              shadowOpacity: 0.3,
-              shadowRadius: 4,
-              elevation: 5,
-              backgroundColor: '#E2E8F0',
-            }}
-
-            data={[{ key: -1, value: 'All' }, ...alertTypeMap]}
-            setSelected={(val) => setSelected(val)}
-            save="key"
-            defaultOption={defaultOption}
-          /> */}
-          
           <CustomSelectList
             typeMap={[{ key: -1, value: 'All' }, ...alertTypeMap]}
             defaultOption={defaultOption}
             setSelected={(val) => setSelected(val)}
           />
-          
         </View>
       </View>
 

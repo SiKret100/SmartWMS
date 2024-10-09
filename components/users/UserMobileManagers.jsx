@@ -18,13 +18,13 @@ const UserMobileManagers = () => {
     const [selected, setSelected] = useState("")
     const [errors, setErrors] = useState([]);
     const [err, setError] = useState("");
-    const [defaultOption, setDefaultOption] = useState({key:"", value:"Select manager..."});
+    const [defaultOption, setDefaultOption] = useState({ key: "", value: "Select manager..." });
     const [refreshing, setRefreshing] = useState(false);
 
     const onRefresh = useCallback(() => {
-      setRefreshing(true);
-      fetchData();
-      setRefreshing(false);
+        setRefreshing(true);
+        fetchData();
+        setRefreshing(false);
     }, []);
 
     const fetchData = async () => {
@@ -44,14 +44,13 @@ const UserMobileManagers = () => {
     };
 
     const handleSelect = () => {
-      console.log(data);
-      setFilteredData(data.filter(employee => employee.managerId === selected));
-      console.log(filteredData)
+        console.log(data);
+        setFilteredData(data.filter(employee => employee.managerId === selected));
+        console.log(filteredData)
     }
 
     const renderItem = ({ item }) => (
         <FallingTiles>
-
             <View className={"flex-row justify-between items-center flex-0.5 px-2 py-2 mx-2 my-2 shadow rounded-lg bg-slate-200"}>
                 <Feather name="user" size={24} color={"black"} />
                 <View className={"px-2 py-2 mx-4"}>
@@ -69,26 +68,26 @@ const UserMobileManagers = () => {
         fetchData();
     }, []);
 
-    useEffect(()=> {
-      handleSelect();
+    useEffect(() => {
+        handleSelect();
     }, [selected])
 
     useFocusEffect(
         useCallback(() => {
-          fetchData();
+            fetchData();
         }, [])
-      );
+    );
 
     return (
         <View>
             <CustomSelectList
-                setSelected={(value) => { setSelected(value)
-                  console.log(`New selected value: ${selected}`)
-                 }}
+                setSelected={(value) => {
+                    setSelected(value)
+                    console.log(`New selected value: ${selected}`)
+                }}
                 typeMap={managers}
                 defaultOption={defaultOption}
             />
-
             <FlatList
                 data={filteredData}
                 keyExtractor={(item) => item.id.toString()}

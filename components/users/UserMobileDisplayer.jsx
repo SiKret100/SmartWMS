@@ -13,6 +13,7 @@ import FallingTiles from "../FallingTiles";
 import DeleteButton from "../buttons/DeleteButton";
 import EditButton from "../buttons/EditButton";
 import Feather from "react-native-vector-icons/Feather";
+import CustomSelectList from "../selects/CustomSelectList";
 
 const UserMobileDisplayer = () => {
   const [errors, setErrors] = useState([]);
@@ -60,7 +61,7 @@ const UserMobileDisplayer = () => {
 
   const handleDelete = async (id) => {
 
-    try{
+    try {
       await userService.Delete(id);
     } catch (err) {
       console.log(err);
@@ -72,7 +73,7 @@ const UserMobileDisplayer = () => {
     fetchData();
     if (isDeletedItem) setIsDeletedItem(false);
   }, [isDeletedItem]);
-  
+
   useFocusEffect(
     useCallback(() => {
       fetchData();
@@ -105,8 +106,6 @@ const UserMobileDisplayer = () => {
       saveSelected();
     }
   }, [selected]);
-
-
 
   const loadSelected = async () => {
     try {
@@ -145,99 +144,57 @@ const UserMobileDisplayer = () => {
     }
   };
 
-
-
-
   const renderItem = ({ item }) => (
     <FallingTiles>
-
-      <View className={"flex-row justify-between items-center flex-0.5 px-2 py-2 mx-2 my-2 shadow rounded-lg bg-slate-200"}>
-        <Feather name="user" size={24} color={"black"} />
-        <View className={"px-2 py-2 mx-4"}>
-          <View>
-            <Text className={"text-center"}>{item.email}</Text>
-            <Text className={"text-center"}>{item.userName}</Text>
-            <Text className={"text-center"}>{item.role}</Text>
+      {item.role === "Admin" ? null : (
+        <View className={"flex-row justify-between items-center flex-0.5 px-2 py-2 mx-2 my-2 shadow rounded-lg bg-slate-200"}>
+          <Feather name="user" size={24} color={"black"} />
+          <View className={"px-2 py-2 mx-4"}>
+            <View>
+              <Text className={"text-center"}>{item.email}</Text>
+              <Text className={"text-center"}>{item.userName}</Text>
+              <Text className={"text-center"}>{item.role}</Text>
+            </View>
           </View>
+          <DeleteButton onDelete={() => handleDelete(item.id)} />
         </View>
-        <DeleteButton onDelete={() => handleDelete(item.id)} />
-      </View>
+      )}
     </FallingTiles>
   );
 
-
   return (
     <View>
-      <View>
-        <View className={"mx-2 mt-2 mb-10"}>
-          <SelectList
-            boxStyles={{
-              borderColor: 'black',
-              borderWidth: 0,
-              height: 56,
-              borderRadius: 13,
-              alignItems: 'center',
-              shadowColor: '#000',
-              shadowOffset: { width: 0, height: 2 },
-              shadowOpacity: 0.3,
-              shadowRadius: 4,
-              elevation: 5, // Dla Androida
-              backgroundColor: '#E2E8F0',
-            }}
-            inputStyles={{ fontSize: 16 }}
-            dropdownTextStyles={{ fontSize: 16 }}
-            dropdownStyles={{
-              backgroundColor: '#E2E8F0',
-              borderWidth: 1,
-              shadowColor: '#000',
-              shadowOffset: { width: 0, height: 2 },
-              shadowOpacity: 0.3,
-              shadowRadius: 4,
-              elevation: 5,
-              backgroundColor: '#E2E8F0',
-            }}
-
-            data={[{ key: -1, value: 'All' }, ...userTypeMap]}
-
-            setSelected={(val) => setSelected(val)}
-            save="key"
-            defaultOption={defaultOption}
-          />
-
-        </View>
+      <View className={"mx-2 mt-2 mb-10"}>
+        <CustomSelectList 
+          setSelected={val => setSelected(val)}
+          typeMap={[{ key: -1, value: 'All' }, ...userTypeMap]}
+          defaultOption={defaultOption}
+        />
       </View>
-      <FlatList
-        data={filteredData}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={renderItem}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
-        ListEmptyComponent={
-          !loading ? (
-            <View className={"justify-center align-center"}>
-              <ActivityIndicator size="small" color="#000" />
-            </View>
-          ) : (
-            <View className={"justify-center align-center"}>
-              <Text className={"text-center my-5"}>No users</Text>
-            </View>
-          )
-        }
-      />
+
+        <FlatList
+          data={filteredData}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={renderItem}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+          ListEmptyComponent={
+            !loading ? (
+              <View className={"justify-center align-center"}>
+                <ActivityIndicator size="small" color="#000" />
+              </View>
+            ) : (
+              <View className={"justify-center align-center"}>
+                <Text className={"text-center my-5"}>No users</Text>
+              </View>
+            )
+          }
+        />
+
 
     </View>
   );
-
-
-
-
-
-
-
-
-
-
 };
 
 
