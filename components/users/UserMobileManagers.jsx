@@ -80,14 +80,16 @@ const UserMobileManagers = () => {
 
     return (
         <View>
-            <CustomSelectList
-                setSelected={(value) => {
-                    setSelected(value)
-                    console.log(`New selected value: ${selected}`)
-                }}
-                typeMap={managers}
-                defaultOption={defaultOption}
-            />
+            <View className="mx-2 mt-2 mb-10">
+                <CustomSelectList
+                    setSelected={(value) => {
+                        setSelected(value)
+                        console.log(`New selected value: ${selected}`)
+                    }}
+                    typeMap={managers}
+                    defaultOption={defaultOption}
+                />
+            </View>
             <FlatList
                 data={filteredData}
                 keyExtractor={(item) => item.id.toString()}
