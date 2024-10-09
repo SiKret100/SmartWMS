@@ -79,7 +79,7 @@ const UserMobileManagers = () => {
     );
 
     return (
-        <View>
+        <SafeAreaView className={"flex-1 justify-start align-center"}>
             <View className="mx-2 mt-2 mb-10">
                 <CustomSelectList
                     setSelected={(value) => {
@@ -90,6 +90,7 @@ const UserMobileManagers = () => {
                     defaultOption={defaultOption}
                 />
             </View>
+
             <FlatList
                 data={filteredData}
                 keyExtractor={(item) => item.id.toString()}
@@ -109,8 +110,7 @@ const UserMobileManagers = () => {
                     )
                 }
             />
-        </View>
-
+        </SafeAreaView>
     )
 }
 

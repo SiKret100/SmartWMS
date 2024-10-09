@@ -163,7 +163,7 @@ const UserMobileDisplayer = () => {
   );
 
   return (
-    <View>
+    <SafeAreaView className={"flex-1 justify-start align-center"}>
       <View className={"mx-2 mt-2 mb-10"}>
         <CustomSelectList 
           setSelected={val => setSelected(val)}
@@ -191,9 +191,7 @@ const UserMobileDisplayer = () => {
             )
           }
         />
-
-
-    </View>
+    </SafeAreaView>
   );
 };
 
