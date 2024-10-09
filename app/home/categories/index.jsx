@@ -1,10 +1,9 @@
 import { Text, View } from 'react-native'
+import CategoriesMobileDisplayer from 'components/categories/CategoriesMobileDisplayer.jsx'
 
 const CategoryMain = () => {
   return (
-    <View>
-      <Text>Wszystkie kategoire</Text>
-    </View>
+    <CategoriesMobileDisplayer />
   )
 }
 

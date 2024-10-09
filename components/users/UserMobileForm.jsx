@@ -155,8 +155,6 @@ const UserMobileForm = ({ object = {}, header }) => {
                     />
 
                     {form.email.length < 1 ? null : emailError ?
-
-
                         <Text className="text-red-500">{userErrorMessage.email}</Text>
                         :
                         null
