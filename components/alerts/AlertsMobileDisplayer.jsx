@@ -161,7 +161,6 @@ const saveSelected = async () => {
 
   return (
     <SafeAreaView className={"flex-1 justify-start align-center"}>
-      <View>
         <View className={"mx-2 mt-2 mb-10"}>
           <CustomSelectList
             typeMap={[{ key: -1, value: 'All' }, ...alertTypeMap]}
@@ -169,7 +168,6 @@ const saveSelected = async () => {
             setSelected={(val) => setSelected(val)}
           />
         </View>
-      </View>
 
       <FlatList
         data={filteredData}
