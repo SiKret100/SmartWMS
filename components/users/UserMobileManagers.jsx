@@ -51,8 +51,8 @@ const UserMobileManagers = () => {
 
     const renderItem = ({ item }) => (
         <FallingTiles>
-            <View className={"flex-row justify-between items-center flex-0.5 px-2 py-2 mx-2 my-2 shadow rounded-lg bg-slate-200"}>
-                <Feather name="user" size={24} color={"black"} />
+
+            <View className={"flex-row justify-center items-center flex-0.5 px-2 py-2 mx-2 my-2 shadow rounded-lg bg-slate-200"}>
                 <View className={"px-2 py-2 mx-4"}>
                     <View>
                         <Text className={"text-center"}>{item.email}</Text>
@@ -65,6 +65,7 @@ const UserMobileManagers = () => {
     );
 
     useEffect(() => {
+        setManagers([]);
         fetchData();
     }, []);
 
@@ -74,13 +75,15 @@ const UserMobileManagers = () => {
 
     useFocusEffect(
         useCallback(() => {
+            setData([]);
+            setSelected("");
             fetchData();
         }, [])
     );
 
     return (
-        <SafeAreaView className={"flex-1 justify-start align-center"}>
-            <View className="mx-2 mt-2 mb-10">
+        <View>
+            <View className={"mx-2 mt-2 mb-10"}>
                 <CustomSelectList
                     setSelected={(value) => {
                         setSelected(value)
@@ -110,7 +113,8 @@ const UserMobileManagers = () => {
                     )
                 }
             />
-        </SafeAreaView>
+        </View>
+
     )
 }
 

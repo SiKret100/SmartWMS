@@ -104,7 +104,7 @@ const UserMobileForm = ({ object = {}, header }) => {
         try {
             setErrors({})
             if ((form.role === 1 && (form.managerId === undefined || form.managerId === -1)))
-                setErrors({ "Description": ["Employee must have manager assigned"] });
+                setErrors({ "Description": ["Employee must have manager assigned"] }); 
 
             const result = await userService.Add(form);
 
@@ -230,11 +230,7 @@ const UserMobileForm = ({ object = {}, header }) => {
 
                     <CustomButton
                         title="Save"
-                        handlePress={() => {
-                            if (object?.email)
-                                handleEdit(object.id, form);
-                            else handleAdd(form);
-                        }}
+                        handlePress={() => handleAdd(form)}
                         containerStyles="w-full mt-7"
                         textStyles={"text-white"}
                         showLoading = {false}

@@ -4,6 +4,8 @@ import UserDto from "../../data/DTOs/userDto.js";
 import * as SecureStore from "expo-secure-store";
 import { router } from "expo-router";
 
+axios.defaults.withCredentials = true;
+
 export default class userService {
   static ip = process.env.EXPO_PUBLIC_IP;
 
@@ -71,13 +73,16 @@ export default class userService {
           response = await axios.post(`${this.ip}/api/User/register/employee`, userDto, config);
       }
       
-
+      router.push('/home/users/');
+      
       return response;
 
     } catch (err) {
         //console.log(err.response.data);
         return err.response.data;
     }
+
+    
   };
 
   static Get = async (id) => {
