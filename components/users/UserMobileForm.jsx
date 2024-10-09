@@ -51,7 +51,8 @@ const UserMobileForm = ({ object = {}, header }) => {
 
     const handlePassword = (e) => {
         const passVar = e.nativeEvent.text;
-        const passRegexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[#$^+=!*()@%&]).{8,}$";
+        const passRegexp = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[#$^+=!*()@%&]).{8,}$/;
+        
         if (passVar.match(passRegexp))
             setPasswordError(false)
         else
