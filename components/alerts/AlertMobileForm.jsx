@@ -10,10 +10,14 @@ import alertService from "../../services/dataServices/alertService";
 import { SelectList } from "react-native-dropdown-select-list";
 import alertTypeMap from "../../data/Mappers/alertType";
 import CustomSelectList from "../selects/CustomSelectList";
+import alertErrorMessage from "../../data/ErrorMessages/alertErrorMessages";
 
 const AlertMobileForm = ({object = {}, header, setIsModalVisible}) => {
   const [errors, setErrors] = useState({});
   const [selectKey, setSelectKey] = useState(0);
+  const [titleError, setTitleError] = useState(true);
+  const [descrtiptionError, setDescriptionError] = useState(true);
+  const [alertTypeError, setAlertTypeError] = useState(true);
 
   const [form, setForm] = useState({
     title: object?.title || "",
@@ -72,6 +76,20 @@ const AlertMobileForm = ({object = {}, header, setIsModalVisible}) => {
 
   const defaultOption = form.alertType !== -1 ? alertTypeMap.find(item => item.key === form.alertType) : null;
 
+  const handleTitle = (e) => {
+    const titleVar = e.nativeEvent.text;
+    titleVar.length > 0 ? setTitleError(false) : setTitleError(true);
+  }
+
+  const handleDescription = (e) => {
+    const descVar = e.nativeEvent.text;
+    descVar.length > 0 ? setDescriptionError(false) : setDescriptionError(true);
+  }
+
+  const handleAlertType = () => {
+    form.alertType === -1 ? setAlertTypeError(true) : setAlertTypeError(false); 
+  }
+
   return (
     <SafeAreaView className="h-full">
       <KeyboardAvoidingView
@@ -86,6 +104,9 @@ const AlertMobileForm = ({object = {}, header, setIsModalVisible}) => {
           handleChangeText={(e) => setForm({ ...form, title: e })}
           otherStyles=""
           keyboardType="email-address"
+          onChange={e => handleTitle(e)}
+          isError={titleError}
+          iconsVisible={true}
         />
 
         <FormField
@@ -93,8 +114,11 @@ const AlertMobileForm = ({object = {}, header, setIsModalVisible}) => {
           value={form.description}
           handleChangeText={(e) => setForm({ ...form, description: e })}
           otherStyles="mt-7"
+          onChange={e => handleDescription(e)}
+          isError={descrtiptionError}
+          iconsVisible={true}
         />
-
+        
         <View className = "mt-8">
           <CustomSelectList
             selectKey={selectKey}
@@ -102,6 +126,8 @@ const AlertMobileForm = ({object = {}, header, setIsModalVisible}) => {
             typeMap={alertTypeMap}
             form={form}
             defaultOption={defaultOption}
+            onSelect={() => handleAlertType()}
+
           />
         </View>
 
@@ -113,6 +139,8 @@ const AlertMobileForm = ({object = {}, header, setIsModalVisible}) => {
             else handleAdd(form); }}
           containerStyles="w-full mt-7"
           textStyles={"text-white"}
+          isLoading={titleError || descrtiptionError || alertTypeError}
+          showLoading={false}
         />
 
         {Object.keys(errors).length > 0 && (
