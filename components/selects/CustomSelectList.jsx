@@ -37,7 +37,6 @@ const CustomSelectList = ({selectKey, setSelected, typeMap, defaultOption, ...pr
           shadowOpacity: 0.3,
           shadowRadius: 4,
           elevation: 5,
-          backgroundColor: '#E2E8F0',
         }}
         inputStyles={{ fontSize: 16 }}
         dropdownTextStyles={{ fontSize: 16 }}
