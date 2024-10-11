@@ -34,31 +34,30 @@ const AlertMobileDisplayer = () => {
   }, []);
 
   const fetchData = async () => {
-    try {
-      setLoading(false);
-      const response = await alertService.GetAll();
-      setData(response.data.reverse());
+    setLoading(false);
+    await alertService.GetAll()
+        .then(response => {
+          setData(response.data.reverse());
+          loadSelected();
+          if (selected !== null) {
+            const parsedSelected = parseInt(selected);
+            setSelected(parsedSelected);
 
-      loadSelected();
+            if (parsedSelected !== -1)
+              setFilteredData(response.data.filter(record => record.alertType === parsedSelected));
+            else
+              setFilteredData(response.data);
+          }
+          else
+            setFilteredData(response.data);
 
-      if (selected !== null) {
-        const parsedSelected = parseInt(selected);
-        setSelected(parsedSelected);
-        if (parsedSelected !== -1) {
-          setFilteredData(response.data.filter(record => record.alertType === parsedSelected));
-        } else {
-          setFilteredData(response.data);
-        }
-      } else {
-        setFilteredData(response.data);
-      }
-      console.log("Fetched data");
-
-      setLoading(true);
-    } catch (err) {
-      setError(err);
-      console.log(`Error ${err}`);
-    }
+          console.log("Fetched data");
+          setLoading(true);
+        })
+        .catch(err => {
+          setError(err);
+          console.log(`Error ${err}`);
+        })
   };
 
   useFocusEffect(
