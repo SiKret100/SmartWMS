@@ -47,7 +47,7 @@ const CategoriesMobileDisplayer = () => {
 
     const _renderHeader = (section, _, isActive) => {
         return (
-            <View className={`flex-row justify-center items-center flex-0.5 px-2 py-5 mx-2 my-2 shadow rounded-lg bg-slate-200`}>
+            <View className={`flex-row justify-center items-center flex-0.5 px-2 py-5 mx-2 my-2 shadow rounded-2xl bg-slate-200`}>
                 <Text className="text-center text-lg">{section.title.toUpperCase()}</Text>
                 <Feather 
                     name={isActive ? "chevron-up" : "chevron-down"} 
