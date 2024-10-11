@@ -47,8 +47,8 @@ const CategoriesMobileDisplayer = () => {
 
     const _renderHeader = (section, _, isActive) => {
         return (
-            <View className={`flex-row justify-center items-center flex-0.5 px-2 py-2 mx-2 my-2 shadow rounded-lg bg-slate-300`}>
-                <Text className="text-center">{section.title}</Text>
+            <View className={`flex-row justify-center items-center flex-0.5 px-2 py-5 mx-2 my-2 shadow rounded-lg bg-slate-200`}>
+                <Text className="text-center text-lg">{section.title.toUpperCase()}</Text>
                 <Feather 
                     name={isActive ? "chevron-up" : "chevron-down"} 
                     size={24} 
@@ -68,7 +68,7 @@ const CategoriesMobileDisplayer = () => {
                     return (
                         <View
                             key={index}
-                            className={`flex-col justify-between items-center px-2 py-2 ${!isLast ? 'border-b border-gray-300' : ''}`}
+                            className={`flex-col justify-between items-center px-2 py-3 ${!isLast ? 'border-b border-gray-300' : ''}`}
                         >
                             <Text>{subcategory.subcategoryName}</Text>
                         </View>
