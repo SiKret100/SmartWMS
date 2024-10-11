@@ -28,35 +28,34 @@ const UserMobileDisplayer = () => {
   const [isDeletedItem, setIsDeletedItem] = useState(false);
 
 
-
-
   const fetchData = async () => {
-    try {
-      setLoading(false);
-      const response = await userService.GetAll();
-      setData(response.data.reverse());
+    setLoading(false);
+    await userService.GetAll()
+        .then(response => {
+          setData(response.data.reverse());
 
-      loadSelected();
+          loadSelected();
 
-      if (selected !== null) {
-        const parsedSelected = parseInt(selected);
-        setSelected(parsedSelected);
+          if (selected !== null) {
+            const parsedSelected = parseInt(selected);
+            setSelected(parsedSelected);
 
-        if (parsedSelected !== -1)
-          setFilteredData(response.data.filter(record => record.role === getRole(selected)));
-        else
-          setFilteredData(response.data);
-      }
-      else
-        setFilteredData(response.data);
-      console.log("Fetched data");
-      //console.log(filteredData);
+            if (parsedSelected !== -1)
+              setFilteredData(response.data.filter(record => record.role === getRole(selected)));
+            else
+              setFilteredData(response.data);
+          } else
+            setFilteredData(response.data);
+          console.log("Fetched data");
+          //console.log(filteredData);
 
-      setLoading(true);
-    } catch (err) {
-      setError(err);
-      console.log(`Error ${err}`);
-    }
+          setLoading(true);
+
+        })
+        .catch(err => {
+          setError(err);
+          console.log(`Error ${err}`);
+        });
   };
 
   const handleDelete = async (id) => {
