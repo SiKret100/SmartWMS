@@ -1,8 +1,8 @@
 import axios from "axios";
 import { Platform } from "react-native";
-import AlertDto from "../../data/DTOs/alertDto";
 import * as SecureStore from "expo-secure-store";
 import { router } from "expo-router";
+import CategoryDto from "../../data/DTOs/categoryDto";
 
 export default class categoryService {
     
@@ -27,6 +27,32 @@ export default class categoryService {
 
             return response;
         }catch(err){
+            return err.response.data;
+        }
+    }
+
+    static Add = async (userData) => {
+        const token = Platform.OS !== "web" ? SecureStore.getItem("token") : "";
+        const config = {
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+        };
+
+        try {
+            const categoryDto = new CategoryDto(userData);
+            let response;
+            if (Platform.OS === "web") {
+               response = await axios.post(`${this.ip}/api/Category`, categoryDto);
+            } else {
+                response = await axios.post(`${this.ip}/api/Category`, categoryDto, config);
+            }
+            router.push('/home/categories/');
+
+            return response;
+        }
+        catch(err){
             return err.response.data;
         }
     }

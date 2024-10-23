@@ -1,9 +1,10 @@
 import { Text, View } from 'react-native'
+import CategoriesMobileForm from "../../../components/categories/CategoriesMobileForm";
 
 const CategoryAdd = () => {
   return (
     <View>
-      <Text>Dodaj kategorię</Text>
+        <CategoriesMobileForm header={"Add"}></CategoriesMobileForm>
     </View>
   )
 }

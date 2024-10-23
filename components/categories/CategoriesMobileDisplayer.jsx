@@ -1,10 +1,12 @@
-import React, { Component } from 'react';
+import React, {Component, useCallback} from 'react';
 import Accordion from 'react-native-collapsible/Accordion';
 import { useState, useEffect } from "react";
 import { Text, Touchable, View } from "react-native";
 import categoryService from "services/dataServices/categoryService.js";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Feather } from '@expo/vector-icons';
+import EditButton from "../buttons/EditButton";
+import {useFocusEffect} from "expo-router";
 
 
 const CategoriesMobileDisplayer = () => {
@@ -12,6 +14,8 @@ const CategoriesMobileDisplayer = () => {
     const [error, setError] = useState([]);
     const [sections, setSections] = useState([]);
     const [activeSections, setActiveSections] = useState([]);
+    const [isModalVisible, setIsModalVisible] = useState(false);
+
 
     const fetchData = async () => {
         setSections([]);
@@ -47,14 +51,24 @@ const CategoriesMobileDisplayer = () => {
 
     const _renderHeader = (section, _, isActive) => {
         return (
-            <View className={`flex-row justify-center items-center flex-0.5 px-2 py-5 mx-2 my-2 shadow rounded-2xl bg-slate-200`}>
-                <Text className="text-center text-lg">{section.title.toUpperCase()}</Text>
-                <Feather 
-                    name={isActive ? "chevron-up" : "chevron-down"} 
-                    size={24} 
-                    color="black" 
-                    className = {'right-1 absolute'}
+            <View className={`flex-row justify-between items-center flex-0.5 px-5 py-5 mx-2 my-2 shadow rounded-2xl bg-slate-200 `}>
+
+                <Feather
+                    name={isActive ? "chevron-up" : "chevron-down"}
+                    size={24}
+                    color="black"
+                    className = {''}
                 />
+
+                <Text className="text-center text-lg">{section.title.toUpperCase()}</Text>
+
+                <EditButton onEdit={ (e) => console.log(e)} />
+
+
+
+
+
+
             </View>
         );
     };
@@ -77,14 +91,15 @@ const CategoriesMobileDisplayer = () => {
             </View>
         );
     };
-    
-    const _updateSections = (activeSections) => {
-        setActiveSections(activeSections);
-    }
 
-    useEffect(() => {
-        fetchData();
-    }, [])
+
+
+    useFocusEffect((
+        useCallback(
+            () => {
+                fetchData()
+            },[isModalVisible])
+    ))
 
     return (
         <Accordion
@@ -92,7 +107,7 @@ const CategoriesMobileDisplayer = () => {
             renderContent={_renderContent}
             activeSections={activeSections}
             renderHeader={_renderHeader}
-            onChange={_updateSections}
+            onChange={ (section) => setActiveSections(section)}
             underlayColor='transparent'
         />
 
