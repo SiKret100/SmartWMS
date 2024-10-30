@@ -10,6 +10,7 @@ import {useFocusEffect} from "expo-router";
 import CategoriesMobileForm from "./CategoriesMobileForm";
 import CustomButton from "../buttons/CustomButton";
 import DeleteButton from "../buttons/DeleteButton";
+import SubcategoriesMobileForm from "../subcategories/SubcategoriesMobileForm";
 
 
 const CategoriesMobileDisplayer = () => {
@@ -19,8 +20,10 @@ const CategoriesMobileDisplayer = () => {
     const [activeSections, setActiveSections] = useState([]);
     const [isModalVisibleCategory, setIsModalVisibleCategory] = useState(false);
     const [currentEditItemCategory, setCurrentEditItemCategory] = useState(null);
-    const [currentEditItemSubcategoty, setCurrentEditItemSubcategoty] = useState(null);
+    const [currentEditItemSubcategory, setCurrentEditItemSubcategory] = useState(null);
     const [isModalVisibleSubcategory, setIsModalVisibleSubcategory] = useState(false);
+    const [selectKey, setSelectKey] = useState(null);
+    const [categoryId, setCategoryId] = useState(null);
 
 
     const [refreshing, setRefreshing] = React.useState(false);
@@ -63,26 +66,34 @@ const CategoriesMobileDisplayer = () => {
 
     const _renderHeader = (section, _, isActive) => {
         return (
-            <View className={`flex-row justify-between items-center flex-0.5 px-5 py-5 mx-2 my-2 shadow rounded-2xl bg-slate-200 `}>
+            <View className="flex-row justify-between items-center px-5 py-5 mx-2 my-2 shadow rounded-2xl bg-slate-200">
 
                 <Feather
                     name={isActive ? "chevron-up" : "chevron-down"}
                     size={24}
                     color="black"
-                    className = {''}
+                    className={"absolute left-4"}
+
                 />
 
-                <Text className="text-center text-lg">{section.title.toUpperCase()}</Text>
+                <View className="flex-1 items-center">
+                    <Text className="text-lg">{section.title.toUpperCase()}</Text>
+                </View>
 
-                <EditButton onEdit={ () => handleModalEditCategory(section)} />
+                <View className="flex-row space-x-2 absolute right-4">
+                    <DeleteButton onDelete={(e) => console.log(e)} />
+                    <EditButton onEdit={() => handleModalEditCategory(section)} />
+                </View>
+
             </View>
         );
     };
 
+
     const _renderContent = (section) => {
         return (
             <View className={'rounded-lg shadow my-2 mx-4 bg-slate-200'}>
-                <CustomButton title={"Add subcategory"} textStyles={"text-white"} containerStyles={"w-full mt-0"}></CustomButton>
+                <CustomButton handlePress={() => handleModalAddSubcategory(section.id)} title={"Add subcategory"} textStyles={"text-white"} containerStyles={"w-full mt-0"}></CustomButton>
                 {section.content.map((subcategory, index) => {
                     const isLast = index === section.content.length - 1;
                     return (
@@ -92,7 +103,7 @@ const CategoriesMobileDisplayer = () => {
                         >
                             <DeleteButton onDelete={ (e) => console.log(e)}></DeleteButton>
                             <Text>{subcategory.subcategoryName}</Text>
-                            <EditButton onEdit={ () => handleModalEditSubcategory(section)} />
+                            <EditButton onEdit={ () => handleModalEditSubcategory(subcategory)} />
 
                         </View>
 
@@ -103,9 +114,10 @@ const CategoriesMobileDisplayer = () => {
     };
 
     const handleModalEditSubcategory = async (object) => {
-        setCurrentEditItemSubcategoty(object)
+        console.log(object);
+        setCurrentEditItemSubcategory(object)
         setIsModalVisibleSubcategory(true)
-
+        setCategoryId(null);
     }
 
     const handleModalEditCategory = async (object) => {
@@ -113,11 +125,18 @@ const CategoriesMobileDisplayer = () => {
         setIsModalVisibleCategory(true);
     }
 
+    const handleModalAddSubcategory = async (categoryId) => {
+        setCurrentEditItemSubcategory();
+        setIsModalVisibleSubcategory(true);
+        setCategoryId(categoryId);
+
+    }
+
     useFocusEffect((
         useCallback(
             () => {
                 fetchData()
-            },[isModalVisibleCategory])
+            },[isModalVisibleCategory, isModalVisibleSubcategory])
     ))
 
     return (
@@ -147,6 +166,24 @@ const CategoriesMobileDisplayer = () => {
                     />
                 </View>
             </Modal>
+
+            <Modal
+                visible={isModalVisibleSubcategory}
+                animationType={Platform.OS !== "ios" ? "" : "slide"}
+                presentationStyle="pageSheet"
+                onRequestClose={() => setIsModalVisibleSubcategory(false)}
+            >
+                <View className="flex-auto mt-5">
+                    <SubcategoriesMobileForm
+                        categoriesList={sections}
+                        object={currentEditItemSubcategory}
+                        header={categoryId == null ? 'Add' : 'Edit'}
+                        setIsModalVisible={setIsModalVisibleSubcategory}
+                        categoryId={categoryId}
+                    />
+                </View>
+            </Modal>
+
         </ScrollView>
 
     )

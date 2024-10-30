@@ -14,7 +14,7 @@ import alertErrorMessage from "../../data/ErrorMessages/alertErrorMessages";
 
 const AlertMobileForm = ({object = {}, header, setIsModalVisible}) => {
     const [errors, setErrors] = useState({});
-    const [selectKey, setSelectKey] = useState(0);
+    const [selectKey, setSelectKey] = useState(0);//to jest po to zeby customselectlist sie restowal po edycji albo dodaniu
     const [titleError, setTitleError] = useState(true);
     const [descrtiptionError, setDescriptionError] = useState(true);
     const [alertTypeError, setAlertTypeError] = object?.id ? useState(false) : useState(true);
@@ -43,7 +43,7 @@ const AlertMobileForm = ({object = {}, header, setIsModalVisible}) => {
                 setSelectKey((prevKey) => prevKey + 1);
             }
         } catch (err) {
-            //console.log(err)
+            console.log(err)
             setErrors(err);
         }
     }
