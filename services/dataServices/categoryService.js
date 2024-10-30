@@ -1,8 +1,9 @@
 import axios from "axios";
-import { Platform } from "react-native";
+import {Modal, Platform, View} from "react-native";
 import * as SecureStore from "expo-secure-store";
 import { router } from "expo-router";
 import CategoryDto from "../../data/DTOs/categoryDto";
+import categoryDto from "../../data/DTOs/categoryDto";
 
 export default class categoryService {
     
@@ -53,6 +54,36 @@ export default class categoryService {
             return response;
         }
         catch(err){
+            return err.response.data;
+        }
+    }
+
+    static Update = async(id, userData) => {
+        const token = Platform.OS !== "web" ? SecureStore.getItem("token") : "";
+        const config = {
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+        };
+
+        try {
+            const categoryDto = new CategoryDto(userData);
+
+            let response;
+            if (Platform.OS === "web") {
+                response = await axios.put(`${this.ip}/api/Category/${id}`, categoryDto);
+            } else {
+                response = await axios.put(
+                    `${this.ip}/api/Category/${id}`,
+                    categoryDto,
+                    config
+                );
+            }
+
+            console.log(response);
+            return response;
+        } catch (err) {
             return err.response.data;
         }
     }

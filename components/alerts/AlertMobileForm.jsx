@@ -17,7 +17,7 @@ const AlertMobileForm = ({object = {}, header, setIsModalVisible}) => {
     const [selectKey, setSelectKey] = useState(0);
     const [titleError, setTitleError] = useState(true);
     const [descrtiptionError, setDescriptionError] = useState(true);
-    const [alertTypeError, setAlertTypeError] = useState(true);
+    const [alertTypeError, setAlertTypeError] = object?.id ? useState(false) : useState(true);
 
     const [form, setForm] = useState({
         title: object?.title || "",

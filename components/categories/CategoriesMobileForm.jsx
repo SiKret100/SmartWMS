@@ -7,11 +7,11 @@ import {qunit} from "globals";
 
 const CategoriesMobileForm = ({object = {}, header, setIsModalVisible}) => {
     const [errors, setErrors] = useState({});
-    const [categoryNameError, setCategoryNameError] = React.useState(true);
+    const [categoryNameError, setCategoryNameError] = object?.id ? useState(false) : useState(true);
 
 
     const [form, setForm] = React.useState({
-        categoryName: object?.categoryName || ""
+        categoryName: object?.title || ""
     })
 
     const handleName = (e) => {
@@ -20,7 +20,7 @@ const CategoriesMobileForm = ({object = {}, header, setIsModalVisible}) => {
     }
 
     const handleEdit = async(id, form) => {
-        console.log(id, form.categoryNamename)
+        console.log('Nasze ID:', id)
     }
 
     const handleAdd = async(form) => {
@@ -66,8 +66,8 @@ const CategoriesMobileForm = ({object = {}, header, setIsModalVisible}) => {
                 <CustomButton
                     title="Save"
                     handlePress={() => {
-                        if (object?.alertId)
-                            handleEdit(object.alertId, form);
+                        if (object?.id)
+                            handleEdit(object.id, form);
                         else handleAdd(form);
                     }}
                     containerStyles="w-full mt-7"

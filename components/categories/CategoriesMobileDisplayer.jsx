@@ -1,12 +1,15 @@
 import React, {Component, useCallback} from 'react';
 import Accordion from 'react-native-collapsible/Accordion';
 import { useState, useEffect } from "react";
-import { Text, Touchable, View } from "react-native";
+import {Text, Touchable, View, RefreshControl, Platform, Modal} from "react-native";
 import categoryService from "services/dataServices/categoryService.js";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import {ScrollView, TouchableOpacity} from "react-native-gesture-handler";
 import { Feather } from '@expo/vector-icons';
 import EditButton from "../buttons/EditButton";
 import {useFocusEffect} from "expo-router";
+import CategoriesMobileForm from "./CategoriesMobileForm";
+import CustomButton from "../buttons/CustomButton";
+import DeleteButton from "../buttons/DeleteButton";
 
 
 const CategoriesMobileDisplayer = () => {
@@ -14,31 +17,40 @@ const CategoriesMobileDisplayer = () => {
     const [error, setError] = useState([]);
     const [sections, setSections] = useState([]);
     const [activeSections, setActiveSections] = useState([]);
-    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [isModalVisibleCategory, setIsModalVisibleCategory] = useState(false);
+    const [currentEditItemCategory, setCurrentEditItemCategory] = useState(null);
+    const [currentEditItemSubcategoty, setCurrentEditItemSubcategoty] = useState(null);
+    const [isModalVisibleSubcategory, setIsModalVisibleSubcategory] = useState(false);
 
+
+    const [refreshing, setRefreshing] = React.useState(false);
+
+    const onRefresh = React.useCallback(() =>{
+        setRefreshing(true);
+        fetchData();
+        setRefreshing(false);
+    }, []);
 
     const fetchData = async () => {
-        setSections([]);
+        setSections([]); // Resetujemy sekcje
         await categoryService
             .GetCategoriesWithSubcategories()
             .then(response => {
-                //console.log(response.data);
-                //console.log(JSON.stringify(response.data))
-                //setSections(response.data.map((category) => [{title: category.categoryName, content: category.subcategories}]))
-                response.data.forEach(category => {
-                    setSections(prevSections => [...prevSections, { title: category.categoryName, content: category.subcategories }])
-                })
+                const updatedSections = response.data.map(category => ({
+                    id: category.categoryId,
+                    title: category.categoryName,
+                    content: category.subcategories
+                }));
 
+                const reversedSections = updatedSections.reverse();
+                setSections(reversedSections);
 
-
-                console.log("Sections");
-                console.log(JSON.stringify(sections));
-
+                //console.log("Reversed Sections:", JSON.stringify(reversedSections));
             })
             .catch(err => {
                 setError(err);
                 console.log(`Error ${err}`);
-            })
+            });
     };
 
     const _renderSectionTitle = (section) => {
@@ -62,54 +74,80 @@ const CategoriesMobileDisplayer = () => {
 
                 <Text className="text-center text-lg">{section.title.toUpperCase()}</Text>
 
-                <EditButton onEdit={ (e) => console.log(e)} />
-
-
-
-
-
-
+                <EditButton onEdit={ () => handleModalEditCategory(section)} />
             </View>
         );
     };
-    
 
     const _renderContent = (section) => {
         return (
             <View className={'rounded-lg shadow my-2 mx-4 bg-slate-200'}>
+                <CustomButton title={"Add subcategory"} textStyles={"text-white"} containerStyles={"w-full mt-0"}></CustomButton>
                 {section.content.map((subcategory, index) => {
                     const isLast = index === section.content.length - 1;
                     return (
                         <View
                             key={index}
-                            className={`flex-col justify-between items-center px-2 py-3 ${!isLast ? 'border-b border-gray-300' : ''}`}
+                            className={`flex-row justify-between items-center px-2 py-3 ${!isLast ? 'border-b border-gray-300' : ''}`}
                         >
+                            <DeleteButton onDelete={ (e) => console.log(e)}></DeleteButton>
                             <Text>{subcategory.subcategoryName}</Text>
+                            <EditButton onEdit={ () => handleModalEditSubcategory(section)} />
+
                         </View>
+
                     );
                 })}
             </View>
         );
     };
 
+    const handleModalEditSubcategory = async (object) => {
+        setCurrentEditItemSubcategoty(object)
+        setIsModalVisibleSubcategory(true)
 
+    }
+
+    const handleModalEditCategory = async (object) => {
+        setCurrentEditItemCategory(object);
+        setIsModalVisibleCategory(true);
+    }
 
     useFocusEffect((
         useCallback(
             () => {
                 fetchData()
-            },[isModalVisible])
+            },[isModalVisibleCategory])
     ))
 
     return (
-        <Accordion
-            sections={sections}
-            renderContent={_renderContent}
-            activeSections={activeSections}
-            renderHeader={_renderHeader}
-            onChange={ (section) => setActiveSections(section)}
-            underlayColor='transparent'
-        />
+        <ScrollView
+            refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }>
+            <Accordion
+                sections={sections}
+                renderContent={_renderContent}
+                activeSections={activeSections}
+                renderHeader={_renderHeader}
+                onChange={ (section) => setActiveSections(section)}
+                underlayColor='transparent'
+            />
+            <Modal
+                visible={isModalVisibleCategory}
+                animationType={Platform.OS !== "ios" ? "" : "slide"}
+                presentationStyle="pageSheet"
+                onRequestClose={() => setIsModalVisibleCategory(false)}
+            >
+                <View className="flex-auto mt-5">
+                    <CategoriesMobileForm
+                        object={currentEditItemCategory}
+                        header="Edit"
+                        setIsModalVisible={setIsModalVisibleCategory}
+                    />
+                </View>
+            </Modal>
+        </ScrollView>
 
     )
 }

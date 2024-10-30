@@ -139,7 +139,7 @@ const saveSelected = async () => {
   const renderItem = ({ item }) => (
     <FallingTiles>
       <View className={"flex-row justify-between items-center flex-0.5 px-2 py-2 mx-2 my-2 shadow rounded-lg bg-slate-200"}>
-        <EditButton onEdit={() => handleModalEdit(item)} />
+        <DeleteButton onDelete={() => handleDelete(item.alertId)} />
         <View className={"px-2 py-2 mx-4"}>
           <View>
             <Text className={"text-center"}>{item.title}</Text>
@@ -153,7 +153,8 @@ const saveSelected = async () => {
             </Text>
           </View>
         </View>
-        <DeleteButton onDelete={() => handleDelete(item.alertId)} />
+        <EditButton onEdit={() => handleModalEdit(item)} />
+
       </View>
     </FallingTiles>
   );

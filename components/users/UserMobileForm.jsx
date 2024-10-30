@@ -14,11 +14,11 @@ import ErrorMessages from "components/errors/ErrorMessages.jsx";
 
 const UserMobileForm = ({ object = {}, header }) => {
     const [form, setForm] = useState({
-        email: object?.email || "",
-        userName: object?.userName || "",
-        password: object?.password || "",
-        role: object?.role || "",
-        managerId: object?.managerId || undefined
+        email: "",
+        userName: "",
+        password: "",
+        role: "",
+        managerId: undefined
     });
 
     const [errors, setErrors] = useState({});
@@ -84,7 +84,7 @@ const UserMobileForm = ({ object = {}, header }) => {
 
     const fetchManagers = async () => {
         try {
-            const response = await userService.GetAll(roleName = "Manager");
+            const response = await userService.GetAll("Manager");
             setManagers(response.data.map((manager) => { return { key: manager.id, value: manager.userName } }));
             console.log(`Managers: ${JSON.stringify(managers)}`);
         }
