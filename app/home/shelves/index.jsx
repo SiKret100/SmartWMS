@@ -1,10 +1,9 @@
 import { Text, View } from 'react-native'
+import ShelvesMobileDisplayer from "../../../components/shelves/ShelvesMobileDisplayer";
 
 const AlertMain = () => {
   return (
-    <View>
-      <Text>Wszystkie alerty</Text>
-    </View>
+    <ShelvesMobileDisplayer/>
   )
 }
 

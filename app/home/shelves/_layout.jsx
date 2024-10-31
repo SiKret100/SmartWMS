@@ -20,20 +20,9 @@ const ShelfLayout = () => {
           <Feather name="plus-circle" size={24} color="black" />
         )
       }}/>
-      <Tabs.Screen name='update' options={{
-        title:"Edytuj",
-        headerShown: false,
-        tabBarIcon: ({ color, size }) => (
-          <Feather name="edit" size={24} color="black" />
-        )
-      }}/>
-      <Tabs.Screen name='delete' options={{
-        title:"Usuń",
-        headerShown: false,
-        tabBarIcon: ({ color, size }) => (
-          <Feather name="trash" size={24} color="black" />
-        )
-      }}/>
+
+
+
     </Tabs>
   )
 }

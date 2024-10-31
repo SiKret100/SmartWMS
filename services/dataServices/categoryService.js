@@ -1,9 +1,8 @@
 import axios from "axios";
-import {Modal, Platform, View} from "react-native";
+import {Platform} from "react-native";
 import * as SecureStore from "expo-secure-store";
 import { router } from "expo-router";
 import CategoryDto from "../../data/DTOs/categoryDto";
-import categoryDto from "../../data/DTOs/categoryDto";
 
 export default class categoryService {
     
@@ -87,4 +86,31 @@ export default class categoryService {
             return err.response.data;
         }
     }
+
+    static Delete = async(id) => {
+
+        const token = Platform.OS !== "web" ? SecureStore.getItem("token") : "";
+        const config = {
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+        }
+
+        try {
+            let response
+            if (Platform.OS === "web") {
+                response = await axios.delete(`${this.ip}/api/Category/${id}`);
+            } else {
+                response = await axios.delete(`${this.ip}/api/Category/${id}`, config);
+            }
+
+            console.log(response);
+            return response;
+        } catch(err) {
+            return err.response.data;
+        }
+
+    }
+
 }

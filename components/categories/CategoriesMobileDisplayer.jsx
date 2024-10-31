@@ -1,7 +1,7 @@
 import React, {Component, useCallback} from 'react';
 import Accordion from 'react-native-collapsible/Accordion';
 import { useState, useEffect } from "react";
-import {Text, Touchable, View, RefreshControl, Platform, Modal} from "react-native";
+import {Text, Touchable, View, RefreshControl, Platform, Modal, Alert} from "react-native";
 import categoryService from "services/dataServices/categoryService.js";
 import {ScrollView, TouchableOpacity} from "react-native-gesture-handler";
 import { Feather } from '@expo/vector-icons';
@@ -14,7 +14,6 @@ import SubcategoriesMobileForm from "../subcategories/SubcategoriesMobileForm";
 
 
 const CategoriesMobileDisplayer = () => {
-    const [data, setData] = useState([]);
     const [error, setError] = useState([]);
     const [sections, setSections] = useState([]);
     const [activeSections, setActiveSections] = useState([]);
@@ -56,13 +55,13 @@ const CategoriesMobileDisplayer = () => {
             });
     };
 
-    const _renderSectionTitle = (section) => {
-        return (
-            <View>
-                <Text>{section.content}</Text>
-            </View>
-        );
-    };
+    // const _renderSectionTitle = (section) => {
+    //     return (
+    //         <View>
+    //             <Text>{section.content}</Text>
+    //         </View>
+    //     );
+    // };
 
     const _renderHeader = (section, _, isActive) => {
         return (
@@ -81,7 +80,7 @@ const CategoriesMobileDisplayer = () => {
                 </View>
 
                 <View className="flex-row space-x-2 absolute right-4">
-                    <DeleteButton onDelete={(e) => console.log(e)} />
+                    <DeleteButton onDelete={() => handleDeleteCategory(section)} />
                     <EditButton onEdit={() => handleModalEditCategory(section)} />
                 </View>
 
@@ -113,6 +112,18 @@ const CategoriesMobileDisplayer = () => {
         );
     };
 
+    const createAlert = (title, message) => {
+        return (
+            Alert.alert(title, message, [
+                {
+                    text: "Ok",
+                    onPress: () => {},
+                    style: "cancel"
+                }
+            ])
+        )
+    }
+
     const handleModalEditSubcategory = async (object) => {
         console.log(object);
         setCurrentEditItemSubcategory(object)
@@ -131,6 +142,29 @@ const CategoriesMobileDisplayer = () => {
         setCategoryId(categoryId);
 
     }
+
+    const handleDeleteCategory = async (object) => {
+        if ((object.content).length > 0 ){
+            createAlert('Warning','Cannot delete Categories with Subcategories assigned to them');
+
+        } else {
+            console.log(`Sections: ${JSON.stringify(sections)}`);
+            console.log(`Object: ${JSON.stringify(object)}`)
+            await categoryService.Delete(object.id)
+
+                .then(response => {
+                    setSections(sections.filter(category => category.id !== object.id));
+                    createAlert("Info", "Category successfully deleted");
+
+                })
+                .catch(err => {
+                    console.log(err);
+                    createAlert("Error", err);
+                })
+        }
+    }
+
+
 
     useFocusEffect((
         useCallback(
