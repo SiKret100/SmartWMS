@@ -24,23 +24,26 @@ const FormField = ({ title, value, placeholder, handleChangeText, otherStyles, i
                               transition duration-150 
                               ease-in-out shadow 
                               ${isFocused ? 'border-smartwms-blue border-2' : ''} 
-                              ${value.length < 1 ? ' ' : isError ? 'border-red-500 bg-red-200' : ''}`}
+                              ${(typeof(value) === "string" && value.length < 1) ? ' ' : isError ? 'border-red-500 bg-red-200' : ''}
+                              ${(typeof(value) === "number" && isError) ? 'border-red-500 bg-red-200' : ''}`
+            }
+
                               >
                 <TextInput
-                    className='flex-1 h-full text-black-100 outline-none'
-                    value={value}
-                    placeholder={placeholder}
-                    placeholderTextColor={'#7b7b8b'}
-                    onChangeText={handleChangeText}
-                    secureTextEntry={title === 'Password' && !showPassword}
-                    onFocus={() => setIsFocused(true)}
-                    onBlur={() => setIsFocused(false)}
-                    {...props}
-                />
-                {iconsVisible && value.length >= 1 && (
-                    <View className="justify-center items-center ">
-                        {isError ? (
-                            <Feather name="x" size={24} color={"red"} />
+                                className='flex-1 h-full text-black-100 outline-none'
+                                value={value}
+                                placeholder={placeholder}
+                                placeholderTextColor={'#7b7b8b'}
+                                onChangeText={handleChangeText}
+                                secureTextEntry={title === 'Password' && !showPassword}
+                                onFocus={() => setIsFocused(true)}
+                                onBlur={() => setIsFocused(false)}
+                                {...props}
+                            />
+                            {iconsVisible && value.length >= 1 && (
+                                <View className="justify-center items-center ">
+                            {isError ? (
+                                <Feather name="x" size={24} color={"red"} />
                         ) : (
                             <Feather name="check" size={24} color={smartwms_blue} />
                         )}

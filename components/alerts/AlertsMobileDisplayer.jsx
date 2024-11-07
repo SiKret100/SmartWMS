@@ -161,11 +161,12 @@ const saveSelected = async () => {
 
   return (
     <SafeAreaView className={"flex-1 justify-start align-center"}>
-        <View className={"mx-2 mt-2 mb-10"}>
+        <View className={"flex-col justify-center mx-2 my-2"} >
           <CustomSelectList
             typeMap={[{ key: -1, value: 'All' }, ...alertTypeMap]}
             defaultOption={defaultOption}
             setSelected={(val) => setSelected(val)}
+            otherRawCSS={{marginBottom: 19, marginTop:19}}
           />
         </View>
 

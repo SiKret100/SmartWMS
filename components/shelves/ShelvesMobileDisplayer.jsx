@@ -1,101 +1,102 @@
 import React, {useEffect, useState,} from "react";
-import shelfService from "../../services/dataServices/shelfService";
-import {RefreshControl, Text, View} from "react-native";
+import laneService from "../../services/dataServices/laneService";
+import {Platform, RefreshControl, Text, View, Modal} from "react-native";
 import CustomButton from "../buttons/CustomButton";
 import {ScrollView} from "react-native-gesture-handler";
 import Accordion from "react-native-collapsible/Accordion";
 import DeleteButton from "../buttons/DeleteButton";
 import EditButton from "../buttons/EditButton";
 import {Feather} from "@expo/vector-icons";
+import shelfService from "../../services/dataServices/shelfService";
+import SubcategoriesMobileForm from "../subcategories/SubcategoriesMobileForm";
+import ShelvesMobileForm from "./ShelvesMobileForm";
 
 
 const ShelvesMobileDisplayer = () => {
 
+    const [rawData, setRawData] = useState([]);
     const [sections, setSections] = useState([]);
     const [refreshing, setRefreshing]= useState(false)
     const [activeLaneSections, setActiveLaneSections] = useState([]);
     const [activeRackSections, setActiveRackSections] = useState([]);
     const [rackSections, setRackSections] = useState([]);
+    const [errors, setErrors] = useState([]);
+    const [isModalVisibleShelf, setIsModalVisibleShelf] = useState(false);
+    const [currentEditShelf, setCurrentEditShelf] = useState(null);
+    const [rackId, setRackId] = useState(null);
 
     const onRefresh = React.useCallback(() => {
-        setRefreshing(true)
-        fetchData()
-        setRefreshing(false)
+        setRefreshing(true);
+        fetchData();
+        setRefreshing(false);
     },[])
 
     const fetchData = async () => {
         setSections([]);
-        await shelfService
-            .GetAll()
+        await laneService
+            .GetAllWithRacksShelves()
             .then(response => {
-                setSections(handlePrepareSection(response.data))
+                setRawData(response.data);
+                setSections(handlePrepareSections(response.data));
+
+                //setSections(handlePrepareSection(response.data))
             })
             .catch(err => {
                 throw err
             })
     }
 
-    const handlePrepareSection = (data) => {
-        let lanesArray = [];
+    const handlePrepareSections = (data) => {
 
-        data.forEach((item) => {
-            const existingLane = lanesArray.find(newItem => newItem.title === item.lane);
+        return data.map ( (lane) => ({
+            laneId: lane.id,
+            title: lane.laneCode,
+            content: lane.racks.map ( (rack) => ({
+                rackId: rack.id,
+                title: rack.rackNumber,
+                    content: rack.shelves.map( (shelf) => ({
+                        shelfId: shelf.shelfId,
+                        title: shelf.level,
+                        maxQuant: shelf.maxQuant,
+                        currentQuant: shelf.currentQuant,
+                        productId: shelf.productsProductId,
+                    }))
+            }))
+        }))
 
-            //najpierw sprawdzamy czy dany LANE istnieje
-            if (existingLane) {
+    }
 
-                const existingRack = existingLane.content.find(rack => rack.title === item.rack);
+    const handleDeleteShelf = async (shelf) => {
+        console.log(`Shelf for removal: ${JSON.stringify(shelf)}`);
+        if(shelf.productId !== null){
+            console.log("Jest produkt");
+            setErrors(...errors, "Cannot deleted shelf with product assigned to it");
+        }
+        else {
+            console.log("No product")
+            await shelfService.Delete(shelf.shelfId)
+                .then(response => {
+                    console.log(`Shelf successfully deleted: ${JSON.stringify(response)}`);
+                    onRefresh();
+                })
+                .catch(err => {
+                    console.log(err)
+                })
+        }
+    }
 
-                //sprawdzamy czy dany rack istieje w danym lanie, jesli nie to go tworzymy jak to dodajemy do jego contetntu
-                if (existingRack) {
-                    existingRack.content.push({
-                        shelfId: item.shelfId,
-                        level: item.level,
-                        maxQuant: item.maxQuant,
-                        currentQuant: item.currentQuant
-                    });
-                } else {
-                    existingLane.content.push({
-                        shelfId: item.shelfId,
-                        title: item.rack,
-                        content: [
-                            {
-                                shelfId: item.shelfId,
-                                level: item.level,
-                                maxQuant: item.maxQuant,
-                                currentQuant: item.currentQuant
-                            }
-                        ]
-                    });
-                }
-                //jesli LANE nie istnieje to jest tworzony caly obiekt z struktura pod levele i racki
-            } else {
-                lanesArray.push({
-                    shelfId: item.shelfId,
-                    title: item.lane,
-                    content: [{
-                        shelfId: item.shelfId,
-                        title: item.rack,
-                        content: [
-                            {
-                                shelfId: item.shelfId,
-                                level: item.level,
-                                maxQuant: item.maxQuant,
-                                currentQuant: item.currentQuant
-                            }
-                        ]
-                    }]
-                });
-            }
-        });
+    const handleModalAddShelf = async (rackId) => {
+        setCurrentEditShelf();
+        setIsModalVisibleShelf(true);
+        setRackId(rackId);
+    }
 
-        //console.log(JSON.stringify(lanesArray));
-        return lanesArray;
-    };
-
-
-
-
+    const handleModalEditShelf = async (object) => {
+        setCurrentEditShelf(object);
+        console.log(object);
+        setIsModalVisibleShelf(true);
+        setRackId(null)
+    }
 
     const _renderSectionTitle = (section) => {
         return (
@@ -104,6 +105,12 @@ const ShelvesMobileDisplayer = () => {
             </View>
         );
     };
+
+    const onDeleteLane = () => {
+        console.log(JSON.stringify(rawData));
+        console.log("-------------------")
+        console.log(JSON.stringify(sections));
+    }
 
     const _renderHeader = (section, _, isActive) => {
         return (
@@ -122,8 +129,8 @@ const ShelvesMobileDisplayer = () => {
                 </View>
 
                 <View className="flex-row space-x-2 absolute right-4">
-                    <DeleteButton onDelete={() => console.log("delete")} />
-                    <EditButton onEdit={() => console.log("edit")} />
+                    <DeleteButton onDelete={() => onDeleteLane() } />
+                    {/*<EditButton onEdit={() => console.log("edit")} />*/}
                 </View>
 
             </View>
@@ -133,7 +140,7 @@ const ShelvesMobileDisplayer = () => {
     const _renderRackContent = (rack) => {
         return(
             <View className={'rounded-lg shadow my-2 mx-4 bg-slate-200'}>
-                <CustomButton handlePress={() => console.log("Add Rack")} title={"Add Level"} textStyles={"text-white"} containerStyles={"w-full mt-0"}></CustomButton>
+                <CustomButton handlePress={() => handleModalAddShelf(rack.rackId)} title={"Add Level"} textStyles={"text-white"} containerStyles={"w-full mt-0"}></CustomButton>
 
                 {rack.content.map((level, index) => {
                     const isLast = index === rack.content.length - 1;
@@ -142,12 +149,12 @@ const ShelvesMobileDisplayer = () => {
                             key={index}
                             className={`flex-row justify-between items-center px-2 py-3 ${!isLast ? 'border-b border-gray-300' : ''}`}
                         >
-                            <DeleteButton onDelete={ (e) => console.log(e)}></DeleteButton>
+                            <DeleteButton onDelete={() => handleDeleteShelf(level)}></DeleteButton>
                             <View className={"flex-col justify-between items-center px-5 py-5"}>
-                                <Text>{"Level:" + level.level}</Text>
+                                <Text>{"Level: P" + level.title}</Text>
                             </View>
 
-                            <EditButton onEdit={ () => console.log("edit level")} />
+                            <EditButton onEdit={ () => handleModalEditShelf(level)} />
 
                         </View>
 
@@ -164,28 +171,6 @@ const ShelvesMobileDisplayer = () => {
             <View className={'rounded-lg shadow my-2 mx-4 bg-slate-200'}>
                 <CustomButton handlePress={() => console.log("Add Rack")} title={"Add Rack"} textStyles={"text-white"} containerStyles={"w-full mt-0"}></CustomButton>
 
-                {/*{section.content.map((rack, index) => {*/}
-                {/*    const isLast = index === section.content.length - 1;*/}
-                {/*    return (*/}
-                {/*        <View*/}
-                {/*            key={index}*/}
-                {/*            className={`flex-row justify-between items-center px-2 py-3 ${!isLast ? 'border-b border-gray-300' : ''}`}*/}
-                {/*        >*/}
-                {/*           <DeleteButton onDelete={ (e) => console.log(e)}></DeleteButton>*/}
-                {/*            <View className={"flex-col justify-between items-center px-5 py-5"}>*/}
-                {/*                <Text>{"Rack:" + rack.title}</Text>*/}
-                {/*            </View>*/}
-
-                {/*            <EditButton onEdit={ () => console.log("edit rack")} />*/}
-
-                {/*        </View>*/}
-                {/*        */}
-                {/*        <Accordion sections={rack.section} renderHeader={_renderHeader} renderContent={} onChange={} activeSections={}*/}
-
-
-
-                {/*    );*/}
-                {/*})}*/}
                 {section.content.length === 0 ? <Text></Text>
                     :
                     <Accordion sections={section.content} renderHeader={_renderHeader} renderContent={_renderRackContent} onChange={(rack) => setActiveRackSections(rack)} activeSections={activeRackSections}                 underlayColor='transparent'
@@ -196,7 +181,6 @@ const ShelvesMobileDisplayer = () => {
             </View>
         );
     };
-
 
     useEffect(() => {
             fetchData()
@@ -209,18 +193,38 @@ const ShelvesMobileDisplayer = () => {
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
             }
         >
-            {/*<Text>Shelves</Text>*/}
-            {/*<CustomButton handlePress={ () => console.log(JSON.stringify( sections))} title = {"Show sections"} ></CustomButton>*/}
 
             <Accordion
                 sections={sections}
                 renderContent={_renderLaneContent}
                 activeSections={activeLaneSections}
                 renderHeader={_renderHeader}
-                onChange={ (section) => setActiveLaneSections(section)}
+                onChange={ (section) => setActiveLaneSections(section) }
                 underlayColor='transparent'
+                onDeleteLane={ onDeleteLane }
             />
+            <CustomButton handlePress={() => {console.log(JSON.stringify(sections))}} title = "Button"/>
+
+            <Modal
+                visible = {isModalVisibleShelf}
+                animationType={Platform.OS !== "ios" ? "" : "slide"}
+                presentationStyle="pageSheet"
+                onRequestClose={() => setIsModalVisibleShelf(false)}
+            >
+                <ShelvesMobileForm
+                    object={currentEditShelf}
+                    header={rackId === null ? "Edit" : "Add"}
+                    setIsModalVisible={setIsModalVisibleShelf}
+                    rackId={rackId}
+                />
+
+            </Modal>
+
+
+
         </ScrollView>
+
+
 
     )
 

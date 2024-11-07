@@ -96,16 +96,6 @@ const RootLayout = () => {
           />
 
           <Drawer.Screen
-            name='subcategories'
-            options={{
-              drawerLabel: 'Subcategories',
-              title: 'Subcategories',
-              headerStyle: { backgroundColor: 'bg-slate-200' }
-
-            }}
-          />
-
-          <Drawer.Screen
             name='tasks'
             options={{
               drawerLabel: 'Tasks',
@@ -115,8 +105,6 @@ const RootLayout = () => {
             }}
           />
 
-
-
           <Drawer.Screen
             name='users'
             options={{
@@ -125,7 +113,6 @@ const RootLayout = () => {
               headerStyle: { backgroundColor: 'bg-slate-200' }
             }}
           />
-
 
           <Drawer.Screen
             name='waybills'

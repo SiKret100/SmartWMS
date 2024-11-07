@@ -25,6 +25,8 @@ const AlertMobileForm = ({object = {}, header, setIsModalVisible}) => {
         alertType: object?.alertType !== undefined && object.alertType !== null ? object.alertType : -1
     });
 
+    const defaultOption = form.alertType !== -1 ? alertTypeMap.find(item => item.key === form.alertType) : null;
+
     const handleEdit = async (id, form) => {
         try {
             const result = await alertService.Update(id, form);
@@ -73,8 +75,6 @@ const AlertMobileForm = ({object = {}, header, setIsModalVisible}) => {
     useEffect(() => {
         console.log(`Otrzymano obiekt: ${JSON.stringify(object)}`);
     }, [])
-
-    const defaultOption = form.alertType !== -1 ? alertTypeMap.find(item => item.key === form.alertType) : null;
 
     const handleTitle = (e) => {
         const titleVar = e.nativeEvent.text;
