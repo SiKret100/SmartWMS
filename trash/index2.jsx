@@ -11,7 +11,7 @@ import {
 import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ScrollView } from "react-native-gesture-handler";
-import FormField from "../components/FormField";
+import TextFormField from "../components/form_fields/TextFormField";
 import CustomButton from "../components/CustomButton";
 import { useState } from "react";
 import { KeyboardAvoidingView } from "react-native";
@@ -48,7 +48,7 @@ const index = () => {
           </View>
         </View>
 
-        <FormField
+        <TextFormField
           title="Email"
           value={form.email}
           handleChangeText={(e) => setForm({ ...form, email: e })}
@@ -56,7 +56,7 @@ const index = () => {
           keyboardType="email-address"
         />
 
-        <FormField
+        <TextFormField
           title="Password"
           value={form.password}
           handleChangeText={(e) => setForm({ ...form, password: e })}

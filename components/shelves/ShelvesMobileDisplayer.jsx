@@ -21,7 +21,9 @@ const ShelvesMobileDisplayer = () => {
     const [activeRackSections, setActiveRackSections] = useState([]);
     const [rackSections, setRackSections] = useState([]);
     const [errors, setErrors] = useState([]);
-    const [isModalVisibleShelf, setIsModalVisibleShelf] = useState(false);
+    const [isShelfModalVisible, setIsShelfModalVisible] = useState(false);
+    const [isRackModalVisible, setIsRackModalVisible] = useState(false);
+
     const [currentEditShelf, setCurrentEditShelf] = useState(null);
     const [rackId, setRackId] = useState(null);
 
@@ -87,14 +89,14 @@ const ShelvesMobileDisplayer = () => {
 
     const handleModalAddShelf = async (rackId) => {
         setCurrentEditShelf();
-        setIsModalVisibleShelf(true);
+        setIsShelfModalVisible(true);
         setRackId(rackId);
     }
 
     const handleModalEditShelf = async (object) => {
         setCurrentEditShelf(object);
         console.log(object);
-        setIsModalVisibleShelf(true);
+        setIsShelfModalVisible(true);
         setRackId(null)
     }
 
@@ -185,7 +187,7 @@ const ShelvesMobileDisplayer = () => {
     useEffect(() => {
             fetchData()
                 .catch(err => console.log(err));
-    }, []);
+    }, [isShelfModalVisible]);
 
     return (
         <ScrollView
@@ -206,17 +208,29 @@ const ShelvesMobileDisplayer = () => {
             <CustomButton handlePress={() => {console.log(JSON.stringify(sections))}} title = "Button"/>
 
             <Modal
-                visible = {isModalVisibleShelf}
+                visible = {isShelfModalVisible}
                 animationType={Platform.OS !== "ios" ? "" : "slide"}
                 presentationStyle="pageSheet"
-                onRequestClose={() => setIsModalVisibleShelf(false)}
+                onRequestClose={() => setIsShelfModalVisible(false)}
             >
                 <ShelvesMobileForm
                     object={currentEditShelf}
                     header={rackId === null ? "Edit" : "Add"}
-                    setIsModalVisible={setIsModalVisibleShelf}
+                    setIsModalVisible={setIsShelfModalVisible}
                     rackId={rackId}
                 />
+
+            </Modal>
+
+            <Modal
+                visible={isRackModalVisible}
+                animationType={Platform.OS !== "ios" ? "" : "slide"}
+                presentationStyle="formSheet"
+                onRequestClose={() => setIsRackModalVisible(false)}
+            >
+                <View className = "flex-auto mt-5">
+
+                </View>
 
             </Modal>
 

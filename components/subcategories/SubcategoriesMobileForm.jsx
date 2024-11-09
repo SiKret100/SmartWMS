@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {KeyboardAvoidingView, Platform, SafeAreaView, Text, View} from "react-native";
-import FormField from "../FormField";
+import TextFormField from "../form_fields/TextFormField";
 import CustomSelectList from "../selects/CustomSelectList";
 import CustomButton from "../buttons/CustomButton";
 import subcategoryService from "services/dataServices/subcategoryService.js";
@@ -98,7 +98,7 @@ const SubcategoryMobileForm = ({object = {}, header, setIsModalVisible, categori
             >
                 <Text className={'my-5 text-3xl font-bold'}>{header}</Text>
 
-                <FormField
+                <TextFormField
                     title="Subcategory name"
                     value={form.subcategoryName}
                     handleChangeText={(e) => setForm({...form, subcategoryName: e})}

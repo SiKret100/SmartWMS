@@ -6,10 +6,7 @@ import {SelectList} from 'react-native-dropdown-select-list'
 const CustomSelectList = ({selectKey, setSelected, typeMap, defaultOption, otherRawCSS, ...props}) => {
 
     return (
-        <View style={{...otherRawCSS}}>
-            {props.title && (
-                <Text>{props.title}</Text>
-            )}
+
             <SelectList
                 key={selectKey}
                 setSelected={setSelected}
@@ -46,7 +43,7 @@ const CustomSelectList = ({selectKey, setSelected, typeMap, defaultOption, other
                 defaultOption={defaultOption}
                 onSelect={props.onSelect}
             />
-        </View>
+
 
 
     )

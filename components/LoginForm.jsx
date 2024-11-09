@@ -12,7 +12,7 @@ import {
     Text,
     Image
 } from "react-native";
-import FormField from "../components/FormField";
+import TextFormField from "./form_fields/TextFormField";
 import CustomButton from "./buttons/CustomButton";
 import "react-native-reanimated";
 import authService from "../services/auth/authService";
@@ -65,7 +65,7 @@ const LoginForm = () => {
             </View>
           </View>
 
-          <FormField
+          <TextFormField
             title="Email"
             value={form.email}
             handleChangeText={(e) => setForm({ ...form, email: e })}
@@ -73,7 +73,7 @@ const LoginForm = () => {
             keyboardType="email-address"
           />
 
-          <FormField
+          <TextFormField
             title="Password"
             value={form.password}
             handleChangeText={(e) => setForm({ ...form, password: e })}

@@ -4,7 +4,7 @@ import { useRef, useState, useEffect, useCallback } from "react";
 import { useFocusEffect } from "expo-router";
 import { KeyboardAvoidingView } from "react-native";
 import CustomButton from "../buttons/CustomButton";
-import FormField from "../FormField";
+import TextFormField from "../form_fields/TextFormField";
 import userTypeMap from "data/Mappers/userType.js"
 import userService from "services/dataServices/userService.js";
 import { ScrollView } from "react-native-gesture-handler";
@@ -142,7 +142,7 @@ const UserMobileForm = ({ object = {}, header }) => {
                 >
                     <Text className="my-5 text-3xl font-bold">{header}</Text>
 
-                    <FormField
+                    <TextFormField
                         title="Email"
                         value={form.email}
                         handleChangeText={(e) => setForm({ ...form, email: e })}
@@ -160,7 +160,7 @@ const UserMobileForm = ({ object = {}, header }) => {
                         null
                     }
 
-                    <FormField
+                    <TextFormField
                         title="Username"
                         value={form.userName}
                         handleChangeText={(e) => setForm({ ...form, userName: e })}
@@ -178,7 +178,7 @@ const UserMobileForm = ({ object = {}, header }) => {
                         null
                     }
 
-                    <FormField
+                    <TextFormField
                         title="Password"
                         value={form.password}
                         handleChangeText={(e) => setForm({ ...form, password: e })}

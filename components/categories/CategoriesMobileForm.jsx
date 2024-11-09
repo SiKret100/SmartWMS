@@ -1,5 +1,5 @@
 import {KeyboardAvoidingView, Platform, SafeAreaView, Text, View} from 'react-native'
-import FormField from "../FormField";
+import TextFormField from "../form_fields/TextFormField";
 import React, {useState} from "react";
 import CustomButton from "../buttons/CustomButton";
 import categoryService from "../../services/dataServices/categoryService";
@@ -52,7 +52,7 @@ const CategoriesMobileForm = ({object = {}, header, setIsModalVisible}) => {
 
                 <Text className={'my-5 text-3xl font-bold'}>{header}</Text>
 
-                <FormField
+                <TextFormField
                     title="Name"
                     value={form.categoryName}
                     handleChangeText={(e) => setForm({...form, categoryName: e})}

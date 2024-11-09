@@ -55,7 +55,6 @@ export default class shelfService {
                     `${this.ip}/api/Shelf/${id}`, shelfDto, config);
             }
 
-            console.log(response);
             return response;
         }catch(err){
             console.log("Error from service" + err);

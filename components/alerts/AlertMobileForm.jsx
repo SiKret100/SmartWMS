@@ -1,16 +1,14 @@
 import {Text, View} from "react-native";
 import React from "react";
-import FormField from "../FormField";
+import TextFormField from "../form_fields/TextFormField";
 import {useState, useEffect} from "react";
 import {SafeAreaView} from "react-native";
 import {KeyboardAvoidingView} from "react-native";
 import {Platform} from "react-native";
 import CustomButton from "../buttons/CustomButton";
 import alertService from "../../services/dataServices/alertService";
-import {SelectList} from "react-native-dropdown-select-list";
 import alertTypeMap from "../../data/Mappers/alertType";
 import CustomSelectList from "../selects/CustomSelectList";
-import alertErrorMessage from "../../data/ErrorMessages/alertErrorMessages";
 
 const AlertMobileForm = ({object = {}, header, setIsModalVisible}) => {
     const [errors, setErrors] = useState({});
@@ -20,9 +18,10 @@ const AlertMobileForm = ({object = {}, header, setIsModalVisible}) => {
     const [alertTypeError, setAlertTypeError] = object?.id ? useState(false) : useState(true);
 
     const [form, setForm] = useState({
-        title: object?.title || "",
+        title: object?.title || -1,
         description: object?.description || "",
-        alertType: object?.alertType !== undefined && object.alertType !== null ? object.alertType : -1
+        //usuanac z drugiego objecta ? jak przestanie dzialac
+        alertType: object?.alertType !== undefined && object?.alertType !== null ? object.alertType : -1
     });
 
     const defaultOption = form.alertType !== -1 ? alertTypeMap.find(item => item.key === form.alertType) : null;
@@ -98,7 +97,7 @@ const AlertMobileForm = ({object = {}, header, setIsModalVisible}) => {
             >
                 <Text className="my-5 text-3xl font-bold">{header}</Text>
 
-                <FormField
+                <TextFormField
                     title="Title"
                     value={form.title}
                     handleChangeText={(e) => setForm({...form, title: e})}
@@ -109,7 +108,7 @@ const AlertMobileForm = ({object = {}, header, setIsModalVisible}) => {
                     iconsVisible={true}
                 />
 
-                <FormField
+                <TextFormField
                     title="Description"
                     value={form.description}
                     handleChangeText={(e) => setForm({...form, description: e})}
