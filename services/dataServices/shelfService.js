@@ -3,9 +3,38 @@ import {Platform} from "react-native";
 import * as SecureStore from "expo-secure-store";
 import axios from "axios";
 import ShelfDto from "../../data/DTOs/shelfDto";
+import {router} from "expo-router";
 
 export default class shelfService {
     static ip = process.env.EXPO_PUBLIC_IP;
+
+    static Add = async (shelfData) => {
+        const token = Platform.OS !== "web" ? SecureStore.getItem("token") : "";
+        const config = {
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+        };
+
+        try {
+
+            const shelfDto = new ShelfDto(shelfData);
+            console.log(`Utworzone dto: ${JSON.stringify(shelfDto)}`)
+            let response;
+            if (Platform.OS === "web") {
+                response = await axios.post(`${this.ip}/api/Shelf`, shelfDto);
+            } else {
+                response = await axios.post(`${this.ip}/api/Shelf`, shelfDto, config);
+            }
+            console.log(JSON.stringify(response));
+            return response;
+
+        } catch (err) {
+            console.log(`Wystapil blad: ${JSON.stringify(err)}`);
+            return err.response.data;
+        }
+    }
 
     static Delete = async (id) => {
 

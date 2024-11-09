@@ -10,6 +10,7 @@ import {Feather} from "@expo/vector-icons";
 import shelfService from "../../services/dataServices/shelfService";
 import SubcategoriesMobileForm from "../subcategories/SubcategoriesMobileForm";
 import ShelvesMobileForm from "./ShelvesMobileForm";
+import RacksMobileForm from "../racks/RacksMobileForm";
 
 
 const ShelvesMobileDisplayer = () => {
@@ -25,7 +26,9 @@ const ShelvesMobileDisplayer = () => {
     const [isRackModalVisible, setIsRackModalVisible] = useState(false);
 
     const [currentEditShelf, setCurrentEditShelf] = useState(null);
+    const [currentEditRack, setCurrentEditRack] = useState(null);
     const [rackId, setRackId] = useState(null);
+    const [laneId, setLaneId] = useState(null);
 
     const onRefresh = React.useCallback(() => {
         setRefreshing(true);
@@ -51,10 +54,10 @@ const ShelvesMobileDisplayer = () => {
     const handlePrepareSections = (data) => {
 
         return data.map ( (lane) => ({
-            laneId: lane.id,
+            laneId: lane.laneId,
             title: lane.laneCode,
             content: lane.racks.map ( (rack) => ({
-                rackId: rack.id,
+                rackId: rack.rackId,
                 title: rack.rackNumber,
                     content: rack.shelves.map( (shelf) => ({
                         shelfId: shelf.shelfId,
@@ -69,7 +72,6 @@ const ShelvesMobileDisplayer = () => {
     }
 
     const handleDeleteShelf = async (shelf) => {
-        console.log(`Shelf for removal: ${JSON.stringify(shelf)}`);
         if(shelf.productId !== null){
             console.log("Jest produkt");
             setErrors(...errors, "Cannot deleted shelf with product assigned to it");
@@ -88,16 +90,22 @@ const ShelvesMobileDisplayer = () => {
     }
 
     const handleModalAddShelf = async (rackId) => {
-        setCurrentEditShelf();
+
+        setCurrentEditShelf(null);
         setIsShelfModalVisible(true);
         setRackId(rackId);
     }
 
     const handleModalEditShelf = async (object) => {
         setCurrentEditShelf(object);
-        console.log(object);
         setIsShelfModalVisible(true);
         setRackId(null)
+    }
+
+    const handleModalAddRack = async (laneId) => {
+        setCurrentEditRack(null);
+        setIsRackModalVisible(true);
+        setLaneId(laneId);
     }
 
     const _renderSectionTitle = (section) => {
@@ -167,11 +175,12 @@ const ShelvesMobileDisplayer = () => {
         )
 
     }
-    
+
+
     const _renderLaneContent = (section) => {
         return (
             <View className={'rounded-lg shadow my-2 mx-4 bg-slate-200'}>
-                <CustomButton handlePress={() => console.log("Add Rack")} title={"Add Rack"} textStyles={"text-white"} containerStyles={"w-full mt-0"}></CustomButton>
+                <CustomButton handlePress={() => handleModalAddRack(section.laneId)} title={"Add Rack"} textStyles={"text-white"} containerStyles={"w-full mt-0"}></CustomButton>
 
                 {section.content.length === 0 ? <Text></Text>
                     :
@@ -223,14 +232,10 @@ const ShelvesMobileDisplayer = () => {
             </Modal>
 
             <Modal
-                visible={isRackModalVisible}
-                animationType={Platform.OS !== "ios" ? "" : "slide"}
-                presentationStyle="formSheet"
-                onRequestClose={() => setIsRackModalVisible(false)}
+                visible = {isRackModalVisible}
+                header={rackId === null ? "Edit" : "Add"}
+                setIsModalVisible={setIsRackModalVisible}
             >
-                <View className = "flex-auto mt-5">
-
-                </View>
 
             </Modal>
 

@@ -211,7 +211,7 @@ const CategoriesMobileDisplayer = () => {
                     <SubcategoriesMobileForm
                         categoriesList={sections}
                         object={currentEditItemSubcategory}
-                        header={categoryId == null ? 'Add' : 'Edit'}
+                        header={categoryId == null ? 'Edit' : 'Add'}
                         setIsModalVisible={setIsModalVisibleSubcategory}
                         categoryId={categoryId}
                     />

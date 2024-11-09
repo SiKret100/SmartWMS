@@ -1,13 +1,15 @@
 export default class ShelfDto {
     level;
-    max_quant;
-    current_quant
-    product_product_id
+    maxQuant;
+    currentQuant;
+    racksRackId;
+    productId;
 
     constructor(shelfData){
         this.level = shelfData.title;
         this.maxQuant = shelfData.maxQuant;
-        this.current_quant = shelfData.currentQuant;
-        this.product_product_id = shelfData.productId;
+        this.currentQuant = shelfData.currentQuant;
+        this.racksRackId = shelfData.racksRackId;
+        this.currentQuant = shelfData.productId;
     }
 }

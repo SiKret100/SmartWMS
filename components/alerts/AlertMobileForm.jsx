@@ -18,7 +18,7 @@ const AlertMobileForm = ({object = {}, header, setIsModalVisible}) => {
     const [alertTypeError, setAlertTypeError] = object?.id ? useState(false) : useState(true);
 
     const [form, setForm] = useState({
-        title: object?.title || -1,
+        title: object?.title || "",
         description: object?.description || "",
         //usuanac z drugiego objecta ? jak przestanie dzialac
         alertType: object?.alertType !== undefined && object?.alertType !== null ? object.alertType : -1

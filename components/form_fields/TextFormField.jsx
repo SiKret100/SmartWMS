@@ -10,7 +10,7 @@ const TextFormField = ({
                        placeholder,
                        handleChangeText,
                        otherStyles,
-                       isError = 0,
+                       isError = false,
                        iconsVisible = false,
                         ...props
                    }) => {
@@ -38,7 +38,7 @@ const TextFormField = ({
                               transition duration-150 
                               ease-in-out shadow 
                               ${isFocused ? 'border-smartwms-blue border-2' : ''} 
-                              ${(typeof(value) === "string" && value.length < 1) ? 'bg-slate-200' : isError ? 'border-red-500 bg-red-200' : 'bg-slate-200'}`
+                              ${value.length < 1 ? 'bg-slate-200' : isError ? 'border-red-500 bg-red-200' : 'bg-slate-200'}`
             }
             >
                 <TextInput

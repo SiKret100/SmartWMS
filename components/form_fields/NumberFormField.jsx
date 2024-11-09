@@ -2,6 +2,7 @@ import {View, Text, TextInput, StyleSheet} from 'react-native';
 import React, {useState} from 'react';
 import Feather from "react-native-vector-icons/Feather";
 import FallingTiles from '../FallingTiles';
+import CustomButton from "../buttons/CustomButton";
 
 
 const NumberFormField = ({
@@ -18,7 +19,7 @@ const NumberFormField = ({
     const [isFocused, setIsFocused] = useState(false);
     const smartwms_blue = "#475f9c"
 
-    console.log("Value:" + value)
+    // console.log("Value:" + value)
 
 
     return (
@@ -41,7 +42,7 @@ const NumberFormField = ({
                               transition duration-150 
                               ease-in-out shadow 
                               ${isFocused ? 'border-smartwms-blue border-2' : ''} 
-                              ${isError ? 'border-red-500 bg-red-200' : 'bg-slate-200'}`
+                              ${ (isError && value.length >= 1 ) ? 'border-red-500 bg-red-200' : 'bg-slate-200'}`
             }
             >
                 <TextInput
@@ -55,16 +56,19 @@ const NumberFormField = ({
                     onBlur={() => setIsFocused(false)}
                     {...props}
                 />
-                {iconsVisible && (
+                { (iconsVisible && value.length >= 1) && (
 
                     <View className="justify-center items-center ">
-                        {isError && isNaN(parseInt(value)) ? (
+                        {isError ? (
                             <Feather name="x" size={24} color={"red"}/>
                         ) : (
                             <Feather name="check" size={24} color={smartwms_blue}/>
                         )}
                     </View>
                 )}
+
+
+
 
             </View>
         </View>

@@ -9,17 +9,22 @@ import NumberFormField from "../form_fields/NumberFormField";
 import CustomButton from "../buttons/CustomButton";
 import shelfService from "../../services/dataServices/shelfService";
 import shelfErrorMessages from "../../data/ErrorMessages/shelfErrorMessages";
+import {useEffect} from "react";
 
 
 const ShelvesMobileForm = ({object = {}, header, setIsModalVisible, rackId = null}) => {
     const [form, setForm] = useState({
         title: object?.title !== undefined && object?.title !== null ? object.title : -1,
-        maxQuant: object?.maxQuant || '0',
-        prodcutId: object?.productsProductId || null
+        maxQuant: object?.maxQuant || "",
+        currentQuant: 0,
+        productId: object?.productsProductId || null,
+        racksRackId: rackId
     });
 
     const [titleError, setTitleError] = object?.title ? useState(false) : useState(true);
+    // const [titleError, setTitleError] = useState(false);
     const [maxQuantError, setMaxQuantError] = object?.maxQuant ? useState(false) : useState(true);
+    // const [maxQuantError, setMaxQuantError] = useState(false);
     const [selectKey, setSelectKey] = useState(0);
     const[errors, setErrors] = useState({});
 
@@ -27,22 +32,55 @@ const ShelvesMobileForm = ({object = {}, header, setIsModalVisible, rackId = nul
 
     const handleTitle = () => {
         form.title  === -1 ? setTitleError(true) : setTitleError(false);
-        console.log(`Wybor: ${form.title}`);
     }
 
-    const handleMaxQuant = (e) => {
-        const maxQuant = parseInt(e.nativeEvent.text);
-        //console.log(maxQuant)
-        Number.isNaN(maxQuant) ? setMaxQuantError(true)
-         :
-            (maxQuant < 0 || maxQuant >  2147483647) ?
-                setMaxQuantError(true) : setMaxQuantError(false)
-       // console.log(`Wartosc maxQuantError: ${maxQuantError}`)
-    }
+    // const handleMaxQuant = (e) => {
+    //     const maxQuantString = e.nativeEvent.text;
+    //     if (maxQuantString.length != 0){
+    //         const maxQuant = parseInt(maxQuantString);
+    //         //console.log(maxQuant)
+    //         Number.isNaN(maxQuant) ? setMaxQuantError(true)
+    //             :
+    //             (maxQuant < 0 || maxQuant >  2147483647) ?
+    //                 setMaxQuantError(true) : setMaxQuantError(false);
+    //         // console.log(`Wartosc maxQuantError: ${maxQuantError}`)
+    //     }
+    //     setMaxQuantError(false);
+    // }
+    // useEffect(() => {
+    //     console.log(`Formularz: ${JSON.stringify(form)}`);
+    // }, [])
+
+    const handleMaxQuantity2 = (e) => {
+        const maxQuantity = e.nativeEvent.text;
+
+        if (maxQuantity.length >= 1 && !maxQuantity.startsWith("0")) {
+            const parsedMaxQuantity = parseInt(maxQuantity);
+            console.log(parsedMaxQuantity);
+
+            if (isNaN(parsedMaxQuantity)) {
+                setMaxQuantError(true);
+                console.log('Error: not a number');
+            } else {
+                if ( parsedMaxQuantity > 0 && parsedMaxQuantity <= 2147483647 ) {
+                    setMaxQuantError(false);
+                    console.log('No error');
+                }else{
+                    setMaxQuantError(true);
+                    console.log('Error');
+                }
+            }
+        } else {
+            setMaxQuantError(true);
+            console.log('No error');
+        }
+    };
+
 
     const handleEdit = async (id, form) => {
         setForm(prevForm=> setForm({...prevForm, maxQuant: parseInt(prevForm.maxQuant)}));
-        console.log(`default option : ${JSON.stringify(defaultOption)}`);
+        //console.log(`default option : ${JSON.stringify(defaultOption)}`);
+
         try {
             const result = await shelfService.Update(id, form);
             console.log(result.errors)
@@ -54,7 +92,7 @@ const ShelvesMobileForm = ({object = {}, header, setIsModalVisible, rackId = nul
                 setErrors({});
                 setForm({
                     title: -1,
-                    maxQuant: '0',
+                    maxQuant: '',
                     productId: null,
                 });
                 setIsModalVisible(false);
@@ -63,6 +101,31 @@ const ShelvesMobileForm = ({object = {}, header, setIsModalVisible, rackId = nul
             }
         } catch (err) {
             console.log(err)
+            setErrors(err);
+        }
+    }
+
+    const handleAdd = async(form) => {
+
+        console.log(`Fomr from form: ${JSON.stringify(form)}`)
+
+        try{
+            const result = await shelfService.Add(form);
+            if (result.errors)
+                setErrors(result.errors);
+            else{
+                setErrors({});
+                setForm({
+                    title: -1,
+                    maxQuant: '',
+                    productId: null,
+                    racksRackId: null
+                })
+                setIsModalVisible(false);
+                setSelectKey((prevKey) => prevKey + 1);
+            }
+        }
+        catch(err) {
             setErrors(err);
         }
     }
@@ -87,18 +150,17 @@ const ShelvesMobileForm = ({object = {}, header, setIsModalVisible, rackId = nul
                      onSelect={() => handleTitle()}
                  />
              </View>
-             {titleError ? <Text className={'text-red-600'}>{shelfErrorMessages.title}</Text> : null}
 
              <NumberFormField
                  title="Maximum quantity"
-                 value={form?.maxQuant ? form?.maxQuant.toString() : null}
+                 value={form?.maxQuant ? form.maxQuant.toString() : ''}
                  handleChangeText={(e) => setForm({...form, maxQuant: e})}
-                 onChange={e => handleMaxQuant(e)}
+                 onChange={e => handleMaxQuantity2(e)}
                  isError={maxQuantError}
                  iconsVisible={true}
                  otherStyles={"mt-7"}
              />
-             {maxQuantError ? <Text className={'text-red-600'}>{shelfErrorMessages.maxQuant}</Text> : null}
+             {(maxQuantError && form.maxQuant.length > 0) ? <Text className={'text-red-600'}>{shelfErrorMessages.maxQuant}</Text> : null}
 
              <CustomButton
                  title="Save"
