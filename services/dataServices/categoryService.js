@@ -80,10 +80,11 @@ export default class categoryService {
                 );
             }
 
-            console.log(response);
+            //console.log(response);
             return response;
         } catch (err) {
-            return err.response.data;
+            //console.log(JSON.stringify(err));
+            throw err.message;
         }
     }
 

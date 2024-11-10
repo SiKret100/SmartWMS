@@ -18,10 +18,6 @@ export default function CustomButton({
       disabled={isLoading}
     >
       <View className= "flex-row">
-{/* 
-        {isLoading && (
-          <ActivityIndicator size="small" color="#fff"/>
-        )} */}
 
         {showLoading & isLoading ?   <ActivityIndicator size="small" color="#fff"/> : null}
 

@@ -36,7 +36,7 @@ export default class authService {
         }
       );
 
-      console.log(response);
+      //console.log(`Otrzymano odpowiedz: ${JSON.stringify(response)}`);
 
       if (Platform.OS !== 'web') {
         await SecureStore.setItemAsync('token', response.data.accessToken);//saving token to securestore for IOS
@@ -51,7 +51,7 @@ export default class authService {
       setLoading(false);
 
     } catch (error) {
-      console.log(error);
+      //console.log(`Wystapil problem: ${JSON.stringify(error)}`);
       setError(this.handleLoginStatus(error));
       setLoading(false);
     }

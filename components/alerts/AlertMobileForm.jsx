@@ -9,6 +9,7 @@ import CustomButton from "../buttons/CustomButton";
 import alertService from "../../services/dataServices/alertService";
 import alertTypeMap from "../../data/Mappers/alertType";
 import CustomSelectList from "../selects/CustomSelectList";
+import CancelButton from "../buttons/CancelButton";
 
 const AlertMobileForm = ({object = {}, header, setIsModalVisible}) => {
     const [errors, setErrors] = useState({});
@@ -95,7 +96,13 @@ const AlertMobileForm = ({object = {}, header, setIsModalVisible}) => {
                 behavior="padding"
                 className={`h-full px-4 ${Platform.OS === "web" ? "w-96" : "w-full"}`}
             >
-                <Text className="my-5 text-3xl font-bold">{header}</Text>
+                {header === "Edit" && (
+                    <View className="flex flex-row items-center justify-between my-5">
+                        <CancelButton onPress={() => setIsModalVisible(false)} />
+                        <Text className="absolute left-1/2 transform -translate-x-1/2 my-5 text-3xl font-bold">{header}</Text>
+                    </View>
+                )}
+
 
                 <TextFormField
                     title="Title"

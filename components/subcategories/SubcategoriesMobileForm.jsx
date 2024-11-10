@@ -8,6 +8,7 @@ import * as SecureStore from "expo-secure-store";
 import CategoryDto from "../../data/DTOs/categoryDto";
 import axios from "axios";
 import {router} from "expo-router";
+import CancelButton from "../buttons/CancelButton";
 
 const SubcategoryMobileForm = ({object = {}, header, setIsModalVisible, categoriesList, categoryId}) => {
     const [errors, setErrors] =  useState({});
@@ -96,7 +97,11 @@ const SubcategoryMobileForm = ({object = {}, header, setIsModalVisible, categori
                 behavior="padding"
                 className={`h-full px-4`}
             >
-                <Text className={'my-5 text-3xl font-bold'}>{header}</Text>
+
+                <View className="flex flex-row items-center justify-between my-5">
+                    <CancelButton onPress={() => setIsModalVisible(false)} />
+                    <Text className="absolute left-1/2 transform -translate-x-1/2 my-5 text-3xl font-bold">{header}</Text>
+                </View>
 
                 <TextFormField
                     title="Subcategory name"

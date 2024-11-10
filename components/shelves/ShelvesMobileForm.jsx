@@ -10,14 +10,15 @@ import CustomButton from "../buttons/CustomButton";
 import shelfService from "../../services/dataServices/shelfService";
 import shelfErrorMessages from "../../data/ErrorMessages/shelfErrorMessages";
 import {useEffect} from "react";
+import rackService from "../../services/dataServices/rackService";
+import CancelButton from "../buttons/CancelButton";
 
 
-const ShelvesMobileForm = ({object = {}, header, setIsModalVisible, rackId = null}) => {
+const ShelvesMobileForm = ({object = {}, header, setIsModalVisible, rackId}) => {
     const [form, setForm] = useState({
         title: object?.title !== undefined && object?.title !== null ? object.title : -1,
         maxQuant: object?.maxQuant || "",
         currentQuant: 0,
-        productId: object?.productsProductId || null,
         racksRackId: rackId
     });
 
@@ -27,6 +28,7 @@ const ShelvesMobileForm = ({object = {}, header, setIsModalVisible, rackId = nul
     // const [maxQuantError, setMaxQuantError] = useState(false);
     const [selectKey, setSelectKey] = useState(0);
     const[errors, setErrors] = useState({});
+    const[selectList, setSelectList] = useState([]);
 
     const defaultOption = form?.title !== undefined && form?.title !== -1 ? shelfTypeMap.find(item => item.key === form.title) : null;
 
@@ -75,6 +77,28 @@ const ShelvesMobileForm = ({object = {}, header, setIsModalVisible, rackId = nul
             console.log('No error');
         }
     };
+
+    const getRacksLevels = async () => {
+        try{
+            var result = await shelfService.GetRacksLevels(rackId);
+
+            // w resulcie mamy obiekty {"level":0}, potrzebna jest sama wartosc
+            var rackLevels = result.data.map(object => object.level);
+
+            console.log(`Rack levels: ${JSON.stringify(rackLevels)}`);
+
+            //uzywajac shelfTypeMap zwracamy tylko te levele ktorych jeszcze nie ma dodanych dla regalu sprawdzajac, czy dany key jest w tablicy rackLevels
+            setSelectList(shelfTypeMap.filter(shelf => !rackLevels.includes(shelf.key)));
+            //console.log(`Ustawiona selectList: ${JSON.stringify(selectList)}`);
+        }
+        catch(err){
+            console.log(err);
+        }
+    }
+
+    useEffect( () => {
+        getRacksLevels();
+    }, [])
 
 
     const handleEdit = async (id, form) => {
@@ -137,14 +161,17 @@ const ShelvesMobileForm = ({object = {}, header, setIsModalVisible, rackId = nul
              behavior="padding"
              clasName={`h-full px-4`}>
 
-             <Text className={'my-5 text-3xl font-bold'}>{header}</Text>
+             <View className="flex flex-row items-center justify-between my-5">
+                 <CancelButton onPress={() => setIsModalVisible(false)} />
+                 <Text className="absolute left-1/2 transform -translate-x-1/2 my-5 text-3xl font-bold">{header}</Text>
+             </View>
 
              <View className={'mt-8'}>
                  <Text>Select shelf</Text>
                  <CustomSelectList
                      selectKey={selectKey}
                      setSelected={(val) => setForm((prevForm) => ({...prevForm, title: val}))}
-                     typeMap={shelfTypeMap}
+                     typeMap={selectList}
                      form={form}
                      defaultOption={defaultOption}
                      onSelect={() => handleTitle()}
@@ -174,8 +201,6 @@ const ShelvesMobileForm = ({object = {}, header, setIsModalVisible, rackId = nul
                  isLoading={titleError || maxQuantError}
                  showLoading={false}
              />
-
-
 
          </KeyboardAvoidingView>
      </SafeAreaView>

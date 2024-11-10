@@ -7,7 +7,7 @@ import alertService from '../../services/dataServices/alertService'
 const DeleteButton = ({onDelete}) => {
 
   const createTwoButtonAlert = () => {
-    Alert.alert('Warning', 'Are you sure you want to delete this alert?', [
+    Alert.alert('Warning', 'Are you sure you want to delete this?', [
       {
         text: 'Cancel',
         onPress: () => {},

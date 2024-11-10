@@ -3,7 +3,6 @@ import {Platform} from "react-native";
 import * as SecureStore from "expo-secure-store";
 import axios from "axios";
 import ShelfDto from "../../data/DTOs/shelfDto";
-import {router} from "expo-router";
 
 export default class shelfService {
     static ip = process.env.EXPO_PUBLIC_IP;
@@ -88,6 +87,32 @@ export default class shelfService {
         }catch(err){
             console.log("Error from service" + err);
             return err.response.data;
+        }
+    }
+
+    static GetRacksLevels = async (rackId) => {
+        const token = Platform.OS !== "web" ? SecureStore.getItem("token") : "";
+        const config = {
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+        };
+
+        try{
+            let response;
+
+            if (Platform.OS === "web") {
+                response = await axios.get(`${this.ip}/api/Shelf/racksLevels/${rackId}`);
+            } else {
+                response = await axios.get(
+                    `${this.ip}/api/Shelf/racksLevels/${rackId}`, config);
+            }
+
+            return response;
+        }
+        catch(err){
+            console.log(`Errors from racklevels: ${JSON.stringify(err)} `);
         }
     }
 

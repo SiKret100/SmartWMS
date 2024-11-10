@@ -1,6 +1,6 @@
 import React, {useEffect, useState,} from "react";
 import laneService from "../../services/dataServices/laneService";
-import {Platform, RefreshControl, Text, View, Modal} from "react-native";
+import {Platform, RefreshControl, Text, View, Modal, SafeAreaView} from "react-native";
 import CustomButton from "../buttons/CustomButton";
 import {ScrollView} from "react-native-gesture-handler";
 import Accordion from "react-native-collapsible/Accordion";
@@ -8,7 +8,6 @@ import DeleteButton from "../buttons/DeleteButton";
 import EditButton from "../buttons/EditButton";
 import {Feather} from "@expo/vector-icons";
 import shelfService from "../../services/dataServices/shelfService";
-import SubcategoriesMobileForm from "../subcategories/SubcategoriesMobileForm";
 import ShelvesMobileForm from "./ShelvesMobileForm";
 import RacksMobileForm from "../racks/RacksMobileForm";
 
@@ -24,7 +23,7 @@ const ShelvesMobileDisplayer = () => {
     const [errors, setErrors] = useState([]);
     const [isShelfModalVisible, setIsShelfModalVisible] = useState(false);
     const [isRackModalVisible, setIsRackModalVisible] = useState(false);
-
+    const [shelfModalHeader, setShelfModalHeader] = useState("")
     const [currentEditShelf, setCurrentEditShelf] = useState(null);
     const [currentEditRack, setCurrentEditRack] = useState(null);
     const [rackId, setRackId] = useState(null);
@@ -60,6 +59,7 @@ const ShelvesMobileDisplayer = () => {
                 rackId: rack.rackId,
                 title: rack.rackNumber,
                     content: rack.shelves.map( (shelf) => ({
+                        rackId: rack.rackId,
                         shelfId: shelf.shelfId,
                         title: shelf.level,
                         maxQuant: shelf.maxQuant,
@@ -74,7 +74,7 @@ const ShelvesMobileDisplayer = () => {
     const handleDeleteShelf = async (shelf) => {
         if(shelf.productId !== null){
             console.log("Jest produkt");
-            setErrors(...errors, "Cannot deleted shelf with product assigned to it");
+            setErrors([...errors, "Cannot deleted shelf with product assigned to it"]);
         }
         else {
             console.log("No product")
@@ -94,12 +94,15 @@ const ShelvesMobileDisplayer = () => {
         setCurrentEditShelf(null);
         setIsShelfModalVisible(true);
         setRackId(rackId);
+        setShelfModalHeader("Add")
     }
 
-    const handleModalEditShelf = async (object) => {
-        setCurrentEditShelf(object);
-        setIsShelfModalVisible(true);
-        setRackId(null)
+    const handleModalEditShelf = async (level) => {
+        setCurrentEditShelf(level);
+        setIsShelfModalVisible(true)
+        console.log(`levels rack id: ${level.rackId}`);
+        setRackId(level.rackId);
+        setShelfModalHeader("Edit")
     }
 
     const handleModalAddRack = async (laneId) => {
@@ -150,7 +153,10 @@ const ShelvesMobileDisplayer = () => {
     const _renderRackContent = (rack) => {
         return(
             <View className={'rounded-lg shadow my-2 mx-4 bg-slate-200'}>
-                <CustomButton handlePress={() => handleModalAddShelf(rack.rackId)} title={"Add Level"} textStyles={"text-white"} containerStyles={"w-full mt-0"}></CustomButton>
+                <CustomButton handlePress={() => handleModalAddShelf(rack.rackId)}
+                              title={"Add Level"}
+                              textStyles={"text-white"}
+                              containerStyles={"w-full mt-0"}></CustomButton>
 
                 {rack.content.map((level, index) => {
                     const isLast = index === rack.content.length - 1;
@@ -184,7 +190,11 @@ const ShelvesMobileDisplayer = () => {
 
                 {section.content.length === 0 ? <Text></Text>
                     :
-                    <Accordion sections={section.content} renderHeader={_renderHeader} renderContent={_renderRackContent} onChange={(rack) => setActiveRackSections(rack)} activeSections={activeRackSections}                 underlayColor='transparent'
+                    <Accordion sections={section.content} renderHeader={_renderHeader}
+                               renderContent={_renderRackContent}
+                               onChange={(rack) => setActiveRackSections(rack)}
+                               activeSections={activeRackSections}
+                               underlayColor='transparent'
                     />
                 }
 
@@ -219,32 +229,30 @@ const ShelvesMobileDisplayer = () => {
             <Modal
                 visible = {isShelfModalVisible}
                 animationType={Platform.OS !== "ios" ? "" : "slide"}
-                presentationStyle="pageSheet"
+                presentationStyle={Platform.OS === "ios" ? "pageSheet" : ""}
                 onRequestClose={() => setIsShelfModalVisible(false)}
             >
-                <ShelvesMobileForm
-                    object={currentEditShelf}
-                    header={rackId === null ? "Edit" : "Add"}
-                    setIsModalVisible={setIsShelfModalVisible}
-                    rackId={rackId}
-                />
+                <View className="flex-auto mt-5">
+
+                    <ShelvesMobileForm
+                        object={currentEditShelf}
+                        header={shelfModalHeader}
+                        setIsModalVisible={setIsShelfModalVisible}
+                        rackId={rackId}
+                    />
+                </View>
+
 
             </Modal>
 
-            <Modal
-                visible = {isRackModalVisible}
-                header={rackId === null ? "Edit" : "Add"}
-                setIsModalVisible={setIsRackModalVisible}
-            >
+            {/*<Modal*/}
+            {/*    visible = {isRackModalVisible}*/}
+            {/*    header={rackId === null ? "Edit" : "Add"}*/}
+            {/*    setIsModalVisible={setIsRackModalVisible}*/}
+            {/*>*/}
 
-            </Modal>
-
-
-
+            {/*</Modal>*/}
         </ScrollView>
-
-
-
     )
 
 }

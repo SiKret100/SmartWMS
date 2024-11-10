@@ -3,13 +3,13 @@ export default class ShelfDto {
     maxQuant;
     currentQuant;
     racksRackId;
-    productId;
 
     constructor(shelfData){
+        console.log(`Current quant: ${shelfData.currentQuant}`)
         this.level = shelfData.title;
         this.maxQuant = shelfData.maxQuant;
         this.currentQuant = shelfData.currentQuant;
         this.racksRackId = shelfData.racksRackId;
-        this.currentQuant = shelfData.productId;
+        console.log(`This current quant: ${this.currentQuant}`);
     }
 }
