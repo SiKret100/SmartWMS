@@ -1,10 +1,9 @@
 import { Text, View } from 'react-native'
+import ProductsMobileDisplayer from "../../../components/products/ProductsMobileDisplayer";
 
 const AlertMain = () => {
   return (
-    <View>
-      <Text>Wszystkie alerty</Text>
-    </View>
+   <ProductsMobileDisplayer></ProductsMobileDisplayer>
   )
 }
 
