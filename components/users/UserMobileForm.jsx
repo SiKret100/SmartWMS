@@ -13,6 +13,8 @@ import userErrorMessage from "../../data/ErrorMessages/userErrorMessages.js"
 import ErrorMessages from "components/errors/ErrorMessages.jsx";
 
 const UserMobileForm = ({ object = {}, header }) => {
+
+    //PROPS====================================================================================================
     const [form, setForm] = useState({
         email: "",
         userName: "",
@@ -30,6 +32,40 @@ const UserMobileForm = ({ object = {}, header }) => {
     const [roleError, setRoleError] = useState(true);
     const [managerError, setManagerError] = useState(true);
 
+
+    //FUNCTIONS================================================================================================
+     const handleAdd = async (form) => {
+        try {
+            setErrors({})
+            if ((form.role === 1 && (form.managerId === undefined || form.managerId === -1)))
+                setErrors({ "Description": ["Employee must have manager assigned"] });
+
+            const result = await userService.Add(form);
+
+            if (result.errors) {
+                const newErrros = result.errors
+                console.log(`Errors: ${JSON.stringify(errors)}`)
+                setErrors((prevErrors) => ({ ...prevErrors, ...result.errors }));
+                console.log(`Błędy przechwycone: ${JSON.stringify(result.errors)}`);
+            } else {
+
+                if (!errors.Description) {
+                    setErrors({});
+                    setForm({
+                        email: "",
+                        userName: "",
+                        password: "",
+                        role: "",
+                        managerId: undefined
+                    });
+                    setSelectKey((prevKey) => prevKey + 1);
+                }
+            }
+        }
+        catch (err) {
+            setErrors(err);
+        }
+    }
 
     const handleEmail = (e) => {
         const emailVar = e.nativeEvent.text;
@@ -94,44 +130,13 @@ const UserMobileForm = ({ object = {}, header }) => {
         }
     }
 
+
+    //USE EFFECT HOOKS=========================================================================================
     useEffect(() => {
         fetchManagers();
     }, [])
 
-    
 
-    const handleAdd = async (form) => {
-        try {
-            setErrors({})
-            if ((form.role === 1 && (form.managerId === undefined || form.managerId === -1)))
-                setErrors({ "Description": ["Employee must have manager assigned"] }); 
-
-            const result = await userService.Add(form);
-
-            if (result.errors) {
-                const newErrros = result.errors
-                console.log(`Errors: ${JSON.stringify(errors)}`)
-                setErrors((prevErrors) => ({ ...prevErrors, ...result.errors }));
-                console.log(`Błędy przechwycone: ${JSON.stringify(result.errors)}`);
-            } else {
-
-                if (!errors.Description) {
-                    setErrors({});
-                    setForm({
-                        email: "",
-                        userName: "",
-                        password: "",
-                        role: "",
-                        managerId: undefined
-                    });
-                    setSelectKey((prevKey) => prevKey + 1);
-                }
-            }
-        }
-        catch (err) {
-            setErrors(err);
-        }
-    }
 
     return (
         <ScrollView>

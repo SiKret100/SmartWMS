@@ -23,6 +23,8 @@ SplashScreen.preventAutoHideAsync();
 
 
 const LoginForm = () => {
+
+    //PROPS====================================================================================================
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
 
@@ -31,14 +33,18 @@ const LoginForm = () => {
         password: "Admin123@",
     });
 
-    const handleLoginPress = async () => {
-        await authService.handeLogin(form.email, form.password, error, setError, setLoading);
-    };
-
     const [loaded] = useFonts({
         SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
     });
 
+
+    //FUNCTIONS================================================================================================
+    const handleLoginPress = async () => {
+        await authService.handeLogin(form.email, form.password, error, setError, setLoading);
+    };
+
+
+    //USE EFFECT HOOKS=========================================================================================
     //without that componenets are not load as well as nativewind
     useEffect(() => {
         if (loaded) {
@@ -46,23 +52,30 @@ const LoginForm = () => {
         }
     }, [loaded]);
 
+
     if (!loaded) {
         return null;
     }
+
     return (
        <SafeAreaView className="h-full items-center bg-smartwms">
+
         <KeyboardAvoidingView
           behavior="padding"
           className={`bg-smartwms h-full px-4 justify-center ${Platform.OS === "web" ? "w-96" : "w-full"}`}
         >
           <View className={`items-center justify-center`}>
+
             <View className="items-center justify-center w-full h-40">
+
               <Image
                 //style={{ width: "100%", height: "100%", objectFit: "contain" }}
                 className="w-full justify-center items-center h-full px-4"
                 source={require("../img/logo.png")}
               />
+
             </View>
+
           </View>
 
           <TextFormField
@@ -95,6 +108,7 @@ const LoginForm = () => {
           </View>
 
         </KeyboardAvoidingView>
+
       </SafeAreaView>
     );
 };

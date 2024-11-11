@@ -13,8 +13,9 @@ import {useEffect} from "react";
 import rackService from "../../services/dataServices/rackService";
 import CancelButton from "../buttons/CancelButton";
 
-
 const ShelvesMobileForm = ({object = {}, header, setIsModalVisible, rackId}) => {
+
+    //PROPS====================================================================================================
     const [form, setForm] = useState({
         title: object?.title !== undefined && object?.title !== null ? object.title : -1,
         maxQuant: object?.maxQuant || "",
@@ -29,78 +30,9 @@ const ShelvesMobileForm = ({object = {}, header, setIsModalVisible, rackId}) => 
     const [selectKey, setSelectKey] = useState(0);
     const[errors, setErrors] = useState({});
     const[selectList, setSelectList] = useState([]);
-
     const defaultOption = form?.title !== undefined && form?.title !== -1 ? shelfTypeMap.find(item => item.key === form.title) : null;
 
-    const handleTitle = () => {
-        form.title  === -1 ? setTitleError(true) : setTitleError(false);
-    }
-
-    // const handleMaxQuant = (e) => {
-    //     const maxQuantString = e.nativeEvent.text;
-    //     if (maxQuantString.length != 0){
-    //         const maxQuant = parseInt(maxQuantString);
-    //         //console.log(maxQuant)
-    //         Number.isNaN(maxQuant) ? setMaxQuantError(true)
-    //             :
-    //             (maxQuant < 0 || maxQuant >  2147483647) ?
-    //                 setMaxQuantError(true) : setMaxQuantError(false);
-    //         // console.log(`Wartosc maxQuantError: ${maxQuantError}`)
-    //     }
-    //     setMaxQuantError(false);
-    // }
-    // useEffect(() => {
-    //     console.log(`Formularz: ${JSON.stringify(form)}`);
-    // }, [])
-
-    const handleMaxQuantity2 = (e) => {
-        const maxQuantity = e.nativeEvent.text;
-
-        if (maxQuantity.length >= 1 && !maxQuantity.startsWith("0")) {
-            const parsedMaxQuantity = parseInt(maxQuantity);
-            console.log(parsedMaxQuantity);
-
-            if (isNaN(parsedMaxQuantity)) {
-                setMaxQuantError(true);
-                console.log('Error: not a number');
-            } else {
-                if ( parsedMaxQuantity > 0 && parsedMaxQuantity <= 2147483647 ) {
-                    setMaxQuantError(false);
-                    console.log('No error');
-                }else{
-                    setMaxQuantError(true);
-                    console.log('Error');
-                }
-            }
-        } else {
-            setMaxQuantError(true);
-            console.log('No error');
-        }
-    };
-
-    const getRacksLevels = async () => {
-        try{
-            var result = await shelfService.GetRacksLevels(rackId);
-
-            // w resulcie mamy obiekty {"level":0}, potrzebna jest sama wartosc
-            var rackLevels = result.data.map(object => object.level);
-
-            console.log(`Rack levels: ${JSON.stringify(rackLevels)}`);
-
-            //uzywajac shelfTypeMap zwracamy tylko te levele ktorych jeszcze nie ma dodanych dla regalu sprawdzajac, czy dany key jest w tablicy rackLevels
-            setSelectList(shelfTypeMap.filter(shelf => !rackLevels.includes(shelf.key)));
-            //console.log(`Ustawiona selectList: ${JSON.stringify(selectList)}`);
-        }
-        catch(err){
-            console.log(err);
-        }
-    }
-
-    useEffect( () => {
-        getRacksLevels();
-    }, [])
-
-
+    //FUNCTIONS================================================================================================
     const handleEdit = async (id, form) => {
         setForm(prevForm=> setForm({...prevForm, maxQuant: parseInt(prevForm.maxQuant)}));
         //console.log(`default option : ${JSON.stringify(defaultOption)}`);
@@ -154,6 +86,57 @@ const ShelvesMobileForm = ({object = {}, header, setIsModalVisible, rackId}) => 
         }
     }
 
+    const handleTitle = () => {
+        form.title  === -1 ? setTitleError(true) : setTitleError(false);
+    }
+
+    const handleMaxQuantity = (e) => {
+        const maxQuantity = e.nativeEvent.text;
+
+        if (maxQuantity.length >= 1 && !maxQuantity.startsWith("0")) {
+            const parsedMaxQuantity = parseInt(maxQuantity);
+            console.log(parsedMaxQuantity);
+
+            if (isNaN(parsedMaxQuantity)) {
+                setMaxQuantError(true);
+                console.log('Error: not a number');
+            } else {
+                if ( parsedMaxQuantity > 0 && parsedMaxQuantity <= 2147483647 ) {
+                    setMaxQuantError(false);
+                    console.log('No error');
+                }else{
+                    setMaxQuantError(true);
+                    console.log('Error');
+                }
+            }
+        } else {
+            setMaxQuantError(true);
+            console.log('No error');
+        }
+    };
+
+    const getRacksLevels = async () => {
+        try{
+            var result = await shelfService.GetRacksLevels(rackId);
+
+            // w resulcie mamy obiekty {"level":0}, potrzebna jest sama wartosc
+            var rackLevels = result.data.map(object => object.level);
+
+            console.log(`Rack levels: ${JSON.stringify(rackLevels)}`);
+
+            //uzywajac shelfTypeMap zwracamy tylko te levele ktorych jeszcze nie ma dodanych dla regalu sprawdzajac, czy dany key jest w tablicy rackLevels
+            setSelectList(shelfTypeMap.filter(shelf => !rackLevels.includes(shelf.key)));
+            //console.log(`Ustawiona selectList: ${JSON.stringify(selectList)}`);
+        }
+        catch(err){
+            console.log(err);
+        }
+    }
+
+    //USE EFFECT HOOKS=========================================================================================
+    useEffect( () => {
+        getRacksLevels();
+    }, [])
 
     return(
      <SafeAreaView className={"h-full mx-2"}>
@@ -182,7 +165,7 @@ const ShelvesMobileForm = ({object = {}, header, setIsModalVisible, rackId}) => 
                  title="Maximum quantity"
                  value={form?.maxQuant ? form.maxQuant.toString() : ''}
                  handleChangeText={(e) => setForm({...form, maxQuant: e})}
-                 onChange={e => handleMaxQuantity2(e)}
+                 onChange={e => handleMaxQuantity(e)}
                  isError={maxQuantError}
                  iconsVisible={true}
                  otherStyles={"mt-7"}

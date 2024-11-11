@@ -9,8 +9,9 @@ import { RefreshControl } from "react-native-gesture-handler";
 import { useFocusEffect } from "expo-router";
 
 
-
 const UserMobileManagers = () => {
+
+    //PROPS====================================================================================================
     const [loading, setLoading] = useState(false);
     const [data, setData] = useState([]);
     const [managers, setManagers] = useState([]);
@@ -21,12 +22,8 @@ const UserMobileManagers = () => {
     const [defaultOption, setDefaultOption] = useState({ key: "", value: "Select manager..." });
     const [refreshing, setRefreshing] = useState(false);
 
-    const onRefresh = useCallback(() => {
-        setRefreshing(true);
-        fetchData();
-        setRefreshing(false);
-    }, []);
 
+    //FUNCTIONS================================================================================================
     const fetchData = async () => {
         try {
             setLoading(false);
@@ -64,6 +61,14 @@ const UserMobileManagers = () => {
         </FallingTiles>
     );
 
+    const onRefresh = useCallback(() => {
+        setRefreshing(true);
+        fetchData();
+        setRefreshing(false);
+    }, []);
+
+
+    //USE EFFECT HOOKS=========================================================================================
     useEffect(() => {
         setManagers([]);
         fetchData();
@@ -81,8 +86,10 @@ const UserMobileManagers = () => {
         }, [])
     );
 
+
     return (
         <View>
+
             <View className={"mx-2 mt-2 mb-10"}>
                 <CustomSelectList
                     setSelected={(value) => {

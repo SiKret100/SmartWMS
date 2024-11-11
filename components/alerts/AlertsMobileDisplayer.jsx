@@ -167,11 +167,10 @@ const AlertMobileDisplayer = () => {
         </FallingTiles>
     );
 
-    // Interpolate scrollY value with dynamic inputRange based on FlatList height
     const animatedTranslateY = scrollY.interpolate({
-        inputRange: [0, flatListHeight], // Dynamically use the height of the FlatList
-        outputRange: [60, -flatListHeight + 20], // Move it by the same height
-        extrapolate: 'clamp', // Prevent scrolling beyond the range
+        inputRange: [0, flatListHeight],
+        outputRange: [60, -flatListHeight + 20],
+        extrapolate: 'clamp',
     });
 
     return (

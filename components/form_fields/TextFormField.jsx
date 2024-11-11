@@ -14,6 +14,8 @@ const TextFormField = ({
                        iconsVisible = false,
                         ...props
                    }) => {
+
+    //PROPS====================================================================================================
     const [showPassword, setShowPassword] = useState(false);
     const [isFocused, setIsFocused] = useState(false);
     const smartwms_blue = "#475f9c"
@@ -26,7 +28,6 @@ const TextFormField = ({
                 Text
                 className='text-base font-pmedium'> {title}
             </Text>
-
 
             <View className={`
                               w-full 
@@ -41,6 +42,7 @@ const TextFormField = ({
                               ${value.length < 1 ? 'bg-slate-200' : isError ? 'border-red-500 bg-red-200' : 'bg-slate-200'}`
             }
             >
+
                 <TextInput
                     className='flex-1 h-full text-black-100 outline-none'
                     value={value}
@@ -64,8 +66,7 @@ const TextFormField = ({
 
             </View>
         </View>
-    )
-        ;
+    );
 };
 
 export default TextFormField;

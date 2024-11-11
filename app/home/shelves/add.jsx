@@ -1,10 +1,9 @@
 import { Text, View } from 'react-native'
+import LanesMobileForm from "../../../components/lanes/LanesMobileForm";
 
 const AlertAdd = () => {
   return (
-    <View>
-      <Text>Dodaj alert</Text>
-    </View>
+    <LanesMobileForm/>
   )
 }
 

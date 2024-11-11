@@ -11,6 +11,8 @@ import {router} from "expo-router";
 import CancelButton from "../buttons/CancelButton";
 
 const SubcategoryMobileForm = ({object = {}, header, setIsModalVisible, categoriesList, categoryId}) => {
+
+    //PROPS====================================================================================================
     const [errors, setErrors] =  useState({});
     const [subCategoryNameError, setSubCategoryNameError] = object.subcategoryId ? useState(false) : useState(true);
     const [subCategoryCategoryIdError, setSubCategoryCategoryIdError] = object?.subcategoryId ? useState(false) : useState(false);
@@ -20,29 +22,26 @@ const SubcategoryMobileForm = ({object = {}, header, setIsModalVisible, categori
         categoriesCategoryId: object?.categoriesCategoryId || categoryId
     });
 
+    const [categoryTypeMap, setCategoryTypeMap] = React.useState(
+        categoriesList.map( category => (
+            {
+                key: category.id,
+                value: category.title,
+            }
+        ))
+    );
+
+    const defaultOption = form.categoriesCategoryId !== -1 ? categoryTypeMap.find(category => category.key == form.categoriesCategoryId) : null;
+
+    //FUNCTIONS================================================================================================
     const handleSubcategoryName = (e) => {
         const subcategoryNameVar = e.nativeEvent.text;
         subcategoryNameVar.length > 0 ? setSubCategoryNameError(false) : setSubCategoryNameError(true);
     }
 
-    const [categoryTypeMap, setCategoryTypeMap] = React.useState(
-       categoriesList.map( category => (
-           {
-               key: category.id,
-               value: category.title,
-           }
-       ))
-    );
-
-    const defaultOption = form.categoriesCategoryId !== -1 ? categoryTypeMap.find(category => category.key == form.categoriesCategoryId) : null;
-
     const handleCategoryId = () => {
         form.categoriesCategoryId === -1 ? setSubCategoryCategoryIdError(true) : setSubCategoryCategoryIdError(false);
     }
-
-    useEffect(() => {
-        console.log('Otrzymano obiekt:' + JSON.stringify(categoriesList));
-    }, []);
 
     const handleEdit = async (id, form) => {
         console.log("WYWOLANIE EDIT")
@@ -77,8 +76,8 @@ const SubcategoryMobileForm = ({object = {}, header, setIsModalVisible, categori
             }else {
                 setErrors({});
                 setForm({
-                    subcategoryName: "",
-                    categoriesCategoryId: ""
+                        subcategoryName: "",
+                        categoriesCategoryId: ""
                     }
                 )
                 setIsModalVisible(false)
@@ -90,6 +89,12 @@ const SubcategoryMobileForm = ({object = {}, header, setIsModalVisible, categori
             setErrors(err);
         }
     }
+
+    //USE EFFECT HOOKS=========================================================================================
+    useEffect(() => {
+        console.log('Otrzymano obiekt:' + JSON.stringify(categoriesList));
+    }, []);
+
     return(
 
         <SafeAreaView className={"h-full mx-2"}>
@@ -156,11 +161,9 @@ const SubcategoryMobileForm = ({object = {}, header, setIsModalVisible, categori
                     </View>
                 )}
 
-
             </KeyboardAvoidingView>
         </SafeAreaView>
     )
-
 }
 
 export default SubcategoryMobileForm;

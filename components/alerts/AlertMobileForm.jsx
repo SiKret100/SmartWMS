@@ -12,6 +12,8 @@ import CustomSelectList from "../selects/CustomSelectList";
 import CancelButton from "../buttons/CancelButton";
 
 const AlertMobileForm = ({object = {}, header, setIsModalVisible}) => {
+
+    //PROPS====================================================================================================
     const [errors, setErrors] = useState({});
     const [selectKey, setSelectKey] = useState(0);//to jest po to zeby customselectlist sie restowal po edycji albo dodaniu
     const [titleError, setTitleError] = useState(true);
@@ -26,6 +28,21 @@ const AlertMobileForm = ({object = {}, header, setIsModalVisible}) => {
     });
 
     const defaultOption = form.alertType !== -1 ? alertTypeMap.find(item => item.key === form.alertType) : null;
+
+    //FUNCTIONS================================================================================================
+    const handleTitle = (e) => {
+        const titleVar = e.nativeEvent.text;
+        titleVar.length > 0 ? setTitleError(false) : setTitleError(true);
+    }
+
+    const handleDescription = (e) => {
+        const descVar = e.nativeEvent.text;
+        descVar.length > 0 ? setDescriptionError(false) : setDescriptionError(true);
+    }
+
+    const handleAlertType = () => {
+        form.alertType === -1 ? setAlertTypeError(true) : setAlertTypeError(false);
+    }
 
     const handleEdit = async (id, form) => {
         try {
@@ -72,23 +89,12 @@ const AlertMobileForm = ({object = {}, header, setIsModalVisible}) => {
         }
     };
 
+
+    //USE EFFECT HOOKS=========================================================================================
     useEffect(() => {
         console.log(`Otrzymano obiekt: ${JSON.stringify(object)}`);
     }, [])
 
-    const handleTitle = (e) => {
-        const titleVar = e.nativeEvent.text;
-        titleVar.length > 0 ? setTitleError(false) : setTitleError(true);
-    }
-
-    const handleDescription = (e) => {
-        const descVar = e.nativeEvent.text;
-        descVar.length > 0 ? setDescriptionError(false) : setDescriptionError(true);
-    }
-
-    const handleAlertType = () => {
-        form.alertType === -1 ? setAlertTypeError(true) : setAlertTypeError(false);
-    }
 
     return (
         <SafeAreaView className="h-full">

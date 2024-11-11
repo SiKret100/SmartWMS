@@ -15,12 +15,11 @@ const NumberFormField = ({
                              iconsVisible = false,
                              ...props
                          }) => {
+
+    //PROPS====================================================================================================
     const [showPassword, setShowPassword] = useState(false);
     const [isFocused, setIsFocused] = useState(false);
     const smartwms_blue = "#475f9c"
-
-    // console.log("Value:" + value)
-
 
     return (
         < View
@@ -30,7 +29,6 @@ const NumberFormField = ({
                 Text
                 className='text-base font-pmedium'>{title}
             </Text>
-
 
             <View className={`
                               w-full 
@@ -66,9 +64,6 @@ const NumberFormField = ({
                         )}
                     </View>
                 )}
-
-
-
 
             </View>
         </View>

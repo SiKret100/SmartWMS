@@ -8,14 +8,16 @@ import ErrorMessages from "../errors/ErrorMessages";
 import CancelButton from "../buttons/CancelButton";
 
 const CategoriesMobileForm = ({object = {}, header, setIsModalVisible}) => {
+
+    //PROPS====================================================================================================
     const [errors, setErrors] = useState({});
     const [categoryNameError, setCategoryNameError] = object?.id ? useState(false) : useState(true);
     const[selectKey, setSelectKey] = useState(0);
-
     const [form, setForm] = React.useState({
         categoryName: object?.title || ""
     })
 
+    //FUNCTIONS================================================================================================
     const handleName = (e) => {
         console.log("zmiana znaku");
         const nameVar = e.nativeEvent.text;
@@ -113,7 +115,6 @@ const CategoriesMobileForm = ({object = {}, header, setIsModalVisible}) => {
             {/*</KeyboardAvoidingView>*/}
         </SafeAreaView>
     )
-
 }
 
 export default CategoriesMobileForm

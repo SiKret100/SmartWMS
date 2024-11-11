@@ -14,6 +14,8 @@ import SubcategoriesMobileForm from "../subcategories/SubcategoriesMobileForm";
 
 
 const CategoriesMobileDisplayer = () => {
+
+    //PROPS====================================================================================================
     const [error, setError] = useState([]);
     const [sections, setSections] = useState([]);
     const [activeSections, setActiveSections] = useState([]);
@@ -23,16 +25,9 @@ const CategoriesMobileDisplayer = () => {
     const [isModalVisibleSubcategory, setIsModalVisibleSubcategory] = useState(false);
     const [selectKey, setSelectKey] = useState(null);
     const [categoryId, setCategoryId] = useState(null);
-
-
     const [refreshing, setRefreshing] = React.useState(false);
 
-    const onRefresh = React.useCallback(() =>{
-        setRefreshing(true);
-        fetchData();
-        setRefreshing(false);
-    }, []);
-
+    //FUNCTIONS================================================================================================
     const fetchData = async () => {
         setSections([]); // Resetujemy sekcje
         await categoryService
@@ -55,13 +50,11 @@ const CategoriesMobileDisplayer = () => {
             });
     };
 
-    // const _renderSectionTitle = (section) => {
-    //     return (
-    //         <View>
-    //             <Text>{section.content}</Text>
-    //         </View>
-    //     );
-    // };
+    const onRefresh = React.useCallback(() =>{
+        setRefreshing(true);
+        fetchData();
+        setRefreshing(false);
+    }, []);
 
     const _renderHeader = (section, _, isActive) => {
         return (
@@ -140,7 +133,6 @@ const CategoriesMobileDisplayer = () => {
         setCurrentEditItemSubcategory();
         setIsModalVisibleSubcategory(true);
         setCategoryId(categoryId);
-
     }
 
     const handleDeleteCategory = async (object) => {
@@ -164,8 +156,15 @@ const CategoriesMobileDisplayer = () => {
         }
     }
 
+    // const _renderSectionTitle = (section) => {
+    //     return (
+    //         <View>
+    //             <Text>{section.content}</Text>
+    //         </View>
+    //     );
+    // };
 
-
+    //USE EFFECT HOOKS=========================================================================================
     useFocusEffect((
         useCallback(
             () => {

@@ -16,6 +16,8 @@ import Feather from "react-native-vector-icons/Feather";
 import CustomSelectList from "../selects/CustomSelectList";
 
 const UserMobileDisplayer = () => {
+
+  //PROPS====================================================================================================
   const [errors, setErrors] = useState([]);
   const [selected, setSelected] = useState(undefined);
   const [loading, setLoading] = useState(false);
@@ -27,7 +29,7 @@ const UserMobileDisplayer = () => {
   const [err, setError] = useState("");
   const [isDeletedItem, setIsDeletedItem] = useState(false);
 
-
+  //FUNCTIONS================================================================================================
   const fetchData = async () => {
     setLoading(false);
     await userService.GetAll()
@@ -58,53 +60,23 @@ const UserMobileDisplayer = () => {
         });
   };
 
-  const handleDelete = async (id) => {
-
-    try {
-      await userService.Delete(id);
-    } catch (err) {
-      console.log(err);
-    }
-    setIsDeletedItem(true);
-  }
-
-  useEffect(() => {
-    fetchData();
-    if (isDeletedItem) setIsDeletedItem(false);
-  }, [isDeletedItem]);
-
-  useFocusEffect(
-    useCallback(() => {
-      fetchData();
-    }, [isModalVisible])
+  const renderItem = ({ item }) => (
+      <FallingTiles>
+        {item.role === "Admin" ? null : (
+            <View className={"flex-row justify-between items-center flex-0.5 px-2 py-2 mx-2 my-2 shadow rounded-lg bg-slate-200"}>
+              <Feather name="user" size={24} color={"black"} />
+              <View className={"px-2 py-2 mx-4"}>
+                <View>
+                  <Text className={"text-center"}>{item.email}</Text>
+                  <Text className={"text-center"}>{item.userName}</Text>
+                  <Text className={"text-center"}>{item.role}</Text>
+                </View>
+              </View>
+              <DeleteButton onDelete={() => handleDelete(item.id)} />
+            </View>
+        )}
+      </FallingTiles>
   );
-
-  const onRefresh = useCallback(() => {
-    setRefreshing(true);
-    fetchData();
-    setRefreshing(false);
-  }, []);
-
-  const getRole = (selected) => {
-    const roleObject = userTypeMap.find(item => item.key === selected);
-    return roleObject ? roleObject.value : "Unknown role";
-  }
-
-  useEffect(() => {
-
-    const parsedSelected = parseInt(selected);
-    setSelected(parsedSelected);
-
-    if (selected !== -1)
-      setFilteredData(data.filter(record => record.role === getRole(selected)));
-
-    else
-      setFilteredData(data);
-
-    if (selected !== undefined && selected !== null && !isNaN(selected)) {
-      saveSelected();
-    }
-  }, [selected]);
 
   const loadSelected = async () => {
     try {
@@ -143,32 +115,67 @@ const UserMobileDisplayer = () => {
     }
   };
 
-  const renderItem = ({ item }) => (
-    <FallingTiles>
-      {item.role === "Admin" ? null : (
-        <View className={"flex-row justify-between items-center flex-0.5 px-2 py-2 mx-2 my-2 shadow rounded-lg bg-slate-200"}>
-          <Feather name="user" size={24} color={"black"} />
-          <View className={"px-2 py-2 mx-4"}>
-            <View>
-              <Text className={"text-center"}>{item.email}</Text>
-              <Text className={"text-center"}>{item.userName}</Text>
-              <Text className={"text-center"}>{item.role}</Text>
-            </View>
-          </View>
-          <DeleteButton onDelete={() => handleDelete(item.id)} />
-        </View>
-      )}
-    </FallingTiles>
+  const getRole = (selected) => {
+    const roleObject = userTypeMap.find(item => item.key === selected);
+    return roleObject ? roleObject.value : "Unknown role";
+  }
+
+  const handleDelete = async (id) => {
+
+    try {
+      await userService.Delete(id);
+    } catch (err) {
+      console.log(err);
+    }
+    setIsDeletedItem(true);
+  }
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    fetchData();
+    setRefreshing(false);
+  }, []);
+
+
+  //USE EFFECT HOOKS=========================================================================================
+  useEffect(() => {
+    fetchData();
+    if (isDeletedItem) setIsDeletedItem(false);
+  }, [isDeletedItem]);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchData();
+    }, [isModalVisible])
   );
+
+  useEffect(() => {
+    const parsedSelected = parseInt(selected);
+    setSelected(parsedSelected);
+
+    if (selected !== -1)
+      setFilteredData(data.filter(record => record.role === getRole(selected)));
+
+    else
+      setFilteredData(data);
+
+    if (selected !== undefined && selected !== null && !isNaN(selected)) {
+      saveSelected();
+    }
+  }, [selected]);
+
 
   return (
     <SafeAreaView className={"flex-1 justify-start align-center"}>
+
       <View className={"mx-2 mt-2 mb-10"}>
+
         <CustomSelectList 
           setSelected={val => setSelected(val)}
           typeMap={[{ key: -1, value: 'All' }, ...userTypeMap]}
           defaultOption={defaultOption}
         />
+
       </View>
 
         <FlatList
@@ -190,6 +197,7 @@ const UserMobileDisplayer = () => {
             )
           }
         />
+
     </SafeAreaView>
   );
 };
