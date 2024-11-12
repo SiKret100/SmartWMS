@@ -1,4 +1,4 @@
-import {KeyboardAvoidingView, SafeAreaView, Text, View} from "react-native";
+import {KeyboardAvoidingView, Modal, Platform, SafeAreaView, Text, View} from "react-native";
 import React, {useCallback, useEffect, useState} from "react";
 import TextFormField from "../form_fields/TextFormField";
 import NumberFormField from "../form_fields/NumberFormField";
@@ -7,6 +7,7 @@ import {useFocusEffect} from "expo-router";
 import CustomButton from "../buttons/CustomButton";
 import CustomSelectList from "../selects/CustomSelectList";
 import shelfService from "../../services/dataServices/shelfService";
+import ShelfAssignForm from "components/products/ShelfAssignForm.js";
 
 const ProductsMobileForm = () => {
 
@@ -21,7 +22,7 @@ const ProductsMobileForm = () => {
     })
 
     const [subcategoryTypeMap, setsubcategoryTypeMap] = useState([]);
-    const [shelvesTypeMap, setShelvesTypeMap] = useState([]);
+    // const [shelvesTypeMap, setShelvesTypeMap] = useState([]);
     const [productNameError, setProductNameError] = useState(false);
     const [productDescriptionError, setProductDescriptionError] = useState(false);
     const [priceError, setPriceError] = useState(false);
@@ -29,9 +30,12 @@ const ProductsMobileForm = () => {
     const [barcodeError, setBarcodeError] = useState(false);
     const [subcategoriesSubcategoryIdError, setSubcategoriesSubcategoryIdError] = useState(false);
     const [errors, setErrors] = useState({});
-    
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [shelvesList, setShelvesList] = useState([]);
+    const [assignedShelves, setAssignedShelves] = useState([]);
+    const [productQuantity, setProductQuantity] = useState(form.quantity);
 
-    //FUNCTIONS=====================================================================================key========
+    //FUNCTIONS=============================================================================================
     const fetchSubcategories = async () => {
         try{
             const result = await subcategoryService.GetAll();
@@ -48,13 +52,16 @@ const ProductsMobileForm = () => {
 
     const fetchShelves = async () => {
         try{
-            const result = await shelfService.GetAll()
-            let filteredShelves = result.data.filter(shelf => shelf.productsProductId === null)
+            const result = await shelfService.GetShelfWithRackLane()
 
-            setShelvesTypeMap(filteredShelves.map(shelf => ({
-                key: shelf.shelfId,
-                value: shelf.level
-            })))
+            let filteredShelves = result.data.filter(shelf => shelf.productId === null)
+            setShelvesList(filteredShelves)
+
+            // setShelvesTypeMap(filteredShelves.map(shelf => ({
+            //     key: shelf.shelfId,
+            //     value: "Lane: " + shelf.rackLane.lane.laneCode + " Rack: "+ shelf.rackLane.rackNumber + " Level: " + shelf.level
+            // })))
+
 
         }catch(err){
             console.log(`Bledy fetchShelves: ${JSON.stringify(err)}`)
@@ -145,6 +152,7 @@ const ProductsMobileForm = () => {
     useFocusEffect(
         useCallback(() => {
             fetchSubcategories()
+            fetchShelves()
         }, [])
     );
 
@@ -185,7 +193,7 @@ const ProductsMobileForm = () => {
 
                 <NumberFormField
                     title={"Quantity"}
-                    value={form.quantity}
+                    value={form.quantity.toString()}
                     handleChangeText={(e) => setForm({...form, quantity: e})}
                     onChange={e => handleQuantity(e)}
                     isError={quantityError}
@@ -206,10 +214,28 @@ const ProductsMobileForm = () => {
                     typeMap={subcategoryTypeMap}
                     defaultOption={{key: -1, value: "Choose subcategory"}}
                     onSelect={() => handleSubcategoryId()}
-
                 />
 
-                <CustomButton handlePress={() => fetchShelves() }></CustomButton>
+                <CustomSelectList
+                    setSelected={val => setForm({...form, subcategoriesSubcategoryId: val})}
+                    typeMap={subcategoryTypeMap}
+                    defaultOption={{key: -1, value: "Choose shelf"}}
+                    onSelect={() => handleSubcategoryId()}
+                />
+
+
+                {/*//przycisk do przechodzenia do modala musi byc wlaczony jesli pole quantity w formularzu jestustawione i przeszlo waldiacje*/}
+                <CustomButton handlePress={() => setIsModalVisible(true)}></CustomButton>
+                <Modal
+                    visible={isModalVisible}
+                    animationType={Platform.OS !== "ios" ? "" : "slide"}
+                    presentationStyle={Platform.OS === "ios" ? "pageSheet" : ""}
+                    onRequestClose={() => setIsModalVisible(false)}
+                >
+                    <ShelfAssignForm productQuantity={form.quantity} shelvesList={shelvesList} setIsModalVisible={setIsModalVisible} assignedShelves={assignedShelves} />
+                </Modal>
+
+                <CustomButton handlePress={() => console.log(JSON.stringify(shelvesList)) }></CustomButton>
                 <Text>SubcategoryID: {form.subcategoriesSubcategoryId}</Text>
             </KeyboardAvoidingView>
 

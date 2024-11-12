@@ -51,7 +51,6 @@ const ProductMobileDetailDisplayer = ({product, setIsModalVisible}) => {
                     <Text className={"text-3xl font-bold mt-4 shadow-amber-400"}>Locations:</Text>
 
 
-
                     {product.shelves.length > 0 && product.shelves.map(shelf => {
                             const stockPercentage = (shelf.currentQuant / shelf.maxQuant) * 100;
                             const textColor = stockPercentage < 25 ? "text-red-500"

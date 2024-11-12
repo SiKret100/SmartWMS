@@ -142,4 +142,30 @@ export default class shelfService {
         }
     }
 
+    static GetShelfWithRackLane = async () => {
+        const token = Platform.OS !== "web" ? SecureStore.getItem("token") : "";
+        const config = {
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+        };
+
+        try{
+            let response;
+
+            if (Platform.OS === "web") {
+                response = await axios.get(`${this.ip}/api/Shelf/withRackLane`);
+            } else {
+                response = await axios.get(`${this.ip}/api/Shelf/withRackLane`, config);
+            }
+
+            //console.log("From service: " + JSON.stringify(response));
+            return response;
+        }
+        catch(err){
+            console.log(`Error from shelfservice: ${JSON.stringify(err)} `);
+        }
+    }
+
 }
