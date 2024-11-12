@@ -19,7 +19,7 @@ const NumberFormField = ({
     //PROPS====================================================================================================
     const [showPassword, setShowPassword] = useState(false);
     const [isFocused, setIsFocused] = useState(false);
-    const smartwms_blue = "#475f9c"
+    const smartwms_blue = "#475f9c";
 
     return (
         < View

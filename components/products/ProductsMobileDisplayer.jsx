@@ -21,8 +21,9 @@ const ProductsMobileDisplayer = () => {
     //FUNCTIONS================================================================================================
     const fetchData = async () => {
         try {
-            const result = await productService.GetAll();
+            // const result = await productService.GetAll();
             //console.log(JSON.stringify(result.data));
+            const result = await productService.GetAllWithShelves();
             setData(result.data)
 
         } catch (err) {
@@ -91,6 +92,8 @@ const ProductsMobileDisplayer = () => {
                 }
 
             />
+
+            <CustomButton title={"Data"} handlePress={() => console.log(JSON.stringify(data))}/>
 
             <Modal
                 visible = {isProductDetailModalVisible}

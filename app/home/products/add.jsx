@@ -1,10 +1,9 @@
 import { Text, View } from 'react-native'
+import ProductsMobileForm from "../../../components/products/ProductsMobileForm";
 
 const AlertAdd = () => {
   return (
-    <View>
-      <Text>Dodaj alert</Text>
-    </View>
+    <ProductsMobileForm/>
   )
 }
 

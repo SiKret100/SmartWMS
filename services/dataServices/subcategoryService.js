@@ -46,8 +46,8 @@ export default class subcategoryService {
 
 
             const subcategoryDto = new SubcategoryDto(subcategoryData)
-            console.log(JSON.stringify(subcategoryDto));
-            console.log(`Przekazane id: ${id}`);
+            //console.log(JSON.stringify(subcategoryDto));
+            //console.log(`Przekazane id: ${id}`);
             let response
 
             if (Platform.OS === "web") {
@@ -60,14 +60,43 @@ export default class subcategoryService {
                 );
             }
 
-            console.log(response);
+           // console.log(response);
             return response;
 
         } catch (err) {
             console.log(err);
             return err.response.data;
         }
+    }
 
+    static GetAll = async () => {
+        const token = Platform.OS !== "web" ? SecureStore.getItem("token") : "";
+        const config = {
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+        };
+
+        try{
+            let response
+
+            if (Platform.OS === "web") {
+                response = await axios.get(`${this.ip}/api/Subcategory`);
+            } else {
+                response = await axios.get(
+                    `${this.ip}/api/Subcategory`,
+                    config
+                );
+            }
+
+            //console.log(response);
+            return response;
+        }
+        catch (err) {
+            console.log(err);
+            return err.response.data;
+        }
     }
 
 }

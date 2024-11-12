@@ -25,7 +25,6 @@ const CategoryLayout = () => {
         )
       }}/>
 
-
     </Tabs>
   )
 }

@@ -116,4 +116,30 @@ export default class shelfService {
         }
     }
 
+    static GetAll = async () => {
+        const token = Platform.OS !== "web" ? SecureStore.getItem("token") : "";
+        const config = {
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+        };
+
+        try{
+            let response;
+
+            if (Platform.OS === "web") {
+                response = await axios.get(`${this.ip}/api/Shelf`);
+            } else {
+                response = await axios.get(
+                    `${this.ip}/api/Shelf`, config);
+            }
+
+            return response;
+        }
+        catch(err){
+            console.log(`Error from shelfservice: ${JSON.stringify(err)} `);
+        }
+    }
+
 }
