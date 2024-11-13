@@ -232,7 +232,7 @@ const ProductsMobileForm = () => {
                     presentationStyle={Platform.OS === "ios" ? "pageSheet" : ""}
                     onRequestClose={() => setIsModalVisible(false)}
                 >
-                    <ShelfAssignForm productQuantity={form.quantity} shelvesList={shelvesList} setIsModalVisible={setIsModalVisible} assignedShelves={assignedShelves} />
+                    <ShelfAssignForm productQuantity={form.quantity} shelvesList={shelvesList} setIsModalVisible={setIsModalVisible} assignedShelves={assignedShelves} setAssignedShelves={setAssignedShelves}/>
                 </Modal>
 
                 <CustomButton handlePress={() => console.log(JSON.stringify(shelvesList)) }></CustomButton>
