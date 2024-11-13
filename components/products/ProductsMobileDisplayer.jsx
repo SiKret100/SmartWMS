@@ -1,4 +1,4 @@
-import {useEffect, useState, useCallback} from "react";
+import {useState, useCallback} from "react";
 import {ScrollView, TouchableOpacity} from "react-native-gesture-handler";
 import {Platform, ActivityIndicator, FlatList, Modal, RefreshControl, SafeAreaView, Text, View} from "react-native";
 import CustomButton from "../buttons/CustomButton";
@@ -8,6 +8,8 @@ import Feather from "react-native-vector-icons/Feather";
 import DeleteButton from "../buttons/DeleteButton";
 import EditButton from "../buttons/EditButton";
 import ProductsMobileDetailDisplayer from "./ProductsMobileDetailDisplayer";
+import {useFocusEffect} from "expo-router";
+import ProductMobileTakeDeliveryModal from "./ProductMobileTakeDeliveryModal";
 
 const ProductsMobileDisplayer = () => {
 
@@ -17,6 +19,7 @@ const ProductsMobileDisplayer = () => {
     const [loading, setLoading] = useState(false);
     const [isProductDetailModalVisible, setIsProductDetailModalVisible] = useState(false);
     const [currentProductDetail, setCurrentProductDetail] = useState(null);
+    const [isTakeDeliveryModalVisible, setIsTakeDeliveryModalVisible] = useState(false);
 
     //FUNCTIONS================================================================================================
     const fetchData = async () => {
@@ -66,14 +69,19 @@ const ProductsMobileDisplayer = () => {
     }, []);
 
 //USE EFFECT HOOKS=========================================================================================
-    useEffect(() => {
-        fetchData();
-    }, [])
+
+
+    useFocusEffect((
+        useCallback(
+            () => {
+                fetchData()
+            },[])
+    ));
 
     return (
         <SafeAreaView className={"flex-1 justify-start align-center"}>
             <FlatList
-                data={data}
+                data={data.reverse()}
                 keyExtractor={(item) => item.productId.toString()}
                 renderItem={renderItem}
                 refreshControl={
@@ -93,7 +101,7 @@ const ProductsMobileDisplayer = () => {
 
             />
 
-            <CustomButton title={"Data"} handlePress={() => console.log(JSON.stringify(data))}/>
+            <CustomButton title={"Take new delivery"}  textStyles={"text-white"} containerStyles={"px-2 mb-2 mx-2"} handlePress={() => setIsTakeDeliveryModalVisible(true) }/>
 
             <Modal
                 visible = {isProductDetailModalVisible}
@@ -104,6 +112,16 @@ const ProductsMobileDisplayer = () => {
                 <View className="flex-auto mt-5 bg-background-light">
                     <ProductsMobileDetailDisplayer product={currentProductDetail} setIsModalVisible={setIsProductDetailModalVisible}/>
                 </View>
+
+            </Modal>
+
+            <Modal
+                visible = {isTakeDeliveryModalVisible}
+                animationType={Platform.OS !== "ios" ? "" : "slide"}
+                presentationStyle={Platform.OS === "ios" ? "pageSheet" : ""}
+                onRequestClose={() => setIsTakeDeliveryModalVisible(false)}
+            >
+                <ProductMobileTakeDeliveryModal setIsModalVisible={setIsTakeDeliveryModalVisible}/>
 
             </Modal>
         </SafeAreaView>

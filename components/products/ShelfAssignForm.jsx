@@ -44,7 +44,7 @@ const ShelfAssignForm = ({shelvesList, assignedShelves, setAssignedShelves, setI
             <ScrollView className={"px-2"}>
                 <View className="flex flex-col items-start justify-between my-5 mx-5">
                     <CancelButton onPress={() => setIsModalVisible(false)} />
-                    <Text className="my-5 text-3xl font-bold">Assign Prodcut to shelves</Text>
+                    <Text className="my-5 text-3xl font-bold">Assign Product to shelves</Text>
                 </View>
 
                 <View className={"mb-5 px-2 flex-row"}>

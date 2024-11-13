@@ -1,6 +1,7 @@
 import {Platform} from "react-native";
 import axios from "axios";
 import * as SecureStore from "expo-secure-store";
+import {router} from "expo-router";
 
 export default class productService {
     static ip = process.env.EXPO_PUBLIC_IP
@@ -99,9 +100,12 @@ export default class productService {
                 response = await axios.post(`${this.ip}/api/Product/createAndAssignToShelves`, data, config);
             }
 
-            //console.log(response);
+            console.log("Service response: "  + JSON.stringify(response));
+            router.push(`/home/products`);
+
             return response;
         } catch (err) {
+            // console.log(`errory z serwisu: ${JSON.stringify(err)}`);
             return err.response.data;
         }
     }

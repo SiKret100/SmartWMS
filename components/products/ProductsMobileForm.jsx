@@ -7,9 +7,10 @@ import {useFocusEffect} from "expo-router";
 import CustomButton from "../buttons/CustomButton";
 import CustomSelectList from "../selects/CustomSelectList";
 import shelfService from "../../services/dataServices/shelfService";
-import ShelfAssignForm from "components/products/ShelfAssignForm.js";
+import ShelfAssignForm from "components/products/ShelfAssignForm.jsx";
 import {ScrollView} from "react-native-gesture-handler";
 import ShelfAssignDisplayer from "./ShelfAssignDisplayer";
+import productService from "../../services/dataServices/productService";
 
 const ProductsMobileForm = () => {
 
@@ -22,7 +23,7 @@ const ProductsMobileForm = () => {
         barcode: "",
         subcategoriesSubcategoryId: -1,
     })
-
+    const [selectKey, setSelectKey] = useState(0);
     const [subcategoryTypeMap, setsubcategoryTypeMap] = useState([]);
     // const [shelvesTypeMap, setShelvesTypeMap] = useState([]);
     const [productNameError, setProductNameError] = useState(true);
@@ -39,9 +40,11 @@ const ProductsMobileForm = () => {
     const [assignedShelves, setAssignedShelves] = useState([]);
     const [productQuantity, setProductQuantity] = useState(form.quantity);
     const [request, setRequest] = useState({
-        product: {},
+        productDto: {},
         shelves: [],
     })
+
+    const defaultOption = {key: -1, value: "Choose subcategory"};
 
     //FUNCTIONS=============================================================================================
     const fetchSubcategories = async () => {
@@ -86,6 +89,7 @@ const ProductsMobileForm = () => {
         productDescriptionVar.length > 0 ? setProductDescriptionError(false) : setProductDescriptionError(true);
 
     }
+
 
     const handlePrice = (e) => {
         const price = e.nativeEvent.text;
@@ -171,19 +175,41 @@ const ProductsMobileForm = () => {
         assignedShelves.length > 0 ? setAssignedShelvesError(false) : setAssignedShelvesError(true);
     }
 
-    const handleCreatProduct = () => {
+    const handleCreateProduct = async () => {
 
         // console.log("Form: " + JSON.stringify(form))
         // console.log("Assignes shelces " + JSON.stringify(assignedShelves))
 
-        setRequest({
-            ...form,
-            ...assignedShelves
-        })
 
 
-        console.log(JSON.stringify(request))
-        setAssignedShelves([])
+
+        try{
+            const result = await productService.AddProductAndAssignShelves(request);
+            if(result.errors){
+                setErrors(result.errors);
+                //console.log(`Błędy przechwycone: ${JSON.stringify(result.errors)}`);
+            }else{
+                setForm({
+                    productName: "",
+                    productDescription: "",
+                    price: "",
+                    quantity: "",
+                    barcode: "",
+                    subcategoriesSubcategoryId: -1,
+                })
+                setErrors({})
+                // setForm({
+                //     laneCode: ""
+                // })
+                setSelectKey((prevKey) => prevKey + 1);
+            }
+        }
+        catch(err){
+            setErrors(err);
+            //console.log(`Bledy w komponencie: ${JSON.stringify(err)}`);
+        }
+
+
     }
 
     //USE EFFECT HOOKS=========================================================================================
@@ -198,6 +224,26 @@ const ProductsMobileForm = () => {
         handleAssignedShelves();
     }, [isModalProductMobileFormVisible])
 
+    useEffect(() => {
+        setRequest({
+            productDto: {
+                productName: form.productName,
+                productDescription: form.productDescription,
+                price: form.price,
+                quantity: form.quantity,
+                barcode: form.barcode,
+                subcategoriesSubcategoryId: form.subcategoriesSubcategoryId,
+            },
+            shelves: assignedShelves.map(shelf => ({
+                shelfId: shelf.shelfId,
+                level: shelf.level,
+                maxQuant: shelf.maxQuant,
+                currentQuant: shelf.currentQuant,
+                productsProductId: shelf.productsProductId,
+                racksRackId: shelf.rackId,
+            }))
+        })
+    },[assignedShelves])
 
     return (
 
@@ -261,9 +307,10 @@ const ProductsMobileForm = () => {
 
                 <View className={"mt-12"}>
                     <CustomSelectList
+                        selectKey={selectKey}
                         setSelected={val => setForm({...form, subcategoriesSubcategoryId: val})}
                         typeMap={subcategoryTypeMap}
-                        defaultOption={{key: -1, value: "Choose subcategory"}}
+                        defaultOption={defaultOption}
                         onSelect={() => handleSubcategoryId()}
                     />
                 </View>
@@ -280,11 +327,11 @@ const ProductsMobileForm = () => {
                                                             containerStyles={"mt-7"}
                                                             textStyles={"text-white"}></CustomButton> : null}
 
-                <CustomButton title={"Save"} handlePress={() => handleCreatProduct()} containerStyles={"mt-7"}
+                <CustomButton title={"Save"} handlePress={() => handleCreateProduct()} containerStyles={"mt-7"}
                               isLoading={subcategoriesSubcategoryIdError | quantityError | productNameError | productDescriptionError | priceError | barcodeError | assignedShelvesError}
                               showLoading={false} textStyles={"text-white"}></CustomButton>
 
-                <CustomButton handlePress={() => console.log(JSON.stringify(assignedShelves))}></CustomButton>
+                {/*<CustomButton handlePress={() => console.log(JSON.stringify(assignedShelves))}></CustomButton>*/}
 
 
                 <Modal
@@ -306,12 +353,8 @@ const ProductsMobileForm = () => {
                >
                     <ShelfAssignDisplayer assignedShelves={assignedShelves} setIsModalVisible={setIsModalAssignesShelvesVisible}/>
                </Modal>
-                
-
-
 
             </KeyboardAvoidingView>
-
 
         </ScrollView>
 
