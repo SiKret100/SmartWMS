@@ -1,4 +1,4 @@
-import {KeyboardAvoidingView, Modal, Platform, SafeAreaView, Text, View} from "react-native";
+import {KeyboardAvoidingView, Modal, Platform, Text, View} from "react-native";
 import React, {useCallback, useEffect, useState} from "react";
 import TextFormField from "../form_fields/TextFormField";
 import NumberFormField from "../form_fields/NumberFormField";
@@ -8,6 +8,8 @@ import CustomButton from "../buttons/CustomButton";
 import CustomSelectList from "../selects/CustomSelectList";
 import shelfService from "../../services/dataServices/shelfService";
 import ShelfAssignForm from "components/products/ShelfAssignForm.js";
+import {ScrollView} from "react-native-gesture-handler";
+import ShelfAssignDisplayer from "./ShelfAssignDisplayer";
 
 const ProductsMobileForm = () => {
 
@@ -23,35 +25,40 @@ const ProductsMobileForm = () => {
 
     const [subcategoryTypeMap, setsubcategoryTypeMap] = useState([]);
     // const [shelvesTypeMap, setShelvesTypeMap] = useState([]);
-    const [productNameError, setProductNameError] = useState(false);
-    const [productDescriptionError, setProductDescriptionError] = useState(false);
-    const [priceError, setPriceError] = useState(false);
-    const [quantityError, setQuantityError] = useState(false);
-    const [barcodeError, setBarcodeError] = useState(false);
-    const [subcategoriesSubcategoryIdError, setSubcategoriesSubcategoryIdError] = useState(false);
+    const [productNameError, setProductNameError] = useState(true);
+    const [productDescriptionError, setProductDescriptionError] = useState(true);
+    const [priceError, setPriceError] = useState(true);
+    const [quantityError, setQuantityError] = useState(true);
+    const [barcodeError, setBarcodeError] = useState(true);
+    const [assignedShelvesError, setAssignedShelvesError] = useState(true);
+    const [subcategoriesSubcategoryIdError, setSubcategoriesSubcategoryIdError] = useState(true);
     const [errors, setErrors] = useState({});
-    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [isModalProductMobileFormVisible, setIsModalProductMobileFormVisible] = useState(false);
+    const [isModalAssignesShelvesVisible, setIsModalAssignesShelvesVisible] = useState(false);
     const [shelvesList, setShelvesList] = useState([]);
     const [assignedShelves, setAssignedShelves] = useState([]);
     const [productQuantity, setProductQuantity] = useState(form.quantity);
+    const [request, setRequest] = useState({
+        product: {},
+        shelves: [],
+    })
 
     //FUNCTIONS=============================================================================================
     const fetchSubcategories = async () => {
-        try{
+        try {
             const result = await subcategoryService.GetAll();
             setsubcategoryTypeMap(result.data.map(subcategory => ({
                 key: subcategory.subcategoryId,
                 value: subcategory.subcategoryName,
             })));
-        }
-        catch(err){
+        } catch (err) {
             console.log(`Bledy fetchSubcategories: ${JSON.stringify(err)}`)
             setErrors(err)
         }
     }
 
     const fetchShelves = async () => {
-        try{
+        try {
             const result = await shelfService.GetShelfWithRackLane()
 
             let filteredShelves = result.data.filter(shelf => shelf.productId === null)
@@ -63,7 +70,7 @@ const ProductsMobileForm = () => {
             // })))
 
 
-        }catch(err){
+        } catch (err) {
             console.log(`Bledy fetchShelves: ${JSON.stringify(err)}`)
             setErrors(err)
         }
@@ -86,17 +93,17 @@ const ProductsMobileForm = () => {
 
         if (price.length >= 1 && regexp.test(price)) {
 
-            const parsedPrice =  parseFloat(price);
+            const parsedPrice = parseFloat(price);
             console.log(parsedPrice);
 
             if (isNaN(parsedPrice)) {
                 setPriceError(true);
                 console.log('Error: not a number');
             } else {
-                if ( parsedPrice <= 999999999 ) {
+                if (parsedPrice <= 999999999) {
                     setPriceError(false);
                     console.log('No error');
-                }else{
+                } else {
                     setPriceError(true);
                     console.log('Error');
                 }
@@ -118,10 +125,24 @@ const ProductsMobileForm = () => {
                 setQuantityError(true);
                 console.log('Error: not a number');
             } else {
-                if (parsedMaxQuantity <= 999 ) {
-                    setQuantityError(false);
-                    console.log('No error');
-                }else{
+                setAssignedShelvesError(false)
+                if (parsedMaxQuantity <= 999) {
+                    if (assignedShelves.length > 0) {
+                        const summedQuantity = assignedShelves.reduce((acc, shelf) => acc + parseInt(shelf.currentQuant), 0);
+                        console.log("Summed quantity: " + summedQuantity);
+                        if (summedQuantity === parsedMaxQuantity) {
+                            setQuantityError(false);
+                            console.log('No error');
+                        } else {
+                            setQuantityError(true);
+                            console.log('Error');
+                        }
+                    } else {
+                        setQuantityError(false);
+                        console.log('No error');
+                    }
+
+                } else {
                     setQuantityError(true);
                     console.log('Error');
                 }
@@ -133,12 +154,12 @@ const ProductsMobileForm = () => {
     }
 
     const handleBarcode = (e) => {
-        const regexp = new RegExp("^[A-za-z\\d]{8}$")
+        const regexp = new RegExp("^[A-za-z\\d]{8}$");
         const barcodeVar = e.nativeEvent.text;
         console.log(barcodeVar);
 
-        if(regexp.test(barcodeVar)){
-            setBarcodeError(false)
+        if (regexp.test(barcodeVar)) {
+            setBarcodeError(false);
         } else setBarcodeError(true);
     }
 
@@ -146,21 +167,44 @@ const ProductsMobileForm = () => {
         form.subcategoriesSubcategoryId === -1 ? setSubcategoriesSubcategoryIdError(true) : setSubcategoriesSubcategoryIdError(false);
     }
 
+    const handleAssignedShelves = () => {
+        assignedShelves.length > 0 ? setAssignedShelvesError(false) : setAssignedShelvesError(true);
+    }
 
+    const handleCreatProduct = () => {
+
+        // console.log("Form: " + JSON.stringify(form))
+        // console.log("Assignes shelces " + JSON.stringify(assignedShelves))
+
+        setRequest({
+            ...form,
+            ...assignedShelves
+        })
+
+
+        console.log(JSON.stringify(request))
+        setAssignedShelves([])
+    }
 
     //USE EFFECT HOOKS=========================================================================================
     useFocusEffect(
         useCallback(() => {
-            fetchSubcategories()
-            fetchShelves()
+            fetchSubcategories();
+            fetchShelves();
         }, [])
     );
 
+    useEffect(() => {
+        handleAssignedShelves();
+    }, [isModalProductMobileFormVisible])
+
 
     return (
-        <SafeAreaView>
 
-            <KeyboardAvoidingView>
+        <ScrollView className={"h-full mx-2"}>
+
+
+            <KeyboardAvoidingView className={"h-full px-4"} behavior={"padding"}>
 
                 <Text className="absolute left-1/2 transform -translate-x-1/2 my-5 text-3xl font-bold">Add</Text>
 
@@ -180,6 +224,7 @@ const ProductsMobileForm = () => {
                     onChange={e => handleProductDescription(e)}
                     isError={productDescriptionError}
                     iconsVisible={true}
+                    otherStyles={"mt-7"}
                 />
 
                 <NumberFormField
@@ -189,6 +234,8 @@ const ProductsMobileForm = () => {
                     onChange={e => handlePrice(e)}
                     isError={priceError}
                     iconsVisible={true}
+                    otherStyles={"mt-7"}
+
                 />
 
                 <NumberFormField
@@ -198,6 +245,7 @@ const ProductsMobileForm = () => {
                     onChange={e => handleQuantity(e)}
                     isError={quantityError}
                     iconsVisible={true}
+                    otherStyles={"mt-7"}
                 />
 
                 <TextFormField
@@ -207,39 +255,66 @@ const ProductsMobileForm = () => {
                     onChange={e => handleBarcode(e)}
                     isError={barcodeError}
                     iconsVisible={true}
+                    otherStyles={"mt-7"}
                 />
 
-                <CustomSelectList
-                    setSelected={val => setForm({...form, subcategoriesSubcategoryId: val})}
-                    typeMap={subcategoryTypeMap}
-                    defaultOption={{key: -1, value: "Choose subcategory"}}
-                    onSelect={() => handleSubcategoryId()}
-                />
 
-                <CustomSelectList
-                    setSelected={val => setForm({...form, subcategoriesSubcategoryId: val})}
-                    typeMap={subcategoryTypeMap}
-                    defaultOption={{key: -1, value: "Choose shelf"}}
-                    onSelect={() => handleSubcategoryId()}
-                />
+                <View className={"mt-12"}>
+                    <CustomSelectList
+                        setSelected={val => setForm({...form, subcategoriesSubcategoryId: val})}
+                        typeMap={subcategoryTypeMap}
+                        defaultOption={{key: -1, value: "Choose subcategory"}}
+                        onSelect={() => handleSubcategoryId()}
+                    />
+                </View>
 
 
                 {/*//przycisk do przechodzenia do modala musi byc wlaczony jesli pole quantity w formularzu jestustawione i przeszlo waldiacje*/}
-                <CustomButton handlePress={() => setIsModalVisible(true)}></CustomButton>
+
+                <CustomButton title={"Assign shelves"} handlePress={() => setIsModalProductMobileFormVisible(true)}
+                              containerStyles={"mt-7"} isLoading={assignedShelvesError} showLoading={false}
+                              textStyles={"text-white"}></CustomButton>
+
+                {assignedShelves.length > 0 ? <CustomButton title={"Show assigned shelves"}
+                                                            handlePress={() => setIsModalAssignesShelvesVisible(true)}
+                                                            containerStyles={"mt-7"}
+                                                            textStyles={"text-white"}></CustomButton> : null}
+
+                <CustomButton title={"Save"} handlePress={() => handleCreatProduct()} containerStyles={"mt-7"}
+                              isLoading={subcategoriesSubcategoryIdError | quantityError | productNameError | productDescriptionError | priceError | barcodeError | assignedShelvesError}
+                              showLoading={false} textStyles={"text-white"}></CustomButton>
+
+                <CustomButton handlePress={() => console.log(JSON.stringify(assignedShelves))}></CustomButton>
+
+
                 <Modal
-                    visible={isModalVisible}
+                    visible={isModalProductMobileFormVisible}
                     animationType={Platform.OS !== "ios" ? "" : "slide"}
                     presentationStyle={Platform.OS === "ios" ? "pageSheet" : ""}
-                    onRequestClose={() => setIsModalVisible(false)}
+                    onRequestClose={() => setIsModalProductMobileFormVisible(false)}
                 >
-                    <ShelfAssignForm productQuantity={form.quantity} shelvesList={shelvesList} setIsModalVisible={setIsModalVisible} assignedShelves={assignedShelves} setAssignedShelves={setAssignedShelves}/>
+                    <ShelfAssignForm productQuantity={form.quantity} shelvesList={shelvesList}
+                                     setIsModalVisible={setIsModalProductMobileFormVisible} assignedShelves={assignedShelves}
+                                     setAssignedShelves={setAssignedShelves}/>
                 </Modal>
 
-                <CustomButton handlePress={() => console.log(JSON.stringify(shelvesList)) }></CustomButton>
-                <Text>SubcategoryID: {form.subcategoriesSubcategoryId}</Text>
+               <Modal
+                   visible = {isModalAssignesShelvesVisible}
+                   animationType={Platform.OS !== "ios" ? "" : "slide"}
+                   presentationStyle={Platform.OS === "ios" ? "pageSheet" : ""}
+                   onRequestClose={() => setIsModalAssignesShelvesVisible(false)}
+               >
+                    <ShelfAssignDisplayer assignedShelves={assignedShelves} setIsModalVisible={setIsModalAssignesShelvesVisible}/>
+               </Modal>
+                
+
+
+
             </KeyboardAvoidingView>
 
-        </SafeAreaView>
+
+        </ScrollView>
+
     )
 }
 

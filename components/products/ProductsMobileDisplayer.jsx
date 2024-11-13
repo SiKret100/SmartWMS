@@ -7,7 +7,7 @@ import FallingTiles from "../FallingTiles";
 import Feather from "react-native-vector-icons/Feather";
 import DeleteButton from "../buttons/DeleteButton";
 import EditButton from "../buttons/EditButton";
-import ProductMobileDetailDisplayer from "./ProductMobileDetailDisplayer";
+import ProductsMobileDetailDisplayer from "./ProductsMobileDetailDisplayer";
 
 const ProductsMobileDisplayer = () => {
 
@@ -102,7 +102,7 @@ const ProductsMobileDisplayer = () => {
                 onRequestClose={() => setIsProductDetailModalVisible(false)}
             >
                 <View className="flex-auto mt-5 bg-background-light">
-                    <ProductMobileDetailDisplayer product={currentProductDetail} setIsModalVisible={setIsProductDetailModalVisible}/>
+                    <ProductsMobileDetailDisplayer product={currentProductDetail} setIsModalVisible={setIsProductDetailModalVisible}/>
                 </View>
 
             </Modal>

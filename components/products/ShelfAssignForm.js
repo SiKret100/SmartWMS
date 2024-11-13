@@ -1,10 +1,13 @@
 import {SafeAreaView, Text, View} from "react-native";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import NumberFormField from "../form_fields/NumberFormField";
 import {ScrollView} from "react-native-gesture-handler";
 import rackErrorMessages from "../../data/ErrorMessages/rackErrorMessages";
 import CancelButton from "../buttons/CancelButton";
 import CustomButton from "../buttons/CustomButton";
+import {Feather} from "@expo/vector-icons";
+import {Button} from "react-native-elements";
+import {Keyboard as navigation} from "react-native-web";
 
 
 const ShelfAssignForm = ({shelvesList, assignedShelves, setAssignedShelves, setIsModalVisible, productQuantity}) => {
@@ -19,6 +22,19 @@ const ShelfAssignForm = ({shelvesList, assignedShelves, setAssignedShelves, setI
 
     //USE EFFECT HOOKS=========================================================================================
 
+    useEffect(() => {
+        if (currentlyAssignedProductQuantity === 0 ){
+            setAssignedShelves(localAssignedShelves);
+            setIsModalVisible(false)
+
+            return () => {
+                setCurrentlyAssignedProductQuantity(0);
+                setLocalAssignedShelves([]);
+            };
+
+        }
+    },[currentlyAssignedProductQuantity])
+
 
 
     return (
@@ -31,9 +47,11 @@ const ShelfAssignForm = ({shelvesList, assignedShelves, setAssignedShelves, setI
                     <Text className="my-5 text-3xl font-bold">Assign Prodcut to shelves</Text>
                 </View>
 
-                <Text className={"text-2xl font-bold text-center mb-5"}>
-                    {currentlyAssignedProductQuantity} pieces remain for assignment
-                </Text>
+                <View className={"mb-5 px-2 flex-row"}>
+                    <Text className={" text-2xl font-bold text-gray-800"}>Pieces remained:</Text>
+                    <Text className={"text-2xl font-bold ml-5"}>{currentlyAssignedProductQuantity}</Text>
+                </View>
+                
                 {
                     tempShelvesList.map(shelf => {
 
@@ -46,12 +64,16 @@ const ShelfAssignForm = ({shelvesList, assignedShelves, setAssignedShelves, setI
                             currentQuant: "",
                             productsProductId: shelf.productId,
                             racksRackId: shelf.rackLane.rackNumber,
+                            lane: shelf.rackLane.lane.laneCode,
+                            rack: shelf.rackLane.rackNumber
+
                         })
 
                         const [maxQuantError, setMaxQuantError] = useState(true);
                         const [currentQuantError, setCurrentQuantError] = useState(true);
                         const [currentQuantErrorMessage, setCurrentQuantErrorMessage] = useState("");
                         const [maxQuantErrorMessage, setMaxQuantErrorMessage] = useState("");
+                        const [isAssignedToShelf, setIsAssignedToShelf] = useState(false);
 
 
                         //FUNCTIONS=============================================================================================
@@ -110,6 +132,14 @@ const ShelfAssignForm = ({shelvesList, assignedShelves, setAssignedShelves, setI
 
                         const handleCurrentQuant = (e) => {
                             const currentQuant = e.nativeEvent.text;
+                            const alreadyAssignedShelf = localAssignedShelves.filter(shelf => shelf.shelfId === form.shelfId);
+                            setIsAssignedToShelf(false);
+
+                            if(alreadyAssignedShelf.length > 0){
+                                //console.log("Znaleziono")
+                                setCurrentlyAssignedProductQuantity(prevQuantity => prevQuantity + parseInt(alreadyAssignedShelf[0].currentQuant));
+                                setLocalAssignedShelves(assignedShelves.filter(shelf => shelf.shelfId !== form.shelfId));
+                            }
 
                             if (currentQuant.length >= 1 && !currentQuant.startsWith("0")) {
                                 const parsedCurrentQuant = parseInt(currentQuant);
@@ -137,125 +167,81 @@ const ShelfAssignForm = ({shelvesList, assignedShelves, setAssignedShelves, setI
                             }
                         }
 
-                        // const validateQuantities = (field, value) => {
-                        //     const parsedValue = parseInt(value);
-                        //
-                        //     // Aktualizacja formularza
-                        //     setForm(prevForm => ({
-                        //         ...prevForm,
-                        //         [field]: value
-                        //     }));
-                        //
-                        //     // Sprawdzenie błędów
-                        //     if (field === "maxQuant" && form.currentQuant.length > 0) {
-                        //         if (value.length === 0) {
-                        //             setErrorMessage("Maximum quantity is required");
-                        //             setMaxQuantError(true);
-                        //             return;
-                        //         }
-                        //     }
-                        //
-                        //     if (field === "currentQuant") {
-                        //         if (form.maxQuant.length === 0) {
-                        //             setErrorMessage("Maximum quantity is required");
-                        //             setCurrentQuantError(true);
-                        //             return;
-                        //         }
-                        //
-                        //         const maxQuantParsed = parseInt(form.maxQuant);
-                        //         if (parsedValue > maxQuantParsed) {
-                        //             setErrorMessage("Current quantity cannot exceeds maximum quantity");
-                        //             setCurrentQuantError(true);
-                        //             return;
-                        //         }
-                        //     }
-                        //
-                        //     setErrorMessage("");
-                        //     setMaxQuantError(false);
-                        //     setCurrentQuantError(false);
-                        // };
+
 
                         return (
+                            <View className="px-2 shadow mb-5">
 
-                            <View className={"px-2 shadow mb-5"}>
+                                <View key={key} className="flex flex-row bg-slate-200 p-2 rounded-lg gap-2">
 
-                                <View key={key} className={"flex flex-row  bg-slate-200 p-2 rounded-lg"}>
-
-                                    {/*Rack Lane Level*/}
-                                    <View className={"justify-center"}>
-
-                                        <View className="flex-row items-center justify-between mr-10">
-                                            <Text className={"font-bold text-2xl text-gray-800"}>Lane:</Text>
-                                            <Text className={"ml-2"}>{shelf.rackLane.lane.laneCode}</Text>
+                                    {/* Rack Lane Level */}
+                                    <View className="flex-3 justify-center pr-2">
+                                        <View className="flex-row items-center justify-between">
+                                            <Text className="font-bold text-2xl text-gray-800">Lane:</Text>
+                                            <Text className="ml-2">{shelf.rackLane.lane.laneCode}</Text>
                                         </View>
 
-                                        <View className="flex-row items-center justify-between mr-10">
-                                            <Text className={"font-bold text-2xl text-gray-800"}>Rack:</Text>
-                                            <Text className={"ml-2"}>{shelf.rackLane.rackNumber}</Text>
+                                        <View className="flex-row items-center justify-between">
+                                            <Text className="font-bold text-2xl text-gray-800">Rack:</Text>
+                                            <Text className="ml-2">{shelf.rackLane.rackNumber}</Text>
                                         </View>
 
-
-                                        <View className="flex-row items-center justify-between mr-10">
-                                            <Text className={"font-bold text-2xl text-gray-800"}>Level:</Text>
-                                            <Text className={"ml-2"}>{shelf.level}</Text>
+                                        <View className="flex-row items-center justify-between">
+                                            <Text className="font-bold text-2xl text-gray-800">Level:</Text>
+                                            <Text className="ml-2">{shelf.level}</Text>
                                         </View>
-
                                     </View>
 
-                                    {/*MaxQuant CurrentQuant Button*/}
-                                    <View className={"flex-col"}>
-                                        <View className={"flex-row items-center"}>
-
-                                            <View className={"justify-center mr-10"}>
-                                                <NumberFormField
-                                                    title="Current Quantity"
-                                                    value={form.currentQuant.toString()}
-                                                    handleChangeText={(e) => setForm({...form, currentQuant: e})}
-                                                    onChange={e => handleCurrentQuant(e)}
-                                                    isError={currentQuantError}
-                                                    iconsVisible={true}
-                                                />
-                                            </View>
-
-                                            <View className={"justify-center"}>
-                                                <NumberFormField
-                                                    title="Max Quantity"
-                                                    value={form.maxQuant.toString()}
-                                                    handleChangeText={(e) => setForm({...form, maxQuant: e}) }
-                                                    onChange = {e => handleMaxQuant(e)}
-                                                    isError={maxQuantError}
-                                                    iconsVisible={true}
-                                                />
-
-                                            </View>
-
+                                    <View className="flex-1 flex-row items-center justify-between gap-2">
+                                        <View className="flex-1 justify-center">
+                                            <NumberFormField
+                                                title="Current"
+                                                value={form.currentQuant.toString()}
+                                                handleChangeText={(e) => setForm({ ...form, currentQuant: e })}
+                                                onChange={e => handleCurrentQuant(e)}
+                                                isError={currentQuantError}
+                                                iconsVisible={true}
+                                            />
                                         </View>
 
-                                        <View>
-
-                                            <CustomButton
-                                                handlePress={() => handleAssignShelf()}
-                                                title={"Assign to shelf"}
-                                                isLoading={currentQuantError || maxQuantError}
-                                                showLoading={false}
+                                        <View className="flex-1 justify-center">
+                                            <NumberFormField
+                                                title="Max"
+                                                value={form.maxQuant.toString()}
+                                                handleChangeText={(e) => setForm({ ...form, maxQuant: e })}
+                                                onChange={e => handleMaxQuant(e)}
+                                                isError={maxQuantError}
+                                                iconsVisible={true}
                                             />
-
-                                            <CustomButton
-                                                handlePress={() => console.log(`Assigned shelves: ${JSON.stringify(assignedShelves)}`)}
-                                                title={"Show assigned"}
-                                                isLoading={currentQuantError || maxQuantError}
-                                                showLoading={false}
-                                            />
-
                                         </View>
 
+                                        <View className="justify-center">
+                                            <Button
+                                                onPress={() => handleAssignShelf()}
+                                                type="clear"
+                                                icon={
+                                                    <Feather
+                                                        name="plus-circle"
+                                                        size={24}
+                                                        color={currentQuantError || maxQuantError || isAssignedToShelf ? "gray" : "#3E86D8"}
+                                                    />
+                                                }
+                                                disabled={currentQuantError || maxQuantError || isAssignedToShelf}
+                                            />
+                                        </View>
                                     </View>
-
                                 </View>
-                                {(currentQuantError && form.currentQuant.length > 0) ? (<Text className={"color-red-600"}> {currentQuantErrorMessage} </Text>) : null}
-                                {(maxQuantError && form.maxQuant.length > 0) ? (<Text className={"color-red-600"}> {maxQuantErrorMessage} </Text>) : null}
+
+                                {(currentQuantError && form.currentQuant.length > 0) ? (
+                                    <Text className="text-red-600"> {currentQuantErrorMessage} </Text>
+                                ) : null}
+
+                                {(maxQuantError && form.maxQuant.length > 0) ? (
+                                    <Text className="text-red-600"> {maxQuantErrorMessage} </Text>
+                                ) : null}
 
                             </View>
+
 
                         )
                         }

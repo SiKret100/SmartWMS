@@ -3,7 +3,7 @@ import ProductsMobileForm from "../../../components/products/ProductsMobileForm"
 
 const AlertAdd = () => {
   return (
-    <ProductsMobileForm/>
+      <ProductsMobileForm/>
   )
 }
 

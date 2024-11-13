@@ -2,10 +2,9 @@ import {Text, View} from "react-native";
 import CancelButton from "../buttons/CancelButton";
 import React from "react";
 import {ScrollView} from "react-native-gesture-handler";
-import CustomButton from "../buttons/CustomButton";
 import {Divider} from "react-native-elements";
 
-const ProductMobileDetailDisplayer = ({product, setIsModalVisible}) => {
+const ProductsMobileDetailDisplayer = ({product, setIsModalVisible}) => {
     return (
 
         <View>
@@ -104,4 +103,4 @@ const ProductMobileDetailDisplayer = ({product, setIsModalVisible}) => {
     );
 }
 
-export default ProductMobileDetailDisplayer;
+export default ProductsMobileDetailDisplayer;
