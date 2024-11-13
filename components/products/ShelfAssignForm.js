@@ -14,7 +14,8 @@ const ShelfAssignForm = ({shelvesList, assignedShelves, setAssignedShelves, setI
 
     //PROPS====================================================================================================
     const [currentlyAssignedProductQuantity, setCurrentlyAssignedProductQuantity] = useState(productQuantity);
-    const [tempShelvesList, setTempShelvesList] = useState(shelvesList);
+    //const [tempShelvesList, setTempShelvesList] = useState(shelvesList);
+    const [localAssignedShelves, setLocalAssignedShelves] = useState([]);
 
     //FUNCTIONS=============================================================================================
 
@@ -38,7 +39,6 @@ const ShelfAssignForm = ({shelvesList, assignedShelves, setAssignedShelves, setI
 
 
     return (
-        //wyswietlac ile jeszcze sztuk do rozdysponowania
 
         <View>
             <ScrollView className={"px-2"}>
@@ -53,7 +53,7 @@ const ShelfAssignForm = ({shelvesList, assignedShelves, setAssignedShelves, setI
                 </View>
                 
                 {
-                    tempShelvesList.map(shelf => {
+                    shelvesList.map(shelf => {
 
                         //PROPS====================================================================================================
                         const [key, setKey] = useState(shelf.shelfId);
@@ -79,13 +79,21 @@ const ShelfAssignForm = ({shelvesList, assignedShelves, setAssignedShelves, setI
                         //FUNCTIONS=============================================================================================
                         const handleAssignShelf = () => {
                             setCurrentlyAssignedProductQuantity(prevQuantity => prevQuantity - parseInt(form.currentQuant));
-                            setAssignedShelves(prevArr => [...prevArr, form])
-                            //setTempShelvesList(tempShelvesList.filter(shelf => shelf.shelfId !== form.shelfId));
+                            setLocalAssignedShelves(prevArr => [...prevArr, form])
+
+                            // if(currentlyAssignedProductQuantity === 0){
+                            //     setIsModalVisible(false);
+                            //     console.log("Wszystkie rozdysponowane")
+                            // }
+
+                            setIsAssignedToShelf(true)
+                            //setTempShelvesList(tempShelvesList.filter(shelf => shelf.shelfId !== form.shelfId));'
+                            console.log("Currently assigned" + currentlyAssignedProductQuantity)
                         }
 
                         const handleMaxQuant = (e) => {
                             const maxQuantVar = e.nativeEvent.text;
-
+                            setIsAssignedToShelf(false)
                             // if(form.maxQuant.length !== 0 && form.currentQuant.length !== 0 ){
                             //     setErrorMessage("Maximum quantity is required");
                             // }
@@ -100,7 +108,7 @@ const ShelfAssignForm = ({shelvesList, assignedShelves, setAssignedShelves, setI
                                 else {
                                     const parsedCurrentQuant = parseInt(form.currentQuant);
                                     if(parsedMaxQuant > 0 && parsedMaxQuant <= 2147483647) {
-                                        setMaxQuantError(false)
+                                        setMaxQuantError(false);
                                         setMaxQuantErrorMessage("")
                                         if(isNaN(parsedCurrentQuant)) {
                                             setCurrentQuantError(true);
