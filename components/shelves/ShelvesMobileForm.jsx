@@ -18,8 +18,8 @@ const ShelvesMobileForm = ({object = {}, header, setIsModalVisible, rackId}) => 
     //PROPS====================================================================================================
     const [form, setForm] = useState({
         title: object?.title !== undefined && object?.title !== null ? object.title : -1,
-        maxQuant: object?.maxQuant || "",
-        currentQuant: 0,
+        maxQuant: object?.maxQuant || "0",
+        currentQuant: object?.currentQuant || "0",  
         racksRackId: rackId
     });
 
@@ -67,9 +67,13 @@ const ShelvesMobileForm = ({object = {}, header, setIsModalVisible, rackId}) => 
 
         try{
             const result = await shelfService.Add(form);
-            if (result.errors)
+            if (result.errors){
                 setErrors(result.errors);
-            else{
+                console.log(`Błędy przechwycone: ${JSON.stringify(result.errors)}`);
+            }
+
+
+        else{
                 setErrors({});
                 setForm({
                     title: -1,
@@ -161,16 +165,16 @@ const ShelvesMobileForm = ({object = {}, header, setIsModalVisible, rackId}) => 
                  />
              </View>
 
-             <NumberFormField
-                 title="Maximum quantity"
-                 value={form?.maxQuant ? form.maxQuant.toString() : ''}
-                 handleChangeText={(e) => setForm({...form, maxQuant: e})}
-                 onChange={e => handleMaxQuantity(e)}
-                 isError={maxQuantError}
-                 iconsVisible={true}
-                 otherStyles={"mt-7"}
-             />
-             {(maxQuantError && form.maxQuant.length > 0) ? <Text className={'text-red-600'}>{shelfErrorMessages.maxQuant}</Text> : null}
+             {/*<NumberFormField*/}
+             {/*    title="Maximum quantity"*/}
+             {/*    value={form?.maxQuant ? form.maxQuant.toString() : ''}*/}
+             {/*    handleChangeText={(e) => setForm({...form, maxQuant: e})}*/}
+             {/*    onChange={e => handleMaxQuantity(e)}*/}
+             {/*    isError={maxQuantError}*/}
+             {/*    iconsVisible={true}*/}
+             {/*    otherStyles={"mt-7"}*/}
+             {/*/>*/}
+             {/*{(maxQuantError && form.maxQuant.length > 0) ? <Text className={'text-red-600'}>{shelfErrorMessages.maxQuant}</Text> : null}*/}
 
              <CustomButton
                  title="Save"
@@ -181,7 +185,7 @@ const ShelvesMobileForm = ({object = {}, header, setIsModalVisible, rackId}) => 
                  }}
                  containerStyles="w-full mt-7"
                  textStyles={"text-white"}
-                 isLoading={titleError || maxQuantError}
+                 isLoading={titleError}
                  showLoading={false}
              />
 

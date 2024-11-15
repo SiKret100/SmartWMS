@@ -262,9 +262,8 @@ const ProductDeliveryDistributionForm = ({
                                             {
                                                 shelf.maxQuant !== 0 ? (
                                                     <View className="flex-row items-center justify-between">
-                                                        <Text className="font-bold text-2xl text-gray-800">Space
-                                                            left:</Text>
-                                                        <Text className="ml-2">{shelf.maxQuant - shelf.currentQuant}</Text>
+                                                        <Text className="font-bold text-2xl text-gray-800">Space:</Text>
+                                                        <Text className="ml-2">{shelf.maxQuant - shelf.currentQuant}/{shelf.maxQuant}</Text>
                                                     </View>
                                                 ) : (
                                                     <View className="flex-row items-center justify-between">
@@ -274,7 +273,7 @@ const ProductDeliveryDistributionForm = ({
                                                 )
                                             }
 
-                                        <CustomButton handlePress={() => console.log(JSON.stringify(form))}></CustomButton>
+                                        {/*<CustomButton handlePress={() => console.log(JSON.stringify(form))}></CustomButton>*/}
 
                                         </View>
 
@@ -329,8 +328,8 @@ const ProductDeliveryDistributionForm = ({
                                         <Text className="text-red-600"> {maxQuantErrorMessage} </Text>
                                     ) : null}
 
-                                    <CustomButton handlePress={() => console.log(`Pierwotna lista: ${JSON.stringify(shelvesList)}`)} title="pierw" />
-                                    <CustomButton handlePress={() => console.log("Nowa lista: " + JSON.stringify(localAssignedShelves))}></CustomButton>
+                                    {/*<CustomButton handlePress={() => console.log(`Pierwotna lista: ${JSON.stringify(shelvesList)}`)} title="pierw" />*/}
+                                    {/*<CustomButton handlePress={() => console.log("Nowa lista: " + JSON.stringify(localAssignedShelves))}></CustomButton>*/}
 
                                 </View>
 

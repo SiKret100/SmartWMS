@@ -1,4 +1,4 @@
-import {useState, useCallback} from "react";
+import {useState, useCallback, useEffect} from "react";
 import {ScrollView, TouchableOpacity} from "react-native-gesture-handler";
 import {Platform, ActivityIndicator, FlatList, Modal, RefreshControl, SafeAreaView, Text, View} from "react-native";
 import CustomButton from "../buttons/CustomButton";
@@ -20,14 +20,16 @@ const ProductsMobileDisplayer = () => {
     const [isProductDetailModalVisible, setIsProductDetailModalVisible] = useState(false);
     const [currentProductDetail, setCurrentProductDetail] = useState(null);
     const [isTakeDeliveryModalVisible, setIsTakeDeliveryModalVisible] = useState(false);
-
+    const [isDeletedItem, setIsDeletedItem] = useState(false);
     //FUNCTIONS================================================================================================
     const fetchData = async () => {
         try {
             // const result = await productService.GetAll();
             //console.log(JSON.stringify(result.data));
             const result = await productService.GetAllWithShelves();
-            setData(result.data)
+            setData([...result.data])
+
+            console.log("wywolanie")
 
         } catch (err) {
             console.log(err);
@@ -37,6 +39,17 @@ const ProductsMobileDisplayer = () => {
     const handleProductDetailDisplay = (product) => {
         setCurrentProductDetail(product);
         setIsProductDetailModalVisible(true);
+    }
+
+    const handleDelete = (id) => {
+
+        try{
+            productService.Delete(id)
+            setIsDeletedItem(true)
+
+        }catch(err){
+            console.log(err);
+        }
     }
 
     const renderItem = ({item}) => (
@@ -54,7 +67,7 @@ const ProductsMobileDisplayer = () => {
                 </TouchableOpacity>
 
 
-                <DeleteButton onDelete={() => {console.log()}}/>
+                <DeleteButton onDelete={() =>(handleDelete(item.productId))}/>
 
             </View>
 
@@ -77,6 +90,18 @@ const ProductsMobileDisplayer = () => {
                 fetchData()
             },[])
     ));
+
+    useEffect(() => {
+        fetchData();
+        console.log("Modala nie ma ")
+        if (isDeletedItem) setIsDeletedItem(false);
+
+    }, [isTakeDeliveryModalVisible])
+
+    useEffect(() => {
+        fetchData();
+        if (isDeletedItem) setIsDeletedItem(false);
+    }, [isDeletedItem]);
 
     return (
         <SafeAreaView className={"flex-1 justify-start align-center"}>

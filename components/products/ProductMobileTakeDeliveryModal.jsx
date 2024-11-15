@@ -28,11 +28,15 @@ const ProductMobileTakeDeliveryModal = ({setIsModalVisible}) => {
     const [errors,setErrors] = useState([]);
     const [productIdError, setProductIdError] = useState(true);
     const [assignedShelvesError, setAssignedShelvesError] = useState(true);
+    const [request, setRequest] = useState(true);
+    const [productList, setProductList] = useState([]);
+
 
     //FUNCS
     const fetchData = async () => {
         try {
             const result = await productService.GetAll();
+            setProductList(result.data)
 
             setProductTypeMap(result.data.map(product => ({
                 key: product.productId,
@@ -113,6 +117,32 @@ const ProductMobileTakeDeliveryModal = ({setIsModalVisible}) => {
         }
     },[form.productsProductId]);
 
+    useEffect(() => {
+        let prodForRequest = productList.filter(item => item.productId === form.productsProductId);
+        console.log("Prod for req: " + JSON.stringify(prodForRequest));
+
+        let product = prodForRequest.length > 0 ? prodForRequest[0] : null;
+
+        setRequest({
+            productDto: {
+                productId: form.productsProductId,
+                quantity: form.currentQuant,
+                productName: product ? product.productName : null,
+                barcode: product ? product.barcode : null,
+            },
+            shelves: assignedShelves.map(shelf => ({
+                shelfId: shelf.shelfId,
+                level: shelf.level,
+                maxQuant: shelf.maxQuant,
+                currentQuant: shelf.currentQuant,
+                productsProductId: shelf.productsProductId,
+                racksRackId: shelf.rackId,
+            }))
+        });
+    }, [assignedShelves]);
+
+
+
     return (
         <View>
             <View className="flex flex-col items-start justify-between mt-2 px-2">
@@ -143,11 +173,25 @@ const ProductMobileTakeDeliveryModal = ({setIsModalVisible}) => {
                     otherStyles={"mt-7"}
                 />
 
-                <CustomButton title={"Distribute"} handlePress={() =>setIsModalShelfAssignFormVisible(true)}
-                              containerStyles={"mt-7"} isLoading={assignedShelvesError || productIdError || currentQuantError} showLoading={false}
-                              textStyles={"text-white"}></CustomButton>
 
-                <CustomButton handlePress={() =>  console.log("Assigned shelves" + JSON.stringify(assignedShelves)) }></CustomButton>
+                <CustomButton title={"Distribute"}
+                              handlePress={() =>setIsModalShelfAssignFormVisible(true)}
+                              containerStyles={"mt-7"}
+                              isLoading={productIdError || currentQuantError}
+                              showLoading={false}
+                              textStyles={"text-white"}
+                />
+
+
+
+                <CustomButton title="Save"
+                              handlePress={() => handleDeliveryAndDistribution()}
+                              containerStyles={"mt-7"}
+                              isLoading={assignedShelvesError || currentQuantError || productIdError}
+                              showLoading={false}
+                              textStyles={"text-white"}
+                />
+
 
                 <Modal
                     visible={isModalShelfAssignFormVisible}
