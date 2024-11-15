@@ -49,8 +49,8 @@ const RacksMobileForm = ({object = {}, header, setIsModalVisible, rackId, laneId
 
     const handleTitle = (e) => {
         const rackNumber = e.nativeEvent.text;
-
-        if (rackNumber.length >= 1 && !rackNumber.startsWith("0")) {
+        const regexp = new RegExp("^[1-9]{1}\\d*$");
+        if (regexp.test(rackNumber)) {
             const parsedRackNumber = parseInt(rackNumber);
             console.log(parsedRackNumber);
 
