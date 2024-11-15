@@ -62,6 +62,24 @@ const ProductMobileTakeDeliveryModal = ({setIsModalVisible}) => {
         }
     }
 
+    const handleDeliveryAndDistribution = async () => {
+        try{
+            const result = productService.ProductDeliveryDistribution(request)
+            if(result.errors){
+                setErrors(result.errors);
+                //console.log(`Błędy przechwycone: ${JSON.stringify(result.errors)}`);
+            }
+            else {
+                console.log("Delivery taken");
+                setIsModalVisible(false);
+            }
+        }
+        catch(err){
+            setErrors(err);
+            console.log(`Bledy w komponencie: ${JSON.stringify(err)}`);
+        }
+    }
+
     const handleProduct = () => {
         form.productsProductId === -1 ? setProductIdError(true) : setProductIdError(false);
     }

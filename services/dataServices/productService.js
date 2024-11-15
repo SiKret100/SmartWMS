@@ -110,4 +110,58 @@ export default class productService {
         }
     }
 
+    static ProductDeliveryDistribution = async(data) => {
+        const token = Platform.OS !== "web" ? SecureStore.getItem("token") : "";
+        const config = {
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+        };
+
+        try {
+            let response;
+            if (Platform.OS === "web") {
+                response = await axios.post(`${this.ip}/api/Product/takeDeliveryAndDistribute`, data);
+            } else {
+                response = await axios.post(`${this.ip}/api/Product/takeDeliveryAndDistribute`, data, config);
+            }
+
+            console.log("Service response: "  + JSON.stringify(response));
+            router.push(`/home/products`);
+
+            return response;
+        } catch (err) {
+            console.log(`errory z serwisu: ${JSON.stringify(err)}`);
+            throw err.response.data;
+        }
+    }
+
+    static Delete = async (id) => {
+        const token = Platform.OS !== "web" ? SecureStore.getItem("token") : "";
+        const config = {
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+        };
+
+        try{
+            let response
+
+            if (Platform.OS === "web") {
+                response = await axios.delete(`${this.ip}/api/Product/${id}`);
+            } else {
+                response = await axios.delete(`${this.ip}/api/Product/${id}`, config);
+            }
+
+            console.log(response);
+            return response;
+        }catch(err){
+            console.log("Error from service" + err);
+            return err.response.data;
+
+        }
+    }
+
 }

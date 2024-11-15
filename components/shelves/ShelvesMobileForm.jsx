@@ -24,9 +24,6 @@ const ShelvesMobileForm = ({object = {}, header, setIsModalVisible, rackId}) => 
     });
 
     const [titleError, setTitleError] = object?.title ? useState(false) : useState(true);
-    // const [titleError, setTitleError] = useState(false);
-    const [maxQuantError, setMaxQuantError] = object?.maxQuant ? useState(false) : useState(true);
-    // const [maxQuantError, setMaxQuantError] = useState(false);
     const [selectKey, setSelectKey] = useState(0);
     const[errors, setErrors] = useState({});
     const[selectList, setSelectList] = useState([]);
@@ -94,30 +91,30 @@ const ShelvesMobileForm = ({object = {}, header, setIsModalVisible, rackId}) => 
         form.title  === -1 ? setTitleError(true) : setTitleError(false);
     }
 
-    const handleMaxQuantity = (e) => {
-        const maxQuantity = e.nativeEvent.text;
-
-        if (maxQuantity.length >= 1 && !maxQuantity.startsWith("0")) {
-            const parsedMaxQuantity = parseInt(maxQuantity);
-            console.log(parsedMaxQuantity);
-
-            if (isNaN(parsedMaxQuantity)) {
-                setMaxQuantError(true);
-                console.log('Error: not a number');
-            } else {
-                if ( parsedMaxQuantity > 0 && parsedMaxQuantity <= 2147483647 ) {
-                    setMaxQuantError(false);
-                    console.log('No error');
-                }else{
-                    setMaxQuantError(true);
-                    console.log('Error');
-                }
-            }
-        } else {
-            setMaxQuantError(true);
-            console.log('No error');
-        }
-    };
+    // const handleMaxQuantity = (e) => {
+    //     const maxQuantity = e.nativeEvent.text;
+    //
+    //     if (maxQuantity.length >= 1 && !maxQuantity.startsWith("0")) {
+    //         const parsedMaxQuantity = parseInt(maxQuantity);
+    //         console.log(parsedMaxQuantity);
+    //
+    //         if (isNaN(parsedMaxQuantity)) {
+    //             setMaxQuantError(true);
+    //             console.log('Error: not a number');
+    //         } else {
+    //             if ( parsedMaxQuantity > 0 && parsedMaxQuantity <= 2147483647 ) {
+    //                 setMaxQuantError(false);
+    //                 console.log('No error');
+    //             }else{
+    //                 setMaxQuantError(true);
+    //                 console.log('Error');
+    //             }
+    //         }
+    //     } else {
+    //         setMaxQuantError(true);
+    //         console.log('No error');
+    //     }
+    // };
 
     const getRacksLevels = async () => {
         try{

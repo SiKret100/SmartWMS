@@ -328,7 +328,7 @@ const ProductsMobileForm = () => {
                                                             textStyles={"text-white"}></CustomButton> : null}
 
                 <CustomButton title={"Save"} handlePress={() => handleCreateProduct()} containerStyles={"mt-7"}
-                              isLoading={subcategoriesSubcategoryIdError | quantityError | productNameError | productDescriptionError | priceError | barcodeError | assignedShelvesError}
+                              isLoading={subcategoriesSubcategoryIdError || quantityError || productNameError || productDescriptionError || priceError || barcodeError || assignedShelvesError}
                               showLoading={false} textStyles={"text-white"}></CustomButton>
 
                 {/*<CustomButton handlePress={() => console.log(JSON.stringify(assignedShelves))}></CustomButton>*/}
