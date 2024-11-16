@@ -16,6 +16,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage'; // Import 
 import CustomSelectList from "../selects/CustomSelectList";
 
 const AlertMobileDisplayer = () => {
+
+    //PROPS====================================================================================================
     const [data, setData] = useState([]);
     const [filteredData, setFilteredData] = useState([]);
     const [err, setError] = useState("");
@@ -36,11 +38,30 @@ const AlertMobileDisplayer = () => {
     );
 
 
-    const onRefresh = useCallback(() => {
-        setRefreshing(true);
-        fetchData();
-        setRefreshing(false);
-    }, []);
+    //FUNCTIONS================================================================================================
+    const renderItem = ({item}) => (
+        <FallingTiles>
+            <View
+                className={"flex-row justify-between items-center flex-0.5 px-2 py-2 mx-2 my-2 shadow rounded-lg bg-slate-200"}>
+                <DeleteButton onDelete={() => handleDelete(item.alertId)}/>
+                <View className={"px-2 py-2 mx-4"}>
+                    <View>
+                        <Text className={"text-center"}>{item.title}</Text>
+                        <Text className={"text-center"}>{item.description}</Text>
+                        <Text className={"text-center"}>{moment(item.alertDate).format("DD MMMM YYYY")}</Text>
+                        <Text className={"text-center"}>
+                            {item.seen === 0 ? "Widziano" : "Nie widziano"}
+                        </Text>
+                        <Text className={"text-center"}>
+                            {alertTypeMap.find(alert => alert.key === item.alertType)?.value || "Unknown"}
+                        </Text>
+                    </View>
+                </View>
+                <EditButton onEdit={() => handleModalEdit(item)}/>
+
+            </View>
+        </FallingTiles>
+    );
 
     const fetchData = async () => {
         setLoading(false);
@@ -67,30 +88,6 @@ const AlertMobileDisplayer = () => {
                 console.log(`Error ${err}`);
             })
     };
-
-    useFocusEffect(
-        useCallback(() => {
-            fetchData();
-        }, [isModalVisible])
-    );
-
-    useEffect(() => {
-        fetchData();
-        if (isDeletedItem) setIsDeletedItem(false);
-    }, [isDeletedItem]);
-
-    useEffect(() => {
-        if (selected !== -1)
-            setFilteredData(data.filter(record => record.alertType === selected));
-        else
-            setFilteredData(data);
-
-        if (selected !== undefined && selected !== null && !isNaN(selected)) {
-            saveSelected();
-        }
-    }, [selected]);
-
-
 
     // Save selected value to AsyncStorage
     const saveSelected = async () => {
@@ -145,35 +142,42 @@ const AlertMobileDisplayer = () => {
         setIsModalVisible(true);
     };
 
-    const renderItem = ({item}) => (
-        <FallingTiles>
-            <View
-                className={"flex-row justify-between items-center flex-0.5 px-2 py-2 mx-2 my-2 shadow rounded-lg bg-slate-200"}>
-                <DeleteButton onDelete={() => handleDelete(item.alertId)}/>
-                <View className={"px-2 py-2 mx-4"}>
-                    <View>
-                        <Text className={"text-center"}>{item.title}</Text>
-                        <Text className={"text-center"}>{item.description}</Text>
-                        <Text className={"text-center"}>{moment(item.alertDate).format("DD MMMM YYYY")}</Text>
-                        <Text className={"text-center"}>
-                            {item.seen === 0 ? "Widziano" : "Nie widziano"}
-                        </Text>
-                        <Text className={"text-center"}>
-                            {alertTypeMap.find(alert => alert.key === item.alertType)?.value || "Unknown"}
-                        </Text>
-                    </View>
-                </View>
-                <EditButton onEdit={() => handleModalEdit(item)}/>
-
-            </View>
-        </FallingTiles>
-    );
-
     const animatedTranslateY = scrollY.interpolate({
         inputRange: [0, flatListHeight],
         outputRange: [60, -flatListHeight + 20],
         extrapolate: 'clamp',
     });
+
+    const onRefresh = useCallback(() => {
+        setRefreshing(true);
+        fetchData();
+        setRefreshing(false);
+    }, []);
+
+
+    //USE EFFECT HOOKS=========================================================================================
+    useFocusEffect(
+        useCallback(() => {
+            fetchData();
+        }, [isModalVisible])
+    );
+
+    useEffect(() => {
+        fetchData();
+        if (isDeletedItem) setIsDeletedItem(false);
+    }, [isDeletedItem]);
+
+    useEffect(() => {
+        if (selected !== -1)
+            setFilteredData(data.filter(record => record.alertType === selected));
+        else
+            setFilteredData(data);
+
+        if (selected !== undefined && selected !== null && !isNaN(selected)) {
+            saveSelected();
+        }
+    }, [selected]);
+
 
     return (
         <SafeAreaView className={"flex-1 justify-start align-center"}>
@@ -199,6 +203,7 @@ const AlertMobileDisplayer = () => {
                     defaultOption={defaultOption}
                     setSelected={setSelected}
                 />
+
             </Animated.View>
 
             <Animated.FlatList
@@ -223,7 +228,6 @@ const AlertMobileDisplayer = () => {
                 }
             />
 
-
             <Modal
                 visible={isModalVisible}
                 animationType={Platform.OS !== "ios" ? "" : "slide"}
@@ -237,9 +241,8 @@ const AlertMobileDisplayer = () => {
                         setIsModalVisible={setIsModalVisible}
                     />
                 </View>
+
             </Modal>
-
-
 
         </SafeAreaView>
     );

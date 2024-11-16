@@ -221,7 +221,7 @@ const UserMobileForm = ({ object = {}, header }) => {
                                 <CustomSelectList
                                     setSelected={(e) => setForm((prevForm) => ({ ...prevForm, managerId: e }))}
                                     typeMap={managers}
-                                    defaultOption={{ key: -1, value: "Select role" }}
+                                    defaultOption={{ key: -1, value: "Select manager..." }}
                                     onSelect={() => handleManager()}
                                     title={"Manager"}
                                 />

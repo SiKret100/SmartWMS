@@ -127,19 +127,19 @@ const RacksMobileForm = ({object = {}, header, setIsModalVisible, rackId, laneId
                     value={form?.title ? form.title.toString() : ''}
                     handleChangeText={(e) => setForm({...form, title: e})}
                     onChange={e => handleTitle(e)}
-                    isError={titleError}
+                    isError={!!titleError}
                     iconsVisible={true}
                     otherStyles={"w-full mt-7"}
                 />
 
-                {(titleError && form.title.length > 0) ? <Text className={'text-red-600'}>{titleErrorMessage}</Text> : null}
+                {/*{(titleError && form.title.length > 0) ? <Text className={'text-red-600'}>{titleErrorMessage}</Text> : null}*/}
 
                 <CustomButton
                     title="Save"
                     handlePress={() => {handleAdd(form)}}
                     containerStyles="w-full mt-7"
                     textStyles={"text-white"}
-                    isLoading={titleError}
+                    isLoading={!!titleError}
                     showLoading={false}
                 />
 

@@ -113,7 +113,7 @@ const ShelfAssignForm = ({shelvesList, assignedShelves, setAssignedShelves, setI
                                             setMaxQuantErrorMessage("")
                                             if(isNaN(parsedCurrentQuant)) {
                                                 setCurrentQuantError(true);
-                                                setCurrentQuantErrorMessage("Enterd value for current quantity is not a number");
+                                                setCurrentQuantErrorMessage("Entered value for current quantity is not a number");
                                             }
                                             else {
                                                 if(parsedCurrentQuant > parsedMaxQuant){
@@ -157,7 +157,7 @@ const ShelfAssignForm = ({shelvesList, assignedShelves, setAssignedShelves, setI
                                     if (isNaN(parsedCurrentQuant)) {
                                         setCurrentQuantError(true);
                                         setCurrentQuantErrorMessage("Entered value for max quantity is not a number")
-                                        console.log('Entered value for current quantity is not a number');
+                                        //console.log('Entered value for current quantity is not a number');
                                     } else {
                                         const parsedMaxQuant = parseInt(form.maxQuant);
                                         if ( parsedCurrentQuant > 0 && parsedCurrentQuant <= currentlyAssignedProductQuantity) {
@@ -181,7 +181,7 @@ const ShelfAssignForm = ({shelvesList, assignedShelves, setAssignedShelves, setI
 
                                         }else{
                                             setCurrentQuantError(true);
-                                            setCurrentQuantErrorMessage("Entered value is either less than zero or exceeds product's quantity");
+                                            setCurrentQuantErrorMessage("Entered value is either less than zero or exceeds number of pieces for assignment");
                                             console.log('Error');
                                         }
                                     }

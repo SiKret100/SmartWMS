@@ -28,7 +28,7 @@ const ProductMobileTakeDeliveryModal = ({setIsModalVisible}) => {
     const [errors,setErrors] = useState([]);
     const [productIdError, setProductIdError] = useState(true);
     const [assignedShelvesError, setAssignedShelvesError] = useState(true);
-    const [request, setRequest] = useState(true);
+    const [request, setRequest] = useState({});
     const [productList, setProductList] = useState([]);
 
 
@@ -95,21 +95,21 @@ const ProductMobileTakeDeliveryModal = ({setIsModalVisible}) => {
                 setCurrentQuantError(true);
                 console.log('Error: not a number');
             } else {
-                setAssignedShelvesError(false)
                 if (parsedMaxQuantity <= 999) {
+                    setCurrentQuantError(false)
                     if (assignedShelves.length > 0) {
                         const summedQuantity = assignedShelves.reduce((acc, shelf) => acc + parseInt(shelf.currentQuant), 0);
                         console.log("Summed quantity: " + summedQuantity);
                         if (summedQuantity === parsedMaxQuantity) {
-                            setCurrentQuantError(false);
+                            setAssignedShelvesError(false);
                             console.log('No error');
                         } else {
-                            setCurrentQuantError(true);
+                            setAssignedShelvesError(true);
                             console.log('Error');
                         }
                     } else {
-                        setCurrentQuantError(false);
-                        console.log('No error');
+                        setAssignedShelvesError(true);
+                        //console.log('No error');
                     }
 
                 } else {
@@ -140,6 +140,20 @@ const ProductMobileTakeDeliveryModal = ({setIsModalVisible}) => {
         console.log("Prod for req: " + JSON.stringify(prodForRequest));
 
         let product = prodForRequest.length > 0 ? prodForRequest[0] : null;
+
+        if (!isNaN(parseInt(form.currentQuant)) && assignedShelves.length > 0) {
+            const summedQuantity = assignedShelves.reduce((acc, shelf) => acc + parseInt(shelf.currentQuant), 0);
+            console.log("Summed quantity: " + summedQuantity);
+            if (summedQuantity === parseInt(form.currentQuant)) {
+                setAssignedShelvesError(false);
+                console.log('No error');
+            } else {
+                setAssignedShelvesError(true);
+                console.log('Error');
+            }
+        }
+        else setAssignedShelvesError(true);
+
 
         setRequest({
             productDto: {
@@ -186,7 +200,7 @@ const ProductMobileTakeDeliveryModal = ({setIsModalVisible}) => {
                     value = {form.currentQuant.toString()}
                     handleChangeText={(e) => setForm({...form, currentQuant: e})}
                     onChange = {e => handleQuantity(e)}
-                    isError={currentQuantError}
+                    isError={!!currentQuantError}
                     iconsVisible={true}
                     otherStyles={"mt-7"}
                 />
@@ -195,7 +209,7 @@ const ProductMobileTakeDeliveryModal = ({setIsModalVisible}) => {
                 <CustomButton title={"Distribute"}
                               handlePress={() =>setIsModalShelfAssignFormVisible(true)}
                               containerStyles={"mt-7"}
-                              isLoading={productIdError || currentQuantError}
+                              isLoading={!!productIdError || !!currentQuantError}
                               showLoading={false}
                               textStyles={"text-white"}
                 />
@@ -205,7 +219,7 @@ const ProductMobileTakeDeliveryModal = ({setIsModalVisible}) => {
                 <CustomButton title="Save"
                               handlePress={() => handleDeliveryAndDistribution()}
                               containerStyles={"mt-7"}
-                              isLoading={assignedShelvesError || currentQuantError || productIdError}
+                              isLoading={!!assignedShelvesError || !!currentQuantError || !!productIdError}
                               showLoading={false}
                               textStyles={"text-white"}
                 />

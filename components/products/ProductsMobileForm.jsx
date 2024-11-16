@@ -1,4 +1,4 @@
-import {KeyboardAvoidingView, Modal, Platform, Text, View} from "react-native";
+import {KeyboardAvoidingView, Modal, Platform, SafeAreaView, Text, View} from "react-native";
 import React, {useCallback, useEffect, useState} from "react";
 import TextFormField from "../form_fields/TextFormField";
 import NumberFormField from "../form_fields/NumberFormField";
@@ -34,7 +34,7 @@ const ProductsMobileForm = () => {
     const [assignedShelvesError, setAssignedShelvesError] = useState(true);
     const [subcategoriesSubcategoryIdError, setSubcategoriesSubcategoryIdError] = useState(true);
     const [errors, setErrors] = useState({});
-    const [isModalProductMobileFormVisible, setIsModalProductMobileFormVisible] = useState(false);
+    const [isShelfAssignmentModalVisible, setIsShelfAssignmentModalVisible] = useState(false);
     const [isModalAssignesShelvesVisible, setIsModalAssignesShelvesVisible] = useState(false);
     const [shelvesList, setShelvesList] = useState([]);
     const [assignedShelves, setAssignedShelves] = useState([]);
@@ -222,142 +222,173 @@ const ProductsMobileForm = () => {
 
     useEffect(() => {
         handleAssignedShelves();
-    }, [isModalProductMobileFormVisible])
+        if(!isNaN(parseInt(form.quantity)) && assignedShelves.length > 0) {
+            const summedQuantity = assignedShelves.reduce((acc, shelf) => acc + parseInt(shelf.currentQuant), 0);
+            console.log("Summed quantity: " + summedQuantity);
+            if (summedQuantity === parseInt(form.quantity)) {
+                setQuantityError(false);
+                //console.log('No error');
+            } else {
+                setQuantityError(true);
+                //console.log('Error');
+            }
+        }
+    }, [isShelfAssignmentModalVisible])
 
     useEffect(() => {
-        setRequest({
-            productDto: {
-                productName: form.productName,
-                productDescription: form.productDescription,
-                price: form.price,
-                quantity: form.quantity,
-                barcode: form.barcode,
-                subcategoriesSubcategoryId: form.subcategoriesSubcategoryId,
-            },
-            shelves: assignedShelves.map(shelf => ({
-                shelfId: shelf.shelfId,
-                level: shelf.level,
-                maxQuant: shelf.maxQuant,
-                currentQuant: shelf.currentQuant,
-                productsProductId: shelf.productsProductId,
-                racksRackId: shelf.rackId,
-            }))
-        })
+        if(assignedShelves.length > 0){
+            setRequest({
+                productDto: {
+                    productName: form.productName,
+                    productDescription: form.productDescription,
+                    price: form.price,
+                    quantity: form.quantity,
+                    barcode: form.barcode,
+                    subcategoriesSubcategoryId: form.subcategoriesSubcategoryId,
+                },
+                shelves: assignedShelves.map(shelf => ({
+                    shelfId: shelf.shelfId,
+                    level: shelf.level,
+                    maxQuant: shelf.maxQuant,
+                    currentQuant: shelf.currentQuant,
+                    productsProductId: shelf.productsProductId,
+                    racksRackId: shelf.rackId,
+                }))
+            })
+        }
     },[assignedShelves])
 
+
     return (
+        <SafeAreaView>
 
-        <ScrollView className={"h-full mx-2"}>
-
-
-            <KeyboardAvoidingView className={"h-full px-4"} behavior={"padding"}>
-
-                <Text className="absolute left-1/2 transform -translate-x-1/2 my-5 text-3xl font-bold">Add</Text>
-
-                <TextFormField
-                    title={"Product name"}
-                    value={form.productName}
-                    handleChangeText={(e) => setForm({...form, productName: e})}
-                    onChange={e => handleProductName(e)}
-                    isError={productNameError}
-                    iconsVisible={true}
-                />
-
-                <TextFormField
-                    title={"Product description"}
-                    value={form.productDescription}
-                    handleChangeText={(e) => setForm({...form, productDescription: e})}
-                    onChange={e => handleProductDescription(e)}
-                    isError={productDescriptionError}
-                    iconsVisible={true}
-                    otherStyles={"mt-7"}
-                />
-
-                <NumberFormField
-                    title={"Price"}
-                    value={form.price}
-                    handleChangeText={(e) => setForm({...form, price: e})}
-                    onChange={e => handlePrice(e)}
-                    isError={priceError}
-                    iconsVisible={true}
-                    otherStyles={"mt-7"}
-
-                />
-
-                <NumberFormField
-                    title={"Quantity"}
-                    value={form.quantity.toString()}
-                    handleChangeText={(e) => setForm({...form, quantity: e})}
-                    onChange={e => handleQuantity(e)}
-                    isError={quantityError}
-                    iconsVisible={true}
-                    otherStyles={"mt-7"}
-                />
-
-                <TextFormField
-                    title={"Barcode"}
-                    value={form.barcode}
-                    handleChangeText={(e) => setForm({...form, barcode: e})}
-                    onChange={e => handleBarcode(e)}
-                    isError={barcodeError}
-                    iconsVisible={true}
-                    otherStyles={"mt-7"}
-                />
+            <ScrollView className={"h-full mx-2"}>
 
 
-                <View className={"mt-12"}>
-                    <CustomSelectList
-                        selectKey={selectKey}
-                        setSelected={val => setForm({...form, subcategoriesSubcategoryId: val})}
-                        typeMap={subcategoryTypeMap}
-                        defaultOption={defaultOption}
-                        onSelect={() => handleSubcategoryId()}
+                <KeyboardAvoidingView className={"h-full px-4"} behavior={"padding"}>
+
+                    <Text className="absolute left-1/2 transform -translate-x-1/2 my-5 text-3xl font-bold">Add</Text>
+
+                    <TextFormField
+                        title={"Product name"}
+                        value={form.productName}
+                        handleChangeText={(e) => setForm({...form, productName: e})}
+                        onChange={e => handleProductName(e)}
+                        isError={!!productNameError}
+                        iconsVisible={true}
                     />
-                </View>
+
+                    <TextFormField
+                        title={"Product description"}
+                        value={form.productDescription}
+                        handleChangeText={(e) => setForm({...form, productDescription: e})}
+                        onChange={e => handleProductDescription(e)}
+                        isError={!!productDescriptionError}
+                        iconsVisible={true}
+                        otherStyles={"mt-7"}
+                    />
+
+                    <NumberFormField
+                        title={"Price"}
+                        value={form.price}
+                        handleChangeText={(e) => setForm({...form, price: e})}
+                        onChange={e => handlePrice(e)}
+                        isError={!!priceError}
+                        iconsVisible={true}
+                        otherStyles={"mt-7"}
+
+                    />
+
+                    <NumberFormField
+                        title={"Quantity"}
+                        value={form.quantity.toString()}
+                        handleChangeText={(e) => setForm({...form, quantity: e})}
+                        onChange={e => handleQuantity(e)}
+                        isError={!!quantityError}
+                        iconsVisible={true}
+                        otherStyles={"mt-7"}
+                    />
+
+                    <TextFormField
+                        title={"Barcode"}
+                        value={form.barcode}
+                        handleChangeText={(e) => setForm({...form, barcode: e})}
+                        onChange={e => handleBarcode(e)}
+                        isError={!!barcodeError}
+                        iconsVisible={true}
+                        otherStyles={"mt-7"}
+                    />
 
 
-                {/*//przycisk do przechodzenia do modala musi byc wlaczony jesli pole quantity w formularzu jestustawione i przeszlo waldiacje*/}
-
-                <CustomButton title={"Assign shelves"} handlePress={() => setIsModalProductMobileFormVisible(true)}
-                              containerStyles={"mt-7"} isLoading={assignedShelvesError} showLoading={false}
-                              textStyles={"text-white"}></CustomButton>
-
-                {assignedShelves.length > 0 ? <CustomButton title={"Show assigned shelves"}
-                                                            handlePress={() => setIsModalAssignesShelvesVisible(true)}
-                                                            containerStyles={"mt-7"}
-                                                            textStyles={"text-white"}></CustomButton> : null}
-
-                <CustomButton title={"Save"} handlePress={() => handleCreateProduct()} containerStyles={"mt-7"}
-                              isLoading={subcategoriesSubcategoryIdError || quantityError || productNameError || productDescriptionError || priceError || barcodeError || assignedShelvesError}
-                              showLoading={false} textStyles={"text-white"}></CustomButton>
-
-                {/*<CustomButton handlePress={() => console.log(JSON.stringify(assignedShelves))}></CustomButton>*/}
+                    <View className={"mt-12"}>
+                        <CustomSelectList
+                            selectKey={selectKey}
+                            setSelected={val => setForm({...form, subcategoriesSubcategoryId: val})}
+                            typeMap={subcategoryTypeMap}
+                            defaultOption={defaultOption}
+                            onSelect={() => handleSubcategoryId()}
+                        />
+                    </View>
 
 
-                <Modal
-                    visible={isModalProductMobileFormVisible}
-                    animationType={Platform.OS !== "ios" ? "" : "slide"}
-                    presentationStyle={Platform.OS === "ios" ? "pageSheet" : ""}
-                    onRequestClose={() => setIsModalProductMobileFormVisible(false)}
-                >
-                    <ShelfAssignForm productQuantity={form.quantity} shelvesList={shelvesList}
-                                     setIsModalVisible={setIsModalProductMobileFormVisible} assignedShelves={assignedShelves}
-                                     setAssignedShelves={setAssignedShelves}/>
-                </Modal>
+                    {/*//przycisk do przechodzenia do modala musi byc wlaczony jesli pole quantity w formularzu jestustawione i przeszlo waldiacje*/}
 
-               <Modal
-                   visible = {isModalAssignesShelvesVisible}
-                   animationType={Platform.OS !== "ios" ? "" : "slide"}
-                   presentationStyle={Platform.OS === "ios" ? "pageSheet" : ""}
-                   onRequestClose={() => setIsModalAssignesShelvesVisible(false)}
-               >
-                    <ShelfAssignDisplayer assignedShelves={assignedShelves} setIsModalVisible={setIsModalAssignesShelvesVisible}/>
-               </Modal>
+                    <CustomButton title={"Assign shelves"}
+                                  handlePress={() => setIsShelfAssignmentModalVisible(true)}
+                                  containerStyles={"mt-7"}
+                                  isLoading={!!assignedShelvesError}
+                                  showLoading={false}
+                                  textStyles={"text-white"}></CustomButton>
 
-            </KeyboardAvoidingView>
+                    {
+                        assignedShelves.length > 0 ?
+                        <CustomButton title={"Show assigned shelves"}
+                                      handlePress={() => setIsModalAssignesShelvesVisible(true)}
+                                      containerStyles={"mt-7"}
+                                      textStyles={"text-white"}
+                        /> : null
+                    }
 
-        </ScrollView>
+                    <CustomButton title={"Save"}
+                                  handlePress={() => handleCreateProduct()}
+                                  containerStyles={"mt-7"}
+                                  isLoading={!!subcategoriesSubcategoryIdError || !!quantityError || !!productNameError || !!productDescriptionError || !!priceError || !!barcodeError || !!assignedShelvesError}
+                                  showLoading={false}
+                                  textStyles={"text-white"}
+                    />
 
+                    {/*<CustomButton handlePress={() => console.log(JSON.stringify(assignedShelves))}></CustomButton>*/}
+
+
+                    <Modal
+                        visible={!!isShelfAssignmentModalVisible}
+                        animationType={Platform.OS !== "ios" ? "" : "slide"}
+                        presentationStyle={Platform.OS === "ios" ? "pageSheet" : ""}
+                        onRequestClose={() => setIsShelfAssignmentModalVisible(false)}
+                    >
+                        <ShelfAssignForm productQuantity={form.quantity}
+                                         shelvesList={shelvesList}
+                                         setIsModalVisible={setIsShelfAssignmentModalVisible}
+                                         assignedShelves={assignedShelves}
+                                         setAssignedShelves={setAssignedShelves}
+                        />
+
+                    </Modal>
+
+                    <Modal
+                        visible = {!!isModalAssignesShelvesVisible}
+                        animationType={Platform.OS !== "ios" ? "" : "slide"}
+                        presentationStyle={Platform.OS === "ios" ? "pageSheet" : ""}
+                        onRequestClose={() => setIsModalAssignesShelvesVisible(false)}
+                    >
+                        <ShelfAssignDisplayer assignedShelves={assignedShelves} setIsModalVisible={setIsModalAssignesShelvesVisible}/>
+                    </Modal>
+
+                </KeyboardAvoidingView>
+
+            </ScrollView>
+
+        </SafeAreaView>
     )
 }
 

@@ -126,7 +126,8 @@ const ShelvesMobileDisplayer = () => {
                 <CustomButton handlePress={() => handleModalAddShelf(rack.rackId)}
                               title={"Add Level"}
                               textStyles={"text-white"}
-                              containerStyles={"w-full mt-0"}></CustomButton>
+                              containerStyles={"w-full mt-0"}
+                />
 
                 {rack.content.map((level, index) => {
                     const isLast = index === rack.content.length - 1;
@@ -154,7 +155,7 @@ const ShelvesMobileDisplayer = () => {
     const _renderLaneContent = (section) => {
         return (
             <View className={'rounded-lg shadow my-2 mx-4 bg-slate-200'}>
-                <CustomButton handlePress={() => handleModalAddRack(section.laneId)} title={"Add Rack"} textStyles={"text-white"} containerStyles={"w-full mt-0"}></CustomButton>
+                <CustomButton handlePress={() => handleModalAddRack(section.laneId)} title={"Add Rack"} textStyles={"text-white"} containerStyles={"w-full mt-0"}/>
 
                 {section.content.length === 0 ? <Text></Text>
                     :
