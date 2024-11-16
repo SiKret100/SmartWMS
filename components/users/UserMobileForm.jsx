@@ -9,7 +9,7 @@ import userTypeMap from "data/Mappers/userType.js"
 import userService from "services/dataServices/userService.js";
 import { ScrollView } from "react-native-gesture-handler";
 import FallingTiles from "../FallingTiles";
-import userErrorMessage from "../../data/ErrorMessages/userErrorMessages.js"
+import userErrorMessage from "../../data/ErrorMessages/userErrorMessages.jsx"
 import ErrorMessages from "components/errors/ErrorMessages.jsx";
 
 const UserMobileForm = ({ object = {}, header }) => {
