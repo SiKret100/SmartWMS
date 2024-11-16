@@ -11,6 +11,7 @@ import CategoriesMobileForm from "./CategoriesMobileForm";
 import CustomButton from "../buttons/CustomButton";
 import DeleteButton from "../buttons/DeleteButton";
 import SubcategoriesMobileForm from "../subcategories/SubcategoriesMobileForm";
+import subcategoryService from "../../services/dataServices/subcategoryService";
 
 
 const CategoriesMobileDisplayer = () => {
@@ -93,7 +94,7 @@ const CategoriesMobileDisplayer = () => {
                             key={index}
                             className={`flex-row justify-between items-center px-2 py-3 ${!isLast ? 'border-b border-gray-300' : ''}`}
                         >
-                            <DeleteButton onDelete={ (e) => console.log(e)}></DeleteButton>
+                            <DeleteButton onDelete={ () => handleDeleteSubcategory(subcategory.subcategoryId)}></DeleteButton>
                             <Text>{subcategory.subcategoryName}</Text>
                             <EditButton onEdit={ () => handleModalEditSubcategory(subcategory)} />
 
@@ -156,13 +157,19 @@ const CategoriesMobileDisplayer = () => {
         }
     }
 
-    // const _renderSectionTitle = (section) => {
-    //     return (
-    //         <View>
-    //             <Text>{section.content}</Text>
-    //         </View>
-    //     );
-    // };
+    const handleDeleteSubcategory = async (id) => {
+        try{
+            const result = await subcategoryService.Delete(id);
+            //console.log("Result from view:" + JSON.stringify(result) )
+            createAlert("Message", "Subcategory deleted")
+            setIsSubcategoryDeleted(true)
+        }
+        catch(err){
+            console.log(`Error deleting subcategory`);
+            createAlert("Error", "Cannot delete subcategory with products assigned to it");
+        }
+    }
+
 
     //USE EFFECT HOOKS=========================================================================================
     useFocusEffect((
