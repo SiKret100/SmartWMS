@@ -25,7 +25,7 @@ const RacksMobileForm = ({object = {}, header, setIsModalVisible, rackId, laneId
     const[errors, setErrors] = useState({});
     const [selectKey, setSelectKey] = useState(0);
     const [lanesRacks, setLanesRacks] = useState([]);
-    const [titleErrorMessage, setTitleErrorMessage] = useState({});
+    const [titleErrorMessage, setTitleErrorMessage] = useState("");
 
     //FUNCS====================================================================================================
     const getLanesRacks = async () => {
@@ -79,6 +79,7 @@ const RacksMobileForm = ({object = {}, header, setIsModalVisible, rackId, laneId
             }
         } else {
             setTitleError(true);
+            setTitleErrorMessage(rackErrorMessages.rackNumber);
             console.log('No error');
         }
     }
@@ -132,7 +133,7 @@ const RacksMobileForm = ({object = {}, header, setIsModalVisible, rackId, laneId
                     otherStyles={"w-full mt-7"}
                 />
 
-                {/*{(titleError && form.title.length > 0) ? <Text className={'text-red-600'}>{titleErrorMessage}</Text> : null}*/}
+                {(titleError && form.title.length > 0) ? (<Text className={'text-red-600'}>{titleErrorMessage}</Text>) : null}
 
                 <CustomButton
                     title="Save"
