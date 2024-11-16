@@ -27,6 +27,8 @@ const CategoriesMobileDisplayer = () => {
     const [selectKey, setSelectKey] = useState(null);
     const [categoryId, setCategoryId] = useState(null);
     const [refreshing, setRefreshing] = React.useState(false);
+    const [isSubcategoryDeleted, setIsSubcategoryDeleted] = useState(false);
+
 
     //FUNCTIONS================================================================================================
     const fetchData = async () => {
@@ -149,6 +151,7 @@ const CategoriesMobileDisplayer = () => {
                     setSections(sections.filter(category => category.id !== object.id));
                     createAlert("Info", "Category successfully deleted");
 
+
                 })
                 .catch(err => {
                     console.log(err);
@@ -178,6 +181,13 @@ const CategoriesMobileDisplayer = () => {
                 fetchData()
             },[isModalVisibleCategory, isModalVisibleSubcategory])
     ))
+
+    useEffect(() => {
+        fetchData();
+        console.log("WYWOLANIE USUNIECIA")
+        if (isSubcategoryDeleted) setIsSubcategoryDeleted(false);
+    }, [isSubcategoryDeleted]);
+
 
     return (
         <ScrollView

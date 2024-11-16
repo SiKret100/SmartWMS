@@ -99,4 +99,31 @@ export default class subcategoryService {
         }
     }
 
+    static Delete = async (id) => {
+        const token = Platform.OS !== "web" ? SecureStore.getItem("token") : "";
+        const config = {
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+        }
+
+        try {
+            let response
+            if (Platform.OS === "web") {
+                response = await axios.delete(`${this.ip}/api/Subcategory/${id}`);
+            } else {
+                response = await axios.delete(`${this.ip}/api/Subcategory/${id}`, config);
+            }
+
+            //console.log(`Response z serwisu ${JSON.stringify(response)}`);
+            return response;
+        } catch(err) {
+            //console.log(`Blad w serwisie`)
+            //console.log(JSON.stringify(err));
+            throw err;
+        }
+
+    }
+
 }

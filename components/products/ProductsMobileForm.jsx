@@ -1,4 +1,4 @@
-import {KeyboardAvoidingView, Modal, Platform, SafeAreaView, Text, View} from "react-native";
+import {Alert, KeyboardAvoidingView, Modal, Platform, SafeAreaView, Text, View} from "react-native";
 import React, {useCallback, useEffect, useState} from "react";
 import TextFormField from "../form_fields/TextFormField";
 import NumberFormField from "../form_fields/NumberFormField";
@@ -11,6 +11,7 @@ import ShelfAssignForm from "components/products/ShelfAssignForm.jsx";
 import {ScrollView} from "react-native-gesture-handler";
 import ShelfAssignDisplayer from "./ShelfAssignDisplayer";
 import productService from "../../services/dataServices/productService";
+import userErrorMessage from "../../data/ErrorMessages/userErrorMessages";
 
 const ProductsMobileForm = () => {
 
@@ -25,7 +26,11 @@ const ProductsMobileForm = () => {
     })
     const [selectKey, setSelectKey] = useState(0);
     const [subcategoryTypeMap, setsubcategoryTypeMap] = useState([]);
-    // const [shelvesTypeMap, setShelvesTypeMap] = useState([]);
+
+    const [priceErrorMessage, setPriceErrorMessage] = useState("");
+    const [quantityErrorMessage, setQuantityErrorMessage] = useState("");
+    const [barcodeErrorMessage, setBarcodeErrorMessage] = useState("");
+
     const [productNameError, setProductNameError] = useState(true);
     const [productDescriptionError, setProductDescriptionError] = useState(true);
     const [priceError, setPriceError] = useState(true);
@@ -34,6 +39,7 @@ const ProductsMobileForm = () => {
     const [assignedShelvesError, setAssignedShelvesError] = useState(true);
     const [subcategoriesSubcategoryIdError, setSubcategoriesSubcategoryIdError] = useState(true);
     const [errors, setErrors] = useState({});
+
     const [isShelfAssignmentModalVisible, setIsShelfAssignmentModalVisible] = useState(false);
     const [isModalAssignesShelvesVisible, setIsModalAssignesShelvesVisible] = useState(false);
     const [shelvesList, setShelvesList] = useState([]);
@@ -90,7 +96,6 @@ const ProductsMobileForm = () => {
 
     }
 
-
     const handlePrice = (e) => {
         const price = e.nativeEvent.text;
         const regexp = new RegExp("^[1-9]{1}\\d*(\\.\\d{1,2})?$")
@@ -102,18 +107,22 @@ const ProductsMobileForm = () => {
 
             if (isNaN(parsedPrice)) {
                 setPriceError(true);
+                setPriceErrorMessage("Input valid price");
                 console.log('Error: not a number');
             } else {
                 if (parsedPrice <= 999999999) {
+                    setPriceErrorMessage("");
                     setPriceError(false);
                     console.log('No error');
                 } else {
+                    setPriceErrorMessage("Price exceeds max possible value");
                     setPriceError(true);
                     console.log('Error');
                 }
             }
         } else {
             setPriceError(true);
+            setPriceErrorMessage("Input valid price");
             console.log('No error');
         }
     }
@@ -127,6 +136,7 @@ const ProductsMobileForm = () => {
 
             if (isNaN(parsedMaxQuantity)) {
                 setQuantityError(true);
+                setQuantityErrorMessage("Input valid quantity");
                 console.log('Error: not a number');
             } else {
                 setAssignedShelvesError(false)
@@ -136,24 +146,29 @@ const ProductsMobileForm = () => {
                         console.log("Summed quantity: " + summedQuantity);
                         if (summedQuantity === parsedMaxQuantity) {
                             setQuantityError(false);
+                            setQuantityErrorMessage("");
                             console.log('No error');
                         } else {
+                            setQuantityErrorMessage("Product quantity doesn't match quantity of pieces assigned to shelves");
                             setQuantityError(true);
                             console.log('Error');
                         }
                     } else {
                         setQuantityError(false);
+                        setQuantityErrorMessage("");
                         console.log('No error');
                     }
 
                 } else {
                     setQuantityError(true);
+                    setQuantityErrorMessage("Input quantity exceeds max possible value")
                     console.log('Error');
                 }
             }
         } else {
             setQuantityError(true);
-            console.log('No error');
+            setQuantityErrorMessage("Input valid quantity");
+            console.log('error');
         }
     }
 
@@ -164,7 +179,11 @@ const ProductsMobileForm = () => {
 
         if (regexp.test(barcodeVar)) {
             setBarcodeError(false);
-        } else setBarcodeError(true);
+            setBarcodeErrorMessage("");
+        } else {
+            setBarcodeError(true);
+            setBarcodeErrorMessage("Barcode must consist of 8 numbers");
+        }
     }
 
     const handleSubcategoryId = () => {
@@ -210,6 +229,18 @@ const ProductsMobileForm = () => {
         }
 
 
+    }
+
+    const createAlert = (title, message) => {
+        return (
+            Alert.alert(title, message, [
+                {
+                    text: "Ok",
+                    onPress: () => {},
+                    style: "cancel"
+                }
+            ])
+        )
     }
 
     //USE EFFECT HOOKS=========================================================================================
@@ -296,8 +327,14 @@ const ProductsMobileForm = () => {
                         isError={!!priceError}
                         iconsVisible={true}
                         otherStyles={"mt-7"}
-
                     />
+
+                    {form.price.length === 0 ? null : priceError ?
+
+                        <Text className="text-red-500">{priceErrorMessage}</Text>
+                        :
+                        null
+                    }
 
                     <NumberFormField
                         title={"Quantity"}
@@ -309,6 +346,13 @@ const ProductsMobileForm = () => {
                         otherStyles={"mt-7"}
                     />
 
+                    {form.quantity.length === 0 ? null : quantityError ?
+
+                        <Text className="text-red-500">{quantityErrorMessage}</Text>
+                        :
+                        null
+                    }
+
                     <TextFormField
                         title={"Barcode"}
                         value={form.barcode}
@@ -318,6 +362,15 @@ const ProductsMobileForm = () => {
                         iconsVisible={true}
                         otherStyles={"mt-7"}
                     />
+
+                    {form.barcode.length === 0 ? null : barcodeError ?
+
+
+                        <Text className="text-red-500">{barcodeErrorMessage}</Text>
+                        :
+                        null
+                    }
+
 
 
                     <View className={"mt-12"}>
