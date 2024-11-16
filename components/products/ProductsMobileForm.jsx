@@ -12,6 +12,7 @@ import {ScrollView} from "react-native-gesture-handler";
 import ShelfAssignDisplayer from "./ShelfAssignDisplayer";
 import productService from "../../services/dataServices/productService";
 import userErrorMessage from "../../data/ErrorMessages/userErrorMessages";
+import productErrorMessages from "../../data/ErrorMessages/productErrorMessages";
 
 const ProductsMobileForm = () => {
 
@@ -107,7 +108,7 @@ const ProductsMobileForm = () => {
 
             if (isNaN(parsedPrice)) {
                 setPriceError(true);
-                setPriceErrorMessage("Input valid price");
+                setPriceErrorMessage(productErrorMessages.invalidPrice);
                 console.log('Error: not a number');
             } else {
                 if (parsedPrice <= 999999999) {
@@ -115,14 +116,14 @@ const ProductsMobileForm = () => {
                     setPriceError(false);
                     console.log('No error');
                 } else {
-                    setPriceErrorMessage("Price exceeds max possible value");
+                    setPriceErrorMessage(productErrorMessages.excessiveValue);
                     setPriceError(true);
                     console.log('Error');
                 }
             }
         } else {
             setPriceError(true);
-            setPriceErrorMessage("Input valid price");
+            setPriceErrorMessage(productErrorMessages.invalidPrice);
             console.log('No error');
         }
     }
@@ -136,38 +137,40 @@ const ProductsMobileForm = () => {
 
             if (isNaN(parsedMaxQuantity)) {
                 setQuantityError(true);
-                setQuantityErrorMessage("Input valid quantity");
+                setQuantityErrorMessage(productErrorMessages.invalidQuantity);
                 console.log('Error: not a number');
             } else {
-                setAssignedShelvesError(false)
+                //setAssignedShelvesError(false);
                 if (parsedMaxQuantity <= 999) {
+                    setQuantityError(false)
                     if (assignedShelves.length > 0) {
+
                         const summedQuantity = assignedShelves.reduce((acc, shelf) => acc + parseInt(shelf.currentQuant), 0);
                         console.log("Summed quantity: " + summedQuantity);
                         if (summedQuantity === parsedMaxQuantity) {
-                            setQuantityError(false);
+                            setAssignedShelvesError(false);
                             setQuantityErrorMessage("");
                             console.log('No error');
                         } else {
-                            setQuantityErrorMessage("Product quantity doesn't match quantity of pieces assigned to shelves");
-                            setQuantityError(true);
+                            setQuantityErrorMessage(productErrorMessages.quantityToShelvesMismatch);
+                            setAssignedShelvesError(true);
                             console.log('Error');
                         }
                     } else {
-                        setQuantityError(false);
+                        setAssignedShelvesError(true);
                         setQuantityErrorMessage("");
                         console.log('No error');
                     }
 
                 } else {
                     setQuantityError(true);
-                    setQuantityErrorMessage("Input quantity exceeds max possible value")
+                    setQuantityErrorMessage(productErrorMessages.excessiveQuantity)
                     console.log('Error');
                 }
             }
         } else {
             setQuantityError(true);
-            setQuantityErrorMessage("Input valid quantity");
+            setQuantityErrorMessage(productErrorMessages.invalidQuantity);
             console.log('error');
         }
     }
@@ -182,7 +185,7 @@ const ProductsMobileForm = () => {
             setBarcodeErrorMessage("");
         } else {
             setBarcodeError(true);
-            setBarcodeErrorMessage("Barcode must consist of 8 numbers");
+            setBarcodeErrorMessage(productErrorMessages.barcodeError);
         }
     }
 
@@ -199,14 +202,11 @@ const ProductsMobileForm = () => {
         // console.log("Form: " + JSON.stringify(form))
         // console.log("Assignes shelces " + JSON.stringify(assignedShelves))
 
-
-
-
         try{
             const result = await productService.AddProductAndAssignShelves(request);
             if(result.errors){
                 setErrors(result.errors);
-                //console.log(`Błędy przechwycone: ${JSON.stringify(result.errors)}`);
+                console.log(`Błędy przechwycone: ${JSON.stringify(result.errors)}`);
             }else{
                 setForm({
                     productName: "",
@@ -215,8 +215,19 @@ const ProductsMobileForm = () => {
                     quantity: "",
                     barcode: "",
                     subcategoriesSubcategoryId: -1,
-                })
-                setErrors({})
+                });
+                setErrors({});
+
+                setForm({
+                    productName: "",
+                        productDescription: "",
+                    price: "",
+                    quantity: "",
+                    barcode: "",
+                    subcategoriesSubcategoryId: -1,
+                });
+
+                setAssignedShelves([]);
                 // setForm({
                 //     laneCode: ""
                 // })
@@ -227,7 +238,6 @@ const ProductsMobileForm = () => {
             setErrors(err);
             //console.log(`Bledy w komponencie: ${JSON.stringify(err)}`);
         }
-
 
     }
 
@@ -346,7 +356,7 @@ const ProductsMobileForm = () => {
                         otherStyles={"mt-7"}
                     />
 
-                    {form.quantity.length === 0 ? null : quantityError ?
+                    {form.quantity.length === 0 ? null : quantityError || assignedShelvesError ?
 
                         <Text className="text-red-500">{quantityErrorMessage}</Text>
                         :
@@ -389,7 +399,7 @@ const ProductsMobileForm = () => {
                     <CustomButton title={"Assign shelves"}
                                   handlePress={() => setIsShelfAssignmentModalVisible(true)}
                                   containerStyles={"mt-7"}
-                                  isLoading={!!assignedShelvesError}
+                                  isLoading={!!quantityError}
                                   showLoading={false}
                                   textStyles={"text-white"}></CustomButton>
 
@@ -411,7 +421,6 @@ const ProductsMobileForm = () => {
                     />
 
                     {/*<CustomButton handlePress={() => console.log(JSON.stringify(assignedShelves))}></CustomButton>*/}
-
 
                     <Modal
                         visible={!!isShelfAssignmentModalVisible}

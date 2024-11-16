@@ -8,6 +8,7 @@ import CustomButton from "../buttons/CustomButton";
 import {Feather} from "@expo/vector-icons";
 import {Button} from "react-native-elements";
 import {Keyboard as navigation} from "react-native-web";
+import shelfAssignmentErrorMessages from "../../data/ErrorMessages/shelfAssignmentErrorMessages";
 
 
 const ShelfAssignForm = ({shelvesList, assignedShelves, setAssignedShelves, setIsModalVisible, productQuantity}) => {
@@ -103,7 +104,7 @@ const ShelfAssignForm = ({shelvesList, assignedShelves, setAssignedShelves, setI
                                     console.log(`Parsed max: ${parsedMaxQuant}`);
                                     if (isNaN(parsedMaxQuant)) {
                                         setMaxQuantError(true);
-                                        setMaxQuantErrorMessage("Entered value for max quantity is not a number");
+                                        setMaxQuantErrorMessage(shelfAssignmentErrorMessages.invalidMaxQuant);
                                         console.log('Error: not a number');
                                     }
                                     else {
@@ -113,28 +114,34 @@ const ShelfAssignForm = ({shelvesList, assignedShelves, setAssignedShelves, setI
                                             setMaxQuantErrorMessage("")
                                             if(isNaN(parsedCurrentQuant)) {
                                                 setCurrentQuantError(true);
-                                                setCurrentQuantErrorMessage("Entered value for current quantity is not a number");
+                                                setCurrentQuantErrorMessage(shelfAssignmentErrorMessages.invalidCurrentQuant);
                                             }
                                             else {
-                                                if(parsedCurrentQuant > parsedMaxQuant){
-                                                    setCurrentQuantErrorMessage("Current Quantity is either less than zero or exceeds max quantity value");
+                                                if(parsedCurrentQuant > parsedMaxQuant ){
+                                                    setCurrentQuantErrorMessage(shelfAssignmentErrorMessages.currentQuantBelowZeroOrAboveMaxQuant);
                                                     setCurrentQuantError(true);
                                                 }
                                                 else {
-                                                    setCurrentQuantErrorMessage("");
-                                                    setCurrentQuantError(false);
+                                                    if(parsedCurrentQuant > currentlyAssignedProductQuantity ){
+                                                        setCurrentQuantErrorMessage(true)
+                                                        setCurrentQuantErrorMessage(shelfAssignmentErrorMessages.currentQuantBelowZeroOrAbovePiecesLeft);
+                                                    }
+                                                    else {
+                                                        setCurrentQuantErrorMessage("");
+                                                        setCurrentQuantError(false);
+                                                    }
                                                 }
                                             }
                                         }
 
                                         else {
                                             setMaxQuantError(true);
-                                            setMaxQuantErrorMessage("Please enter a positive number greater than 0");
+                                            setMaxQuantErrorMessage(shelfAssignmentErrorMessages.negativeOrExcessiveMaxQuant);
                                         }
                                     }
                                 }
                                 else{
-                                    setMaxQuantErrorMessage("Please enter a valid max quantity number");
+                                    setMaxQuantErrorMessage(shelfAssignmentErrorMessages.invalidMaxQuant);
                                     setMaxQuantError(true);
                                 }
                             }
@@ -156,7 +163,7 @@ const ShelfAssignForm = ({shelvesList, assignedShelves, setAssignedShelves, setI
 
                                     if (isNaN(parsedCurrentQuant)) {
                                         setCurrentQuantError(true);
-                                        setCurrentQuantErrorMessage("Entered value for max quantity is not a number")
+                                        setCurrentQuantErrorMessage(shelfAssignmentErrorMessages.invalidCurrentQuant)
                                         //console.log('Entered value for current quantity is not a number');
                                     } else {
                                         const parsedMaxQuant = parseInt(form.maxQuant);
@@ -169,7 +176,7 @@ const ShelfAssignForm = ({shelvesList, assignedShelves, setAssignedShelves, setI
                                                 }
                                                 else{
                                                     setCurrentQuantError(true);
-                                                    setCurrentQuantErrorMessage("Current quantity exceeds max quantity");
+                                                    setCurrentQuantErrorMessage(shelfAssignmentErrorMessages.currentQuantToMaxQuantMismatch);
                                                     console.log('No error');
                                                 }
                                             }
@@ -181,13 +188,13 @@ const ShelfAssignForm = ({shelvesList, assignedShelves, setAssignedShelves, setI
 
                                         }else{
                                             setCurrentQuantError(true);
-                                            setCurrentQuantErrorMessage("Entered value is either less than zero or exceeds number of pieces for assignment");
+                                            setCurrentQuantErrorMessage(shelfAssignmentErrorMessages.currentQuantBelowZeroOrAbovePiecesLeft);
                                             console.log('Error');
                                         }
                                     }
                                 } else {
                                     setCurrentQuantError(true);
-                                    setCurrentQuantErrorMessage("Please enter a valid current quantity number");
+                                    setCurrentQuantErrorMessage(shelfAssignmentErrorMessages.invalidCurrentQuant);
                                     console.log('Error');
                                 }
                             }
@@ -272,11 +279,9 @@ const ShelfAssignForm = ({shelvesList, assignedShelves, setAssignedShelves, setI
                         }
                     )
                 }
+
             </ScrollView>
         </View>
-
-
-
 
     )
 }
