@@ -385,13 +385,14 @@ const ProductsMobileForm = () => {
                         isModalVisible={setIsBarcodeModalVisible}
                     />
 
-                    {
-                        barcodeModalVisible ?
-                        <Modal>
-                            <BarcodeScanner form={form} setForm={setForm} isModalVisible={setIsBarcodeModalVisible} />
-                        </Modal>
-                            : null
-                    }
+                    <Modal
+                        visible={barcodeModalVisible}
+                        animationType={Platform.OS !== "ios" ? "" : "slide"}
+                        presentationStyle={Platform.OS === "ios" ? "pageSheet" : ""}
+                        onRequestClose={() => setIsBarcodeModalVisible(false)}
+                    >
+                        <BarcodeScanner form={form} setForm={setForm} isModalVisible={setIsBarcodeModalVisible} />
+                    </Modal>
 
                     {form.barcode.length === 0 ? null : barcodeError ?
 
