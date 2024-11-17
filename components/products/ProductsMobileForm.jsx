@@ -13,6 +13,8 @@ import ShelfAssignDisplayer from "./ShelfAssignDisplayer";
 import productService from "../../services/dataServices/productService";
 import userErrorMessage from "../../data/ErrorMessages/userErrorMessages";
 import productErrorMessages from "../../data/ErrorMessages/productErrorMessages";
+import {Feather} from "@expo/vector-icons";
+import BarcodeScanner from "../barcode_scanner/BarcodeScanner";
 
 const ProductsMobileForm = () => {
 
@@ -36,11 +38,12 @@ const ProductsMobileForm = () => {
     const [productDescriptionError, setProductDescriptionError] = useState(true);
     const [priceError, setPriceError] = useState(true);
     const [quantityError, setQuantityError] = useState(true);
-    const [barcodeError, setBarcodeError] = useState(true);
+    const [barcodeError, setBarcodeError] = useState(false);
     const [assignedShelvesError, setAssignedShelvesError] = useState(true);
     const [subcategoriesSubcategoryIdError, setSubcategoriesSubcategoryIdError] = useState(true);
     const [errors, setErrors] = useState({});
 
+    const [barcodeModalVisible, setIsBarcodeModalVisible] = useState(false);
     const [isShelfAssignmentModalVisible, setIsShelfAssignmentModalVisible] = useState(false);
     const [isModalAssignesShelvesVisible, setIsModalAssignesShelvesVisible] = useState(false);
     const [shelvesList, setShelvesList] = useState([]);
@@ -175,12 +178,13 @@ const ProductsMobileForm = () => {
         }
     }
 
-    const handleBarcode = (e) => {
-        const regexp = new RegExp("^[A-za-z\\d]{8}$");
-        const barcodeVar = e.nativeEvent.text;
-        console.log(barcodeVar);
+    const handleBarcode = (barcode) => {
+        const regexp = new RegExp("^[\\d]{8,13}$");
+        //const barcodeVar = e.nativeEvent.text;
+        console.log(barcode);
 
-        if (regexp.test(barcodeVar)) {
+        if (regexp.test(barcode)) {
+            console.log("")
             setBarcodeError(false);
             setBarcodeErrorMessage("");
         } else {
@@ -299,6 +303,12 @@ const ProductsMobileForm = () => {
         }
     },[assignedShelves])
 
+    useEffect(() => {
+
+        if(form.barcode.length > 0)
+            handleBarcode(form.barcode);
+
+    }, [barcodeModalVisible])
 
     return (
         <SafeAreaView>
@@ -362,7 +372,6 @@ const ProductsMobileForm = () => {
                         :
                         null
                     }
-
                     <TextFormField
                         title={"Barcode"}
                         value={form.barcode}
@@ -371,7 +380,18 @@ const ProductsMobileForm = () => {
                         isError={!!barcodeError}
                         iconsVisible={true}
                         otherStyles={"mt-7"}
+                        editable={false}
+                        iconName={"maximize"}
+                        isModalVisible={setIsBarcodeModalVisible}
                     />
+
+                    {
+                        barcodeModalVisible ?
+                        <Modal>
+                            <BarcodeScanner form={form} setForm={setForm} isModalVisible={setIsBarcodeModalVisible} />
+                        </Modal>
+                            : null
+                    }
 
                     {form.barcode.length === 0 ? null : barcodeError ?
 

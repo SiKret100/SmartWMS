@@ -1,4 +1,4 @@
-import {View, Text, TextInput, StyleSheet} from 'react-native';
+import {View, Text, TextInput, StyleSheet, Touchable, TouchableOpacity} from 'react-native';
 import React, {useState} from 'react';
 import Feather from "react-native-vector-icons/Feather";
 import FallingTiles from '../FallingTiles';
@@ -12,6 +12,8 @@ const TextFormField = ({
                        otherStyles,
                        isError = false,
                        iconsVisible = false,
+                        editable=true,
+                        iconName="",
                         ...props
                    }) => {
 
@@ -52,6 +54,7 @@ const TextFormField = ({
                     secureTextEntry={title === 'Password' && !showPassword}
                     onFocus={() => setIsFocused(true)}
                     onBlur={() => setIsFocused(false)}
+                    editable={editable}
                     {...props}
                 />
                 {iconsVisible && value.length >= 1 && (
@@ -63,6 +66,13 @@ const TextFormField = ({
                         )}
                     </View>
                 )}
+
+                { iconName !== "" ?
+                    <TouchableOpacity onPress={() => props.isModalVisible(true)} activeOpacity={0.7} className={"ml-5"}>
+                        <View>
+                            <Feather name={iconName} size={24}/>
+                        </View>
+                    </TouchableOpacity> : null}
 
             </View>
         </View>

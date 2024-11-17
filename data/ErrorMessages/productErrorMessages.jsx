@@ -4,7 +4,7 @@ const productErrorMessages = {
     invalidQuantity: 'Input valid quantity',
     quantityToShelvesMismatch: 'Product quantity doesn\'t match quantity of pieces assigned to shelves',
     excessiveQuantity: 'Input quantity exceeds max possible value',
-    barcodeError: 'Barcode must consist of 8 numbers'
+    barcodeError: 'Barcode must consist of 8 or 13 digits'
 
 }
 
