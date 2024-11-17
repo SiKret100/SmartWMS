@@ -179,7 +179,7 @@ const ProductsMobileForm = () => {
     }
 
     const handleBarcode = (barcode) => {
-        const regexp = new RegExp("^[\\d]{8,13}$");
+        const regexp = new RegExp("^[\\d]{8,14}$");
         //const barcodeVar = e.nativeEvent.text;
         console.log(barcode);
 
