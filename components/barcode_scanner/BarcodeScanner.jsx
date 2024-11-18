@@ -1,6 +1,7 @@
 import { CameraView, useCameraPermissions } from 'expo-camera';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import {Button, StyleSheet, Text, View, Modal} from 'react-native';
+import CancelButton from "../buttons/CancelButton";
 
 const BarcodeScanner = ({form, setForm, setIsModalVisible}) => {
     const [permission, requestPermission] = useCameraPermissions();
@@ -33,6 +34,10 @@ const BarcodeScanner = ({form, setForm, setIsModalVisible}) => {
     return (
 
             <View style={styles.container}>
+                <View style={styles.cancelButtonContainer}>
+                    <CancelButton onPress={() => setIsModalVisible(false)} />
+                </View>
+
                 <View style={styles.cameraContainer}>
                     <CameraView
                         style={styles.camera}
@@ -58,7 +63,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         justifyContent: 'center',
-        alignItems: 'center',
+        alignContent: 'space-between',
     },
     cancelButtonContainer: {
         position: 'absolute',
@@ -71,6 +76,7 @@ const styles = StyleSheet.create({
     },
     cameraContainer: {
         justifyContent:"center",
+        alignSelf: 'center',
         borderRadius: 30,
         overflow: 'hidden',
         height: 200,
