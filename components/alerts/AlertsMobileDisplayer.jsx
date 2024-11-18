@@ -168,15 +168,19 @@ const AlertMobileDisplayer = () => {
     }, [isDeletedItem]);
 
     useEffect(() => {
-        if (selected !== -1)
-            setFilteredData(data.filter(record => record.alertType === selected));
-        else
-            setFilteredData(data);
+        if (data.length > 0) {
+            if (selected !== -1) {
+                setFilteredData(data.filter(record => record.alertType === selected));
+            } else {
+                setFilteredData(data);
+            }
 
-        if (selected !== undefined && selected !== null && !isNaN(selected)) {
-            saveSelected();
+            if (selected !== undefined && selected !== null && !isNaN(selected)) {
+                saveSelected();
+            }
         }
-    }, [selected]);
+    }, [data, selected]);
+
 
 
     return (

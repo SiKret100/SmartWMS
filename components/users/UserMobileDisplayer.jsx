@@ -162,7 +162,7 @@ const UserMobileDisplayer = () => {
     if (selected !== undefined && selected !== null && !isNaN(selected)) {
       saveSelected();
     }
-  }, [selected]);
+  }, [data, selected]);
 
 
   return (

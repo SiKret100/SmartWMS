@@ -2,7 +2,7 @@ import { CameraView, useCameraPermissions } from 'expo-camera';
 import { useState } from 'react';
 import {Button, StyleSheet, Text, View, Modal} from 'react-native';
 
-const BarcodeScanner = ({form, setForm, isModalVisible}) => {
+const BarcodeScanner = ({form, setForm, setIsModalVisible}) => {
     const [permission, requestPermission] = useCameraPermissions();
     const [facing, setFacing] = useState('back');
     const [scanned, setScanned] = useState(false);
@@ -26,7 +26,7 @@ const BarcodeScanner = ({form, setForm, isModalVisible}) => {
 
     const handleBarCodeScanned = (data) => {
         setForm({...form, barcode: data});
-        isModalVisible(false);
+        setIsModalVisible(false);
         console.log(data);
     };
 
@@ -59,6 +59,11 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
+    },
+    cancelButtonContainer: {
+        position: 'absolute',
+        top: 10,
+        left: 10,
     },
     message: {
         textAlign: 'center',

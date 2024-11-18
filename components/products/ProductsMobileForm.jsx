@@ -391,7 +391,7 @@ const ProductsMobileForm = () => {
                         presentationStyle={Platform.OS === "ios" ? "pageSheet" : ""}
                         onRequestClose={() => setIsBarcodeModalVisible(false)}
                     >
-                        <BarcodeScanner form={form} setForm={setForm} isModalVisible={setIsBarcodeModalVisible} />
+                        <BarcodeScanner form={form} setForm={setForm} setIsModalVisible={setIsBarcodeModalVisible} />
                     </Modal>
 
                     {form.barcode.length === 0 ? null : barcodeError ?
