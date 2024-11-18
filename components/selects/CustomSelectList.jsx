@@ -11,7 +11,7 @@ const CustomSelectList = ({selectKey, setSelected, typeMap, defaultOption, other
             setSelected={setSelected}
             data={typeMap}
             save="key"
-            placeholder="Select type..."
+            placeholder="Select..."
             boxStyles={
                 {
                     borderColor: 'black',

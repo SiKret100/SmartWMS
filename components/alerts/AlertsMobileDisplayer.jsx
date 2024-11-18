@@ -14,6 +14,7 @@ import moment from 'moment-timezone';
 import FallingTiles from "../FallingTiles";
 import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
 import CustomSelectList from "../selects/CustomSelectList";
+import CustomButton from "../buttons/CustomButton";
 
 const AlertMobileDisplayer = () => {
 
@@ -49,9 +50,13 @@ const AlertMobileDisplayer = () => {
                         <Text className={"text-center"}>{item.title}</Text>
                         <Text className={"text-center"}>{item.description}</Text>
                         <Text className={"text-center"}>{moment(item.alertDate).format("DD MMMM YYYY")}</Text>
-                        <Text className={"text-center"}>
-                            {item.seen === 0 ? "Widziano" : "Nie widziano"}
-                        </Text>
+
+                        {/*     SEEN STATUS     */}
+
+                        {/*<Text className={"text-center"}>*/}
+                        {/*    {item.seen === 0 ? "Widziano" : "Nie widziano"}*/}
+                        {/*</Text>*/}
+
                         <Text className={"text-center"}>
                             {alertTypeMap.find(alert => alert.key === item.alertType)?.value || "Unknown"}
                         </Text>
@@ -67,18 +72,21 @@ const AlertMobileDisplayer = () => {
         setLoading(false);
         await alertService.GetAll()
             .then(response => {
-                setData(response.data.reverse());
+                setData(response.data);
                 loadSelected();
                 if (selected !== null) {
                     const parsedSelected = parseInt(selected);
                     setSelected(parsedSelected);
 
-                    if (parsedSelected !== -1)
-                        setFilteredData(response.data.filter(record => record.alertType === parsedSelected));
-                    else
-                        setFilteredData(response.data);
+                    if (parsedSelected !== -1) {
+                        const filteredData = response.data.filter(record => record.alertType === parsedSelected);
+                        setFilteredData(filteredData.sort((a, b) => a.alertId - b.alertId).reverse());
+                    } else {
+                        setFilteredData(response.data.sort((a, b) => a.alertId - b.alertId).reverse());
+                    }
+
                 } else
-                    setFilteredData(response.data);
+                    setFilteredData(response.data.sort((a, b) => a.alertId - b.alertId).reverse());
 
                 console.log("Fetched data");
                 setLoading(true);

@@ -2,6 +2,8 @@ import {Platform} from "react-native";
 import axios from "axios";
 import * as SecureStore from "expo-secure-store";
 import {router} from "expo-router";
+import AlertDto from "../../data/DTOs/alertDto";
+import ProductDto from "data/DTOs/productDto.js";
 
 export default class productService {
     static ip = process.env.EXPO_PUBLIC_IP
@@ -163,5 +165,37 @@ export default class productService {
 
         }
     }
+
+    static Update = async (id, productData) => {
+        const token = Platform.OS !== "web" ? SecureStore.getItem("token") : "";
+        const config = {
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+        };
+
+        try {
+            const productDto = new ProductDto(productData);
+
+            let response;
+            if (Platform.OS === "web") {
+                response = await axios.put(`${this.ip}/api/Product/${id}`, productDto);
+            } else {
+                response = await axios.put(
+                    `${this.ip}/api/Product/${id}`,
+                    productDto,
+                    config
+                );
+            }
+
+            console.log("Response from service" + JSON.stringify(response));
+            return response;
+        } catch (err) {
+            console.log("Error from service" + JSON.stringify(err));
+            return err.response.data;
+        }
+    };
+
 
 }

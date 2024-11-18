@@ -10,6 +10,7 @@ import EditButton from "../buttons/EditButton";
 import ProductsMobileDetailDisplayer from "./ProductsMobileDetailDisplayer";
 import {useFocusEffect} from "expo-router";
 import ProductMobileTakeDeliveryModal from "./ProductMobileTakeDeliveryModal";
+import ProductMobileEditForm from "./ProductMobileEditForm";
 
 const ProductsMobileDisplayer = () => {
 
@@ -20,7 +21,10 @@ const ProductsMobileDisplayer = () => {
     const [isProductDetailModalVisible, setIsProductDetailModalVisible] = useState(false);
     const [currentProductDetail, setCurrentProductDetail] = useState(null);
     const [isTakeDeliveryModalVisible, setIsTakeDeliveryModalVisible] = useState(false);
+    const [isEditProductModalVisible, setIsEditProductModalVisible] = useState(false);
+    const [currentlyEditItem, setCurrentlyEditItem] = useState(null);
     const [isDeletedItem, setIsDeletedItem] = useState(false);
+
     //FUNCTIONS================================================================================================
     const fetchData = async () => {
         try {
@@ -43,31 +47,39 @@ const ProductsMobileDisplayer = () => {
 
     const handleDelete = (id) => {
 
-        try{
+        try {
             productService.Delete(id)
             setIsDeletedItem(true)
 
-        }catch(err){
+        } catch (err) {
             console.log(err);
         }
+    }
+
+    const handleEdit = (object) => {
+        setCurrentlyEditItem(object);
+        setIsEditProductModalVisible(true)
+        console.log(JSON.stringify(object));
     }
 
     const renderItem = ({item}) => (
         <FallingTiles>
 
 
-            <View className={"flex-row justify-between items-center flex-0.5 px-2 py-2 mx-2 my-2 shadow rounded-lg bg-slate-200"}>
+            <View
+                className={"flex-row justify-between items-center flex-0.5 px-2 py-2 mx-2 my-2 shadow rounded-lg bg-slate-200"}>
 
-                <EditButton/>
+                <EditButton onEdit={() =>(handleEdit(item)) }/>
 
-                <TouchableOpacity onPress={() => handleProductDetailDisplay(item)} hitSlop={{ top: 15, bottom: 15, left: 60, right: 60 }}>
+                <TouchableOpacity onPress={() => handleProductDetailDisplay(item)}
+                                  hitSlop={{top: 15, bottom: 15, left: 25, right: 25}}>
                     <View className={"px-2 py-2 mx-4"}>
                         <Text className={"text-center"}>{item.productName}</Text>
                     </View>
                 </TouchableOpacity>
 
 
-                <DeleteButton onDelete={() =>(handleDelete(item.productId))}/>
+                <DeleteButton onDelete={() => (handleDelete(item.productId))}/>
 
             </View>
 
@@ -88,7 +100,7 @@ const ProductsMobileDisplayer = () => {
         useCallback(
             () => {
                 fetchData()
-            },[])
+            }, [])
     ));
 
     useEffect(() => {
@@ -96,7 +108,7 @@ const ProductsMobileDisplayer = () => {
         console.log("Modala nie ma ")
         if (isDeletedItem) setIsDeletedItem(false);
 
-    }, [isTakeDeliveryModalVisible])
+    }, [isTakeDeliveryModalVisible, isEditProductModalVisible])
 
     useEffect(() => {
         fetchData();
@@ -126,27 +138,39 @@ const ProductsMobileDisplayer = () => {
 
             />
 
-            <CustomButton title={"Take new delivery"}  textStyles={"text-white"} containerStyles={"px-2 mb-2 mx-2"} handlePress={() => setIsTakeDeliveryModalVisible(true) }/>
+            <CustomButton title={"Take new delivery"} textStyles={"text-white"} containerStyles={"px-2 mb-2 mx-2"}
+                          handlePress={() => setIsTakeDeliveryModalVisible(true)}/>
 
             <Modal
-                visible = {isProductDetailModalVisible}
+                visible={isProductDetailModalVisible}
                 animationType={Platform.OS !== "ios" ? "" : "slide"}
                 presentationStyle={Platform.OS === "ios" ? "pageSheet" : ""}
                 onRequestClose={() => setIsProductDetailModalVisible(false)}
             >
                 <View className="flex-auto mt-5 bg-background-light">
-                    <ProductsMobileDetailDisplayer product={currentProductDetail} setIsModalVisible={setIsProductDetailModalVisible}/>
+                    <ProductsMobileDetailDisplayer product={currentProductDetail}
+                                                   setIsModalVisible={setIsProductDetailModalVisible}/>
                 </View>
 
             </Modal>
 
             <Modal
-                visible = {isTakeDeliveryModalVisible}
+                visible={isTakeDeliveryModalVisible}
                 animationType={Platform.OS !== "ios" ? "" : "slide"}
                 presentationStyle={Platform.OS === "ios" ? "pageSheet" : ""}
                 onRequestClose={() => setIsTakeDeliveryModalVisible(false)}
             >
                 <ProductMobileTakeDeliveryModal setIsModalVisible={setIsTakeDeliveryModalVisible}/>
+
+            </Modal>
+
+            <Modal
+                visible={isEditProductModalVisible}
+                animationType={Platform.OS !== "ios" ? "" : "slide"}
+                presentationStyle={Platform.OS === "ios" ? "pageSheet" : ""}
+                onRequestClose={() => setIsEditProductModalVisible(false)}
+            >
+                <ProductMobileEditForm setIsModalVisible={setIsEditProductModalVisible} object={currentlyEditItem}></ProductMobileEditForm>
 
             </Modal>
         </SafeAreaView>
