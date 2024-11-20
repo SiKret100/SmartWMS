@@ -100,52 +100,7 @@ const ProductMobileEditForm = ({object={}, setIsModalVisible}) => {
         }
     }
 
-    const handleQuantity = (e) => {
-        const quantity = e.nativeEvent.text;
-        const regexp = new RegExp("^[1-9]{1}\\d*$");
-        if (regexp.test(quantity)) {
-            const parsedMaxQuantity = parseInt(quantity);
-            console.log(parsedMaxQuantity);
 
-            if (isNaN(parsedMaxQuantity)) {
-                setQuantityError(true);
-                setQuantityErrorMessage(productErrorMessages.invalidQuantity);
-                console.log('Error: not a number');
-            } else {
-                //setAssignedShelvesError(false);
-                if (parsedMaxQuantity <= 999) {
-                    setQuantityError(false)
-                    if (assignedShelves.length > 0) {
-
-                        const summedQuantity = assignedShelves.reduce((acc, shelf) => acc + parseInt(shelf.currentQuant), 0);
-                        console.log("Summed quantity: " + summedQuantity);
-                        if (summedQuantity === parsedMaxQuantity) {
-                            setAssignedShelvesError(false);
-                            setQuantityErrorMessage("");
-                            console.log('No error');
-                        } else {
-                            setQuantityErrorMessage(productErrorMessages.quantityToShelvesMismatch);
-                            setAssignedShelvesError(true);
-                            console.log('Error');
-                        }
-                    } else {
-                        setAssignedShelvesError(true);
-                        setQuantityErrorMessage("");
-                        console.log('No error');
-                    }
-
-                } else {
-                    setQuantityError(true);
-                    setQuantityErrorMessage(productErrorMessages.excessiveQuantity)
-                    console.log('Error');
-                }
-            }
-        } else {
-            setQuantityError(true);
-            setQuantityErrorMessage(productErrorMessages.invalidQuantity);
-            console.log('error');
-        }
-    }
 
     const handleSubcategoryId = () => {
         form.subcategoriesSubcategoryId === -1 ? setSubcategoriesSubcategoryIdError(true) : setSubcategoriesSubcategoryIdError(false);

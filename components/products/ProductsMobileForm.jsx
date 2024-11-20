@@ -74,8 +74,8 @@ const ProductsMobileForm = () => {
         try {
             const result = await shelfService.GetShelfWithRackLane()
 
-            let filteredShelves = result.data.filter(shelf => shelf.productId === null)
-            setShelvesList(filteredShelves)
+            let filteredShelves = result.data.filter(shelf => shelf.productId === null);
+            setShelvesList(filteredShelves);
 
             // setShelvesTypeMap(filteredShelves.map(shelf => ({
             //     key: shelf.shelfId,
@@ -85,7 +85,7 @@ const ProductsMobileForm = () => {
 
         } catch (err) {
             // console.log(`Bledy fetchShelves: ${JSON.stringify(err)}`)
-            setErrors(err)
+            setErrors(err);
         }
     }
 
@@ -102,7 +102,7 @@ const ProductsMobileForm = () => {
 
     const handlePrice = (e) => {
         const price = e.nativeEvent.text;
-        const regexp = new RegExp("^[1-9]{1}\\d*(\\.\\d{1,2})?$")
+        const regexp = new RegExp("^[1-9]{1}\\d*(\\.\\d{1,2})?$");
 
         if (price.length >= 1 && regexp.test(price)) {
 

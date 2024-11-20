@@ -1,9 +1,10 @@
 import { Text, View } from 'react-native'
+import OrdersMobileDisplayer from "../../../components/orders/OrdersMobileDisplayer";
 
 const OrderMain = () => {
   return (
     <View>
-      <Text>Wszystkie zamówienia</Text>
+      <OrdersMobileDisplayer></OrdersMobileDisplayer>
     </View>
   )
 }

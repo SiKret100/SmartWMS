@@ -8,6 +8,7 @@ import NumberFormField from "../form_fields/NumberFormField";
 import shelfService from "../../services/dataServices/shelfService";
 import ProductDeliveryDistributionForm from "./ProductDeliveryDistributionForm";
 import CustomButton from "../buttons/CustomButton";
+import productErrorMessages from "../../data/ErrorMessages/productErrorMessages";
 
 
 const ProductMobileTakeDeliveryModal = ({setIsModalVisible}) => {
@@ -24,12 +25,14 @@ const ProductMobileTakeDeliveryModal = ({setIsModalVisible}) => {
     const [isModalShelfAssignFormVisible, setIsModalShelfAssignFormVisible] = useState(false);
     const [assignedShelves, setAssignedShelves] = useState([]);
 
-    const [currentQuantError, setCurrentQuantError ] = useState(true);
+    const [quantityError, setQuantityError ] = useState(true);
+    const [quantityErrorMessage, setQuantityErrorMessage] = useState("");
     const [errors,setErrors] = useState([]);
     const [productIdError, setProductIdError] = useState(true);
     const [assignedShelvesError, setAssignedShelvesError] = useState(true);
     const [request, setRequest] = useState({});
     const [productList, setProductList] = useState([]);
+
 
 
 
@@ -85,6 +88,45 @@ const ProductMobileTakeDeliveryModal = ({setIsModalVisible}) => {
         form.productsProductId === -1 ? setProductIdError(true) : setProductIdError(false);
     }
 
+    // const handleQuantity = (e) => {
+    //     const quantity = e.nativeEvent.text;
+    //     const regexp = new RegExp("^[1-9]{1}\\d*$");
+    //     if (regexp.test(quantity)) {
+    //         const parsedMaxQuantity = parseInt(quantity);
+    //         console.log(parsedMaxQuantity);
+    //
+    //         if (isNaN(parsedMaxQuantity)) {
+    //             setCurrentQuantError(true);
+    //             // console.log('Error: not a number');
+    //         } else {
+    //             if (parsedMaxQuantity <= 999) {
+    //                 setCurrentQuantError(false)
+    //                 if (assignedShelves.length > 0) {
+    //                     const summedQuantity = assignedShelves.reduce((acc, shelf) => acc + parseInt(shelf.currentQuant), 0);
+    //                     // console.log("Summed quantity: " + summedQuantity);
+    //                     if (summedQuantity === parsedMaxQuantity) {
+    //                         setAssignedShelvesError(false);
+    //                         // console.log('No error');
+    //                     } else {
+    //                         setAssignedShelvesError(true);
+    //                         // console.log('Error');
+    //                     }
+    //                 } else {
+    //                     setAssignedShelvesError(true);
+    //                     //console.log('No error');
+    //                 }
+    //
+    //             } else {
+    //                 setCurrentQuantError(true);
+    //                 // console.log('Error');
+    //             }
+    //         }
+    //     } else {
+    //         setCurrentQuantError(true);
+    //         // console.log('No error');
+    //     }
+    // }
+
     const handleQuantity = (e) => {
         const quantity = e.nativeEvent.text;
         const regexp = new RegExp("^[1-9]{1}\\d*$");
@@ -93,37 +135,44 @@ const ProductMobileTakeDeliveryModal = ({setIsModalVisible}) => {
             console.log(parsedMaxQuantity);
 
             if (isNaN(parsedMaxQuantity)) {
-                setCurrentQuantError(true);
-                // console.log('Error: not a number');
+                setQuantityError(true);
+                setQuantityErrorMessage(productErrorMessages.invalidQuantity);
+                console.log('Error: not a number');
             } else {
+                //setAssignedShelvesError(false);
                 if (parsedMaxQuantity <= 999) {
-                    setCurrentQuantError(false)
+                    setQuantityError(false)
                     if (assignedShelves.length > 0) {
+
                         const summedQuantity = assignedShelves.reduce((acc, shelf) => acc + parseInt(shelf.currentQuant), 0);
-                        // console.log("Summed quantity: " + summedQuantity);
+                        console.log("Summed quantity: " + summedQuantity);
                         if (summedQuantity === parsedMaxQuantity) {
                             setAssignedShelvesError(false);
-                            // console.log('No error');
+                            setQuantityErrorMessage("");
+                            console.log('No error');
                         } else {
+                            setQuantityErrorMessage(productErrorMessages.quantityToShelvesMismatch);
                             setAssignedShelvesError(true);
-                            // console.log('Error');
+                            console.log('Error');
                         }
                     } else {
                         setAssignedShelvesError(true);
-                        //console.log('No error');
+                        setQuantityErrorMessage("");
+                        console.log('No error');
                     }
 
                 } else {
-                    setCurrentQuantError(true);
-                    // console.log('Error');
+                    setQuantityError(true);
+                    setQuantityErrorMessage(productErrorMessages.excessiveQuantity)
+                    console.log('Error');
                 }
             }
         } else {
-            setCurrentQuantError(true);
-            // console.log('No error');
+            setQuantityError(true);
+            setQuantityErrorMessage(productErrorMessages.invalidQuantity);
+            console.log('error');
         }
     }
-
 
     //USE EFFECT HOOKS=========================================================================================
     useEffect(() => {
@@ -201,16 +250,23 @@ const ProductMobileTakeDeliveryModal = ({setIsModalVisible}) => {
                     value = {form.currentQuant.toString()}
                     handleChangeText={(e) => setForm({...form, currentQuant: e})}
                     onChange = {e => handleQuantity(e)}
-                    isError={!!currentQuantError}
+                    isError={!!quantityError}
                     iconsVisible={true}
                     otherStyles={"mt-7"}
                 />
+
+                {form.currentQuant.length === 0 ? null : quantityError || assignedShelvesError ?
+
+                    <Text className="text-red-500">{quantityErrorMessage}</Text>
+                    :
+                    null
+                }
 
 
                 <CustomButton title={"Distribute"}
                               handlePress={() =>setIsModalShelfAssignFormVisible(true)}
                               containerStyles={"mt-7"}
-                              isLoading={!!productIdError || !!currentQuantError}
+                              isLoading={!!productIdError || !!quantityError}
                               showLoading={false}
                               textStyles={"text-white"}
                 />
@@ -220,7 +276,7 @@ const ProductMobileTakeDeliveryModal = ({setIsModalVisible}) => {
                 <CustomButton title="Save"
                               handlePress={() => handleDeliveryAndDistribution()}
                               containerStyles={"mt-7"}
-                              isLoading={!!assignedShelvesError || !!currentQuantError || !!productIdError}
+                              isLoading={!!assignedShelvesError || !!quantityError || !!productIdError}
                               showLoading={false}
                               textStyles={"text-white"}
                 />

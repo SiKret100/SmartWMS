@@ -1,9 +1,10 @@
 import { Text, View } from 'react-native'
+import OrdersMobileForm from "../../../components/orders/OrdersMobileForm";
 
 const OrderAdd = () => {
   return (
     <View>
-      <Text>Dodaj zamówienie</Text>
+        <OrdersMobileForm></OrdersMobileForm>
     </View>
   )
 }

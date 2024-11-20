@@ -13,6 +13,7 @@ const NumberFormField = ({
                              otherStyles,
                              isError = 0,
                              iconsVisible = false,
+                             editable = true,
                              ...props
                          }) => {
 
@@ -40,7 +41,7 @@ const NumberFormField = ({
                               transition duration-150 
                               ease-in-out shadow 
                               ${isFocused ? 'border-smartwms-blue border-2' : ''} 
-                              ${ (isError && value.length >= 1 ) ? 'border-red-500 bg-red-200' : 'bg-slate-200'}`
+                              ${(isError && value.length >= 1) ? 'border-red-500 bg-red-200' : 'bg-slate-200'}`
             }
             >
                 <TextInput
@@ -52,9 +53,10 @@ const NumberFormField = ({
                     secureTextEntry={title === 'Password' && !showPassword}
                     onFocus={() => setIsFocused(true)}
                     onBlur={() => setIsFocused(false)}
+                    editable={editable}
                     {...props}
                 />
-                { (iconsVisible && value.length >= 1) && (
+                {(iconsVisible && value.length >= 1) && (
 
                     <View className="justify-center items-center ">
                         {isError ? (
