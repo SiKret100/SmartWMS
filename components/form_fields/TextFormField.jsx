@@ -55,6 +55,7 @@ const TextFormField = ({
                     onFocus={() => setIsFocused(true)}
                     onBlur={() => setIsFocused(false)}
                     editable={editable}
+                    autoCapitalize={'none'}
                     {...props}
                 />
                 {iconsVisible && value.length >= 1 && (

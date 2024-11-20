@@ -32,6 +32,7 @@ const ProductMobileTakeDeliveryModal = ({setIsModalVisible}) => {
     const [productList, setProductList] = useState([]);
 
 
+
     //FUNCS
     const fetchData = async () => {
         try {
@@ -43,7 +44,7 @@ const ProductMobileTakeDeliveryModal = ({setIsModalVisible}) => {
                 value: product.productName,
             })));
         } catch (err) {
-            console.log(`Bledy fetchSubcategories: ${JSON.stringify(err)}`)
+            // console.log(`Bledy fetchSubcategories: ${JSON.stringify(err)}`)
             setErrors(err)
         }
     }
@@ -54,11 +55,11 @@ const ProductMobileTakeDeliveryModal = ({setIsModalVisible}) => {
 
             let filteredShelves = result.data.filter(shelf => shelf.productId === null || shelf.productId === form.productsProductId);
             setShelvesList(filteredShelves);
-            console.log(`Otrzymane shelfy: ${JSON.stringify(filteredShelves)}`);
+            // console.log(`Otrzymane shelfy: ${JSON.stringify(filteredShelves)}`);
         }
         catch(err){
             setErrors(err);
-            console.log(`Bledy w komponencie: ${JSON.stringify(err)}`);
+            // console.log(`Bledy w komponencie: ${JSON.stringify(err)}`);
         }
     }
 
@@ -70,13 +71,13 @@ const ProductMobileTakeDeliveryModal = ({setIsModalVisible}) => {
                 //console.log(`Błędy przechwycone: ${JSON.stringify(result.errors)}`);
             }
             else {
-                console.log("Delivery taken");
+                // console.log("Delivery taken");
                 setIsModalVisible(false);
             }
         }
         catch(err){
             setErrors(err);
-            console.log(`Bledy w komponencie: ${JSON.stringify(err)}`);
+            // console.log(`Bledy w komponencie: ${JSON.stringify(err)}`);
         }
     }
 
@@ -93,19 +94,19 @@ const ProductMobileTakeDeliveryModal = ({setIsModalVisible}) => {
 
             if (isNaN(parsedMaxQuantity)) {
                 setCurrentQuantError(true);
-                console.log('Error: not a number');
+                // console.log('Error: not a number');
             } else {
                 if (parsedMaxQuantity <= 999) {
                     setCurrentQuantError(false)
                     if (assignedShelves.length > 0) {
                         const summedQuantity = assignedShelves.reduce((acc, shelf) => acc + parseInt(shelf.currentQuant), 0);
-                        console.log("Summed quantity: " + summedQuantity);
+                        // console.log("Summed quantity: " + summedQuantity);
                         if (summedQuantity === parsedMaxQuantity) {
                             setAssignedShelvesError(false);
-                            console.log('No error');
+                            // console.log('No error');
                         } else {
                             setAssignedShelvesError(true);
-                            console.log('Error');
+                            // console.log('Error');
                         }
                     } else {
                         setAssignedShelvesError(true);
@@ -114,12 +115,12 @@ const ProductMobileTakeDeliveryModal = ({setIsModalVisible}) => {
 
                 } else {
                     setCurrentQuantError(true);
-                    console.log('Error');
+                    // console.log('Error');
                 }
             }
         } else {
             setCurrentQuantError(true);
-            console.log('No error');
+            // console.log('No error');
         }
     }
 
@@ -137,19 +138,19 @@ const ProductMobileTakeDeliveryModal = ({setIsModalVisible}) => {
 
     useEffect(() => {
         let prodForRequest = productList.filter(item => item.productId === form.productsProductId);
-        console.log("Prod for req: " + JSON.stringify(prodForRequest));
+        // console.log("Prod for req: " + JSON.stringify(prodForRequest));
 
         let product = prodForRequest.length > 0 ? prodForRequest[0] : null;
 
         if (!isNaN(parseInt(form.currentQuant)) && assignedShelves.length > 0) {
             const summedQuantity = assignedShelves.reduce((acc, shelf) => acc + parseInt(shelf.currentQuant), 0);
-            console.log("Summed quantity: " + summedQuantity);
+            // console.log("Summed quantity: " + summedQuantity);
             if (summedQuantity === parseInt(form.currentQuant)) {
                 setAssignedShelvesError(false);
-                console.log('No error');
+                // console.log('No error');
             } else {
                 setAssignedShelvesError(true);
-                console.log('Error');
+                // console.log('Error');
             }
         }
         else setAssignedShelvesError(true);

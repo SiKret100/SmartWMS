@@ -16,9 +16,9 @@ const AlertMobileForm = ({object = {}, header, setIsModalVisible}) => {
     //PROPS====================================================================================================
     const [errors, setErrors] = useState({});
     const [selectKey, setSelectKey] = useState(0);//to jest po to zeby customselectlist sie restowal po edycji albo dodaniu
-    const [titleError, setTitleError] = useState(true);
-    const [descrtiptionError, setDescriptionError] = useState(true);
-    const [alertTypeError, setAlertTypeError] = object?.id ? useState(false) : useState(true);
+    const [titleError, setTitleError] = object?.alertId ? useState(false) : useState(true);
+    const [descrtiptionError, setDescriptionError] = object?.alertId ? useState(false) : useState(true);
+    const [alertTypeError, setAlertTypeError] = object?.alertId ? useState(false) : useState(true);
 
     const [form, setForm] = useState({
         title: object?.title || "",

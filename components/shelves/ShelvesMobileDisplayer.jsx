@@ -136,12 +136,12 @@ const ShelvesMobileDisplayer = () => {
                             key={index}
                             className={`flex-row justify-between items-center px-2 py-3 ${!isLast ? 'border-b border-gray-300' : ''}`}
                         >
-                            <DeleteButton onDelete={() => handleDeleteShelf(level)}></DeleteButton>
+                            <EditButton onEdit={() => handleModalEditShelf(level)}/>
+
                             <View className={"flex-col justify-between items-center px-5 py-5"}>
                                 <Text>{"Level: P" + level.title}</Text>
                             </View>
-
-                            <EditButton onEdit={() => handleModalEditShelf(level)}/>
+                            <DeleteButton onDelete={() => handleDeleteShelf(level)}></DeleteButton>
 
                         </View>
 

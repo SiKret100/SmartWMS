@@ -96,9 +96,10 @@ const CategoriesMobileDisplayer = () => {
                             key={index}
                             className={`flex-row justify-between items-center px-2 py-3 ${!isLast ? 'border-b border-gray-300' : ''}`}
                         >
-                            <DeleteButton onDelete={ () => handleDeleteSubcategory(subcategory.subcategoryId)}></DeleteButton>
-                            <Text>{subcategory.subcategoryName}</Text>
                             <EditButton onEdit={ () => handleModalEditSubcategory(subcategory)} />
+                            <Text>{subcategory.subcategoryName}</Text>
+                            <DeleteButton onDelete={ () => handleDeleteSubcategory(subcategory.subcategoryId)}></DeleteButton>
+
 
                         </View>
 
@@ -179,6 +180,7 @@ const CategoriesMobileDisplayer = () => {
         useCallback(
             () => {
                 fetchData()
+                setActiveSections([])
             },[isModalVisibleCategory, isModalVisibleSubcategory])
     ))
 

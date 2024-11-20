@@ -6,6 +6,7 @@ import NumberFormField from "../form_fields/NumberFormField";
 import {Button} from "react-native-elements";
 import {Feather} from "@expo/vector-icons";
 import CustomButton from "../buttons/CustomButton";
+import shelfAssignmentErrorMessages from "../../data/ErrorMessages/shelfAssignmentErrorMessages";
 
 const ProductDeliveryDistributionForm = ({
                                              productQuantity,
@@ -113,11 +114,11 @@ const ProductDeliveryDistributionForm = ({
                                 const regexp = new RegExp("^[1-9]{1}\\d*$");
                                 if (regexp.test(maxQuantVar)) {
                                     const parsedMaxQuant = parseInt(maxQuantVar);
-                                    console.log(`Parsed max: ${parsedMaxQuant}`);
+                                    // console.log(`Parsed max: ${parsedMaxQuant}`);
                                     if (isNaN(parsedMaxQuant)) {
                                         setMaxQuantError(true);
-                                        setMaxQuantErrorMessage("Entered value for max quantity is not a number");
-                                        console.log('Error: not a number');
+                                        setMaxQuantErrorMessage(shelfAssignmentErrorMessages.invalidMaxQuant);
+                                        // console.log('Error: not a number');
                                     } else {
                                         const parsedCurrentQuant = parseInt(form.currentQuant);
                                         if (parsedMaxQuant > 0 && parsedMaxQuant <= 2147483647) {
@@ -125,10 +126,10 @@ const ProductDeliveryDistributionForm = ({
                                             setMaxQuantErrorMessage("")
                                             if (isNaN(parsedCurrentQuant)) {
                                                 setCurrentQuantError(true);
-                                                setCurrentQuantErrorMessage("Enterd value for current quantity is not a number");
+                                                setCurrentQuantErrorMessage(shelfAssignmentErrorMessages.invalidCurrentQuant);
                                             } else {
                                                 if (parsedCurrentQuant > parsedMaxQuant) {
-                                                    setCurrentQuantErrorMessage("Current Quantity is either less than zero or exceeds max quantity value");
+                                                    setCurrentQuantErrorMessage(shelfAssignmentErrorMessages.currentQuantBelowZeroOrAboveMaxQuant);
                                                     setCurrentQuantError(true);
                                                 } else {
                                                     setCurrentQuantErrorMessage("");
@@ -137,11 +138,11 @@ const ProductDeliveryDistributionForm = ({
                                             }
                                         } else {
                                             setMaxQuantError(true);
-                                            setMaxQuantErrorMessage("Please enter a positive number greater than 0");
+                                            setMaxQuantErrorMessage(shelfAssignmentErrorMessages.invalidMaxQuantPositiveError);
                                         }
                                     }
                                 } else {
-                                    setMaxQuantErrorMessage("Please enter a valid max quantity number");
+                                    setMaxQuantErrorMessage(shelfAssignmentErrorMessages.invalidMaxQuantValid);
                                     setMaxQuantError(true);
                                 }
                             }
@@ -164,8 +165,8 @@ const ProductDeliveryDistributionForm = ({
 
                                     if (isNaN(parsedCurrentQuant)) {
                                         setCurrentQuantError(true);
-                                        setCurrentQuantErrorMessage("Entered value for max quantity is not a number")
-                                        console.log('Entered value for current quantity is not a number');
+                                        setCurrentQuantErrorMessage(shelfAssignmentErrorMessages.invalidMaxQuant)
+                                        // console.log('Entered value for current quantity is not a number');
                                     } else {
                                         const parsedMaxQuant = parseInt(form.maxQuant);
                                         if (parsedCurrentQuant > 0 && parsedCurrentQuant <= currentlyAssignedProductQuantity) {
@@ -173,27 +174,27 @@ const ProductDeliveryDistributionForm = ({
                                                 if (parsedCurrentQuant <= parsedMaxQuant) {
                                                     setCurrentQuantError(false);
                                                     setCurrentQuantErrorMessage("");
-                                                    console.log('No error');
+                                                    // console.log('No error');
                                                 } else {
                                                     setCurrentQuantError(true);
-                                                    setCurrentQuantErrorMessage("Current quantity exceeds max quantity");
-                                                    console.log('No error');
+                                                    setCurrentQuantErrorMessage(shelfAssignmentErrorMessages.currentQuantToMaxQuantMismatch);
+                                                    // console.log('No error');
                                                 }
                                             } else {
                                                 setCurrentQuantError(false);
                                                 setCurrentQuantErrorMessage("");
-                                                console.log('No Error');
+                                                // console.log('No Error');
                                             }
 
                                         } else {
                                             setCurrentQuantError(true);
-                                            setCurrentQuantErrorMessage("Entered value is either less than zero or exceeds product's quantity");
+                                            setCurrentQuantErrorMessage(shelfAssignmentErrorMessages.currentQuantBelowZeroOrAboveProductQuant);
                                             console.log('Error');
                                         }
                                     }
                                 } else {
                                     setCurrentQuantError(true);
-                                    setCurrentQuantErrorMessage("Please enter a valid current quantity number");
+                                    setCurrentQuantErrorMessage(shelfAssignmentErrorMessages.currentQuantValidQuantNumber);
                                     console.log('Error');
                                 }
                             }
@@ -211,27 +212,27 @@ const ProductDeliveryDistributionForm = ({
 
                                 const regexp = new RegExp("^[1-9]{1}\\d*$");
                                 if (regexp.test(currentQuant)) {
-                                    console.log("Przeszlo");
+                                    // console.log("Przeszlo");
                                     setCurrentQuantError(false);
                                     const parsedCurrentQuant = parseInt(currentQuant);
-                                    console.log(`Sparsowane: ${parsedCurrentQuant}`)
-                                    console.log(`Pozostale: ${shelf.maxQuant - shelf.currentQuant}`)
+                                    // console.log(`Sparsowane: ${parsedCurrentQuant}`)
+                                    // console.log(`Pozostale: ${shelf.maxQuant - shelf.currentQuant}`)
                                     if (parsedCurrentQuant <= shelf.maxQuant - shelf.currentQuant) {
                                         if (parsedCurrentQuant <= currentlyAssignedProductQuantity) {
                                             setCurrentQuantError(false);
                                             setCurrentQuantErrorMessage("");
                                         } else {
                                             setCurrentQuantError(true);
-                                            setCurrentQuantErrorMessage("Entered values exceeds number of pieces for distribution");
+                                            setCurrentQuantErrorMessage(shelfAssignmentErrorMessages.currentQuantAbovePiecesToDistribution);
                                         }
                                     } else {
                                         setCurrentQuantError(true)
-                                        setCurrentQuantErrorMessage("There is not enough space on the shelf");
+                                        setCurrentQuantErrorMessage(shelfAssignmentErrorMessages.currentQuantNotEnoughSpace);
                                     }
                                 } else {
                                     setCurrentQuantError(true)
-                                    setCurrentQuantErrorMessage("Please input valid number");
-                                    console.log("Nie Przeszlo")
+                                    setCurrentQuantErrorMessage(shelfAssignmentErrorMessages.currentQuantValidNumber);
+                                    // console.log("Nie Przeszlo")
 
                                 }
                             }

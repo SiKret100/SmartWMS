@@ -38,7 +38,7 @@ const ProductsMobileForm = () => {
     const [productDescriptionError, setProductDescriptionError] = useState(true);
     const [priceError, setPriceError] = useState(true);
     const [quantityError, setQuantityError] = useState(true);
-    const [barcodeError, setBarcodeError] = useState(false);
+    const [barcodeError, setBarcodeError] = useState(true);
     const [assignedShelvesError, setAssignedShelvesError] = useState(true);
     const [subcategoriesSubcategoryIdError, setSubcategoriesSubcategoryIdError] = useState(true);
     const [errors, setErrors] = useState({});
@@ -65,7 +65,7 @@ const ProductsMobileForm = () => {
                 value: subcategory.subcategoryName,
             })));
         } catch (err) {
-            console.log(`Bledy fetchSubcategories: ${JSON.stringify(err)}`)
+            // console.log(`Bledy fetchSubcategories: ${JSON.stringify(err)}`)
             setErrors(err)
         }
     }
@@ -84,7 +84,7 @@ const ProductsMobileForm = () => {
 
 
         } catch (err) {
-            console.log(`Bledy fetchShelves: ${JSON.stringify(err)}`)
+            // console.log(`Bledy fetchShelves: ${JSON.stringify(err)}`)
             setErrors(err)
         }
     }
@@ -107,7 +107,7 @@ const ProductsMobileForm = () => {
         if (price.length >= 1 && regexp.test(price)) {
 
             const parsedPrice = parseFloat(price);
-            console.log(parsedPrice);
+            // console.log(parsedPrice);
 
             if (isNaN(parsedPrice)) {
                 setPriceError(true);
@@ -210,7 +210,7 @@ const ProductsMobileForm = () => {
             const result = await productService.AddProductAndAssignShelves(request);
             if(result.errors){
                 setErrors(result.errors);
-                console.log(`Błędy przechwycone: ${JSON.stringify(result.errors)}`);
+                // console.log(`Błędy przechwycone: ${JSON.stringify(result.errors)}`);
             }else{
                 setForm({
                     productName: "",
@@ -269,7 +269,7 @@ const ProductsMobileForm = () => {
         handleAssignedShelves();
         if(!isNaN(parseInt(form.quantity)) && assignedShelves.length > 0) {
             const summedQuantity = assignedShelves.reduce((acc, shelf) => acc + parseInt(shelf.currentQuant), 0);
-            console.log("Summed quantity: " + summedQuantity);
+            // console.log("Summed quantity: " + summedQuantity);
             if (summedQuantity === parseInt(form.quantity)) {
                 setQuantityError(false);
                 //console.log('No error');

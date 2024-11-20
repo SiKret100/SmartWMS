@@ -144,7 +144,7 @@ const RacksMobileForm = ({object = {}, header, setIsModalVisible, rackId, laneId
                     showLoading={false}
                 />
 
-                <CustomButton title={"Pobierz regaly"} handlePress={() => console.log(lanesRacks)}/>
+                {/*<CustomButton title={"Pobierz regaly"} handlePress={() => console.log(lanesRacks)}/>*/}
 
 
             </KeyboardAvoidingView>

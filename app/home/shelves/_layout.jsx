@@ -11,14 +11,14 @@ const ShelfLayout = () => {
         tabBarLabelStyle: { fontSize: 13, fontWeight: 'bold'}}
     }>
       <Tabs.Screen name='index' options={{
-        title:"Półki",
+        title:"Shelves",
         headerShown: false,
         tabBarIcon: ({ color }) => (
           <Feather name="home" size={24} color={color} />
         )
       }}/>
       <Tabs.Screen name='add' options={{
-        title:"Dodaj",
+        title:"Add",
         headerShown: false,
         tabBarIcon: ({ color }) => (
           <Feather name="plus-circle" size={24} color={color} />

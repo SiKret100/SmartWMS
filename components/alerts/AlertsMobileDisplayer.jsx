@@ -80,13 +80,13 @@ const AlertMobileDisplayer = () => {
 
                     if (parsedSelected !== -1) {
                         const filteredData = response.data.filter(record => record.alertType === parsedSelected);
-                        setFilteredData(filteredData.sort((a, b) => a.alertId - b.alertId).reverse());
+                        setFilteredData(filteredData);
                     } else {
-                        setFilteredData(response.data.sort((a, b) => a.alertId - b.alertId).reverse());
+                        setFilteredData();
                     }
 
                 } else
-                    setFilteredData(response.data.sort((a, b) => a.alertId - b.alertId).reverse());
+                    setFilteredData(response.data);
 
                 console.log("Fetched data");
                 setLoading(true);

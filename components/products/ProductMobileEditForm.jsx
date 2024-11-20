@@ -14,14 +14,14 @@ import productService from "../../services/dataServices/productService";
 const ProductMobileEditForm = ({object={}, setIsModalVisible}) => {
 
     //PROPS====================================================================================================
-    const [productNameError, setProductNameError] = useState(true);
-    const [productDescriptionError, setProductDescriptionError] = useState(true);
+    const [productNameError, setProductNameError] = useState(false);
+    const [productDescriptionError, setProductDescriptionError] = useState(false);
     const [priceErrorMessage, setPriceErrorMessage] = useState("");
-    const [priceError, setPriceError] = useState(true);
-    const [quantityError, setQuantityError] = useState(true);
+    const [priceError, setPriceError] = useState(false);
+    const [quantityError, setQuantityError] = useState(false);
     const [quantityErrorMessage, setQuantityErrorMessage] = useState("");
     const [barcodeModalVisible, setIsBarcodeModalVisible] = useState(false);
-    const [barcodeError, setBarcodeError] = useState(true);
+    const [barcodeError, setBarcodeError] = useState(false);
     const [barcodeErrorMessage, setBarcodeErrorMessage] = useState("");
     const [subcategoryTypeMap, setsubcategoryTypeMap] = useState([]);
     const [selectKey, setSelectKey] = useState(0);
@@ -214,15 +214,15 @@ const ProductMobileEditForm = ({object={}, setIsModalVisible}) => {
                         null
                     }
 
-                    <NumberFormField
-                        title={"Quantity"}
-                        value={form.quantity.toString()}
-                        handleChangeText={(e) => setForm({...form, quantity: e})}
-                        onChange={e => handleQuantity(e)}
-                        isError={!!quantityError}
-                        iconsVisible={true}
-                        otherStyles={"mt-7"}
-                    />
+                    {/*<NumberFormField*/}
+                    {/*    title={"Quantity"}*/}
+                    {/*    value={form.quantity.toString()}*/}
+                    {/*    handleChangeText={(e) => setForm({...form, quantity: e})}*/}
+                    {/*    onChange={e => handleQuantity(e)}*/}
+                    {/*    isError={!!quantityError}*/}
+                    {/*    iconsVisible={true}*/}
+                    {/*    otherStyles={"mt-7"}*/}
+                    {/*/>*/}
 
                     {form.quantity.length === 0 ? null : quantityError ?
 

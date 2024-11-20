@@ -74,11 +74,11 @@ export default class userService {
       }
       
       router.push('/home/users/');
-      
+      console.log("From service: " + JSON.stringify(response));
       return response;
 
     } catch (err) {
-        //console.log(err.response.data);
+        console.log("Error from service: " + JSON.stringify(err));
         return err.response.data;
     }
 
