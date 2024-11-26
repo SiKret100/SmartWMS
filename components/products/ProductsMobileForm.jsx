@@ -404,7 +404,10 @@ const ProductsMobileForm = () => {
 
 
 
-                    <View className={"mt-12"}>
+                    <View className={"space-y-6 mt-6 mb-2"}>
+                        <Text
+                            className='text-base font-pmedium'> Subcategory
+                        </Text>
                         <CustomSelectList
                             selectKey={selectKey}
                             setSelected={val => setForm({...form, subcategoriesSubcategoryId: val})}

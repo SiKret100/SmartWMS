@@ -1,6 +1,6 @@
 import CustomSelectList from "../selects/CustomSelectList";
 import { SafeAreaView, Text, View, Modal, Platform, ActivityIndicator, FlatList } from "react-native";
-import { useRef, useState, useEffect, useCallback } from "react";
+import React, { useRef, useState, useEffect, useCallback } from "react";
 import { useFocusEffect } from "expo-router";
 import { KeyboardAvoidingView } from "react-native";
 import CustomButton from "../buttons/CustomButton";
@@ -201,7 +201,10 @@ const UserMobileForm = ({ object = {}, header }) => {
 
 
 
-                    <View className="mt-7">
+                    <View className="mt-6">
+                        <Text
+                            className='text-base font-pmedium'> Role
+                        </Text>
                         <CustomSelectList
                             setSelected={(e) => setForm((prevForm) => ({ ...prevForm, role: e }))}
                             typeMap={userTypeMap}
@@ -212,9 +215,12 @@ const UserMobileForm = ({ object = {}, header }) => {
 
                     </View>
 
-                    <View className="mt-7">
+                    <View className="mt-6">
                         {form.role === 1 && (
                             <View>
+                                <Text
+                                    className='text-base font-pmedium'> Manager
+                                </Text>
                                 <CustomSelectList
                                     setSelected={(e) => setForm((prevForm) => ({ ...prevForm, managerId: e }))}
                                     typeMap={managers}

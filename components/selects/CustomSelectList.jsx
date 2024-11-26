@@ -3,14 +3,14 @@ import React from 'react'
 import {SelectList} from 'react-native-dropdown-select-list'
 
 
-const CustomSelectList = ({selectKey, setSelected, typeMap, defaultOption, otherRawCSS, ...props}) => {
+const CustomSelectList = ({selectKey, setSelected, typeMap, defaultOption, otherRawCSS, saveKey = "key", ...props}) => {
 
     return (
         <SelectList
             key={selectKey}
             setSelected={setSelected}
             data={typeMap}
-            save="key"
+            save={saveKey}
             placeholder="Select..."
             boxStyles={
                 {

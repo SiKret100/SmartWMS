@@ -131,7 +131,10 @@ const AlertMobileForm = ({object = {}, header, setIsModalVisible}) => {
                     iconsVisible={true}
                 />
 
-                <View className="mt-8">
+                <View className="space-y-2 mt-6 mb-2">
+                    <Text
+                        className='text-base font-pmedium'> Alert Type
+                    </Text>
                     <CustomSelectList
                         selectKey={selectKey}
                         setSelected={(val) => setForm((prevForm) => ({...prevForm, alertType: val}))}
