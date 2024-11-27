@@ -105,6 +105,7 @@ const ProductsMobileDisplayer = () => {
 
     useEffect(() => {
         fetchData();
+
         console.log("Modala nie ma ")
         if (isDeletedItem) setIsDeletedItem(false);
 

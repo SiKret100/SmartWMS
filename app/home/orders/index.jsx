@@ -3,9 +3,7 @@ import OrdersMobileDisplayer from "../../../components/orders/OrdersMobileDispla
 
 const OrderMain = () => {
   return (
-    <View>
-      <OrdersMobileDisplayer></OrdersMobileDisplayer>
-    </View>
+      <OrdersMobileDisplayer/>
   )
 }
 

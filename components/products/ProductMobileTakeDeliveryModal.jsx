@@ -88,44 +88,6 @@ const ProductMobileTakeDeliveryModal = ({setIsModalVisible}) => {
         form.productsProductId === -1 ? setProductIdError(true) : setProductIdError(false);
     }
 
-    // const handleQuantity = (e) => {
-    //     const quantity = e.nativeEvent.text;
-    //     const regexp = new RegExp("^[1-9]{1}\\d*$");
-    //     if (regexp.test(quantity)) {
-    //         const parsedMaxQuantity = parseInt(quantity);
-    //         console.log(parsedMaxQuantity);
-    //
-    //         if (isNaN(parsedMaxQuantity)) {
-    //             setCurrentQuantError(true);
-    //             // console.log('Error: not a number');
-    //         } else {
-    //             if (parsedMaxQuantity <= 999) {
-    //                 setCurrentQuantError(false)
-    //                 if (assignedShelves.length > 0) {
-    //                     const summedQuantity = assignedShelves.reduce((acc, shelf) => acc + parseInt(shelf.currentQuant), 0);
-    //                     // console.log("Summed quantity: " + summedQuantity);
-    //                     if (summedQuantity === parsedMaxQuantity) {
-    //                         setAssignedShelvesError(false);
-    //                         // console.log('No error');
-    //                     } else {
-    //                         setAssignedShelvesError(true);
-    //                         // console.log('Error');
-    //                     }
-    //                 } else {
-    //                     setAssignedShelvesError(true);
-    //                     //console.log('No error');
-    //                 }
-    //
-    //             } else {
-    //                 setCurrentQuantError(true);
-    //                 // console.log('Error');
-    //             }
-    //         }
-    //     } else {
-    //         setCurrentQuantError(true);
-    //         // console.log('No error');
-    //     }
-    // }
 
     const handleQuantity = (e) => {
         const quantity = e.nativeEvent.text;
@@ -186,23 +148,42 @@ const ProductMobileTakeDeliveryModal = ({setIsModalVisible}) => {
     },[form.productsProductId]);
 
     useEffect(() => {
+        console.log("WESZLO W USEEFFECT")
         let prodForRequest = productList.filter(item => item.productId === form.productsProductId);
         // console.log("Prod for req: " + JSON.stringify(prodForRequest));
 
         let product = prodForRequest.length > 0 ? prodForRequest[0] : null;
+        // console.log(`Wartosc quantity z forma: ${form.currentQuant}, dlugosc tablicy shelves: ${assignedShelves.length}`)
+        console.log("Assignes shelves: " + JSON.stringify(assignedShelves))
 
         if (!isNaN(parseInt(form.currentQuant)) && assignedShelves.length > 0) {
-            const summedQuantity = assignedShelves.reduce((acc, shelf) => acc + parseInt(shelf.currentQuant), 0);
-            // console.log("Summed quantity: " + summedQuantity);
+            //const summedQuantity = assignedShelves.reduce((acc, shelf) => acc + parseInt(shelf.currentQuant), 0);
+
+            const summedQuantity = assignedShelves.reduce((acc, shelf) => {
+                const oldShelf = shelvesList.find((item) => item.shelfId === shelf.shelfId);
+                const oldQuantity = parseInt(oldShelf.currentQuant);
+                const netQuantity = parseInt(shelf.currentQuant) - oldQuantity;
+                return acc + netQuantity;
+            }, 0);
+
+            console.log("Summed quantity: " + summedQuantity);
             if (summedQuantity === parseInt(form.currentQuant)) {
-                setAssignedShelvesError(false);
-                // console.log('No error');
+                const tempError = false;
+                setAssignedShelvesError(tempError);
+
+                 console.log('No error');
             } else {
-                setAssignedShelvesError(true);
-                // console.log('Error');
+                const tempError = true;
+
+                setAssignedShelvesError(tempError);
+                 console.log('Error');
             }
         }
-        else setAssignedShelvesError(true);
+        else {
+            const tempError = true
+            setAssignedShelvesError(tempError);
+        }
+
 
 
         setRequest({
@@ -221,6 +202,9 @@ const ProductMobileTakeDeliveryModal = ({setIsModalVisible}) => {
                 racksRackId: shelf.rackId,
             }))
         });
+
+        console.log("Assigned shleves: " +  JSON.stringify(assignedShelves));
+        console.log("Assignes shelves error: " + JSON.stringify(assignedShelvesError));
     }, [assignedShelves]);
 
 
@@ -281,6 +265,16 @@ const ProductMobileTakeDeliveryModal = ({setIsModalVisible}) => {
                               textStyles={"text-white"}
                 />
 
+                <CustomButton title={"DIsplay state"}
+                              handlePress={() => console.log(`Assigned: ${assignedShelvesError}, quantity: ${quantityError}, productIdError: ${productIdError}`)}
+                />
+                <CustomButton title={"Shelves list"}
+                              handlePress={() => console.log("Assignes shelves: " + JSON.stringify(shelvesList))}
+                />
+                <CustomButton title={"Assignes shelves"}
+                              handlePress={() => console.log("Assignes shelves: " + JSON.stringify(assignedShelves))}
+                />
+
 
                 <Modal
                     visible={isModalShelfAssignFormVisible}
@@ -290,7 +284,9 @@ const ProductMobileTakeDeliveryModal = ({setIsModalVisible}) => {
                 >
                     <ProductDeliveryDistributionForm productQuantity={form.currentQuant} shelvesList={shelvesList}
                                      setIsModalVisible={setIsModalShelfAssignFormVisible} assignedShelves={assignedShelves}
-                                     setAssignedShelves={setAssignedShelves}/>
+                                     setAssignedShelves={setAssignedShelves}
+                                                     setError={setAssignedShelvesError}
+                    />
                 </Modal>
 
             </SafeAreaView>

@@ -13,7 +13,8 @@ const ProductDeliveryDistributionForm = ({
                                              shelvesList,
                                              setIsModalVisible,
                                              assignedShelves,
-                                             setAssignedShelves
+                                             setAssignedShelves,
+                                                setError
                                          }) => {
     const [currentlyAssignedProductQuantity, setCurrentlyAssignedProductQuantity] = useState(productQuantity);
     const [localAssignedShelves, setLocalAssignedShelves] = useState([]);
@@ -23,6 +24,7 @@ const ProductDeliveryDistributionForm = ({
     useEffect(() => {
         if (currentlyAssignedProductQuantity === 0 ){
             setAssignedShelves(localAssignedShelves);
+            setError(false);
             setIsModalVisible(false)
 
             return () => {
@@ -76,6 +78,7 @@ const ProductDeliveryDistributionForm = ({
                             console.log(`Aktualna wartosc dla shelfa: ${shelf.currentQuant}`);
 
                             const newQuant = (parseInt(form.currentQuant) + parseInt(shelf.currentQuant)).toString();
+                            // const newQuant = parseInt(form.currentQuant).toString();
                             console.log("New quant: " + newQuant);
 
                             setCurrentlyAssignedQuantityToShelf(form.currentQuant);
@@ -92,7 +95,7 @@ const ProductDeliveryDistributionForm = ({
                             setLocalAssignedShelves(prevArr => [...prevArr, updatedForm]);
 
                             if (currentlyAssignedProductQuantity === 0) {
-                                setIsModalVisible(false);12
+                                setIsModalVisible(false);
                                 console.log("Wszystkie rozdysponowane");
                             }
 
@@ -207,6 +210,7 @@ const ProductDeliveryDistributionForm = ({
                                 if (alreadyAssignedShelf.length > 0) {
                                     //console.log("Znaleziono")
                                     setCurrentlyAssignedProductQuantity(prevQuantity => prevQuantity + parseInt(alreadyAssignedShelf[0].currentQuant));
+                                    // setCurrentlyAssignedProductQuantity( parseInt(alreadyAssignedShelf[0].currentQuant));
                                     setLocalAssignedShelves(assignedShelves.filter(shelf => shelf.shelfId !== form.shelfId));
                                 }
 

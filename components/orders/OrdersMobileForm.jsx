@@ -14,6 +14,7 @@ import DeleteButton from "../buttons/DeleteButton";
 import EditProductModal from "./EditProductModal";
 import CustomSelectList from "../selects/CustomSelectList";
 import CountryService from "../../services/dataServices/countryService";
+import orderHeaderService from "../../services/dataServices/orderHeaderService";
 import {post} from "axios";
 import supplierTypeMap from "../../data/Mappers/supplierType";
 
@@ -47,7 +48,6 @@ const OrdersMobileForm = () => {
     const [refreshing, setRefreshing] = useState(false);
     const [loading, setLoading] = useState(false);
     const [currentlyEditedItem, setCurrentlyEditedItem] = useState({});
-    const [request, setRequest] = useState({});
     const [selectKey, setSelectKey] = useState(0);
     const [selectKeyForSupplier, setSelectKeyForSupplier] = useState(0);
     // const defaultOption = {key : -1, value: "Choose country..."};
@@ -154,20 +154,40 @@ const OrdersMobileForm = () => {
 
     }
 
-    const handleAddOrder = () => {
-        const tempReq = ({
+    const handleAddOrder = async () => {
+        // const tempReq = ({
+        //     orderHeader: {
+        //         town: form.town,
+        //         address: form.address,
+        //         countryId: form.countryId,
+        //         postalCode: form.postalCode,
+        //         supplierName: form.supplierName,
+        //
+        //     },
+        //     products: assignedProducts.map(item => ({productId: item.productId, quantity: item.quantity}))
+        // })
+        //
+
+        const request = ({
             orderHeader: {
-                town: form.town,
-                address: form.address,
+                destinationAddress: form.town + ", " + form.address
+            },
+            waybill: {
                 countryId: form.countryId,
                 postalCode: form.postalCode,
-                supplierName: form.supplierName,
-
+                supplierName: form.supplierName
             },
             products: assignedProducts.map(item => ({productId: item.productId, quantity: item.quantity}))
-        })
+        });
 
-        setRequest(tempReq)
+
+        try{
+            await orderHeaderService.Add(request);
+            router.push("/home/orders");
+        }
+        catch(err){
+            console.log(err);
+        }
 
         console.log("Request: " + JSON.stringify(request));
 
@@ -183,8 +203,6 @@ const OrdersMobileForm = () => {
         // setSelectKey(prev => prev + 1)
         // setSelectKeyForSupplier(prev => prev + 1);
         //router.push("/home/orders")
-
-
     }
 
     const renderItem = ({item}) => (
@@ -362,7 +380,8 @@ const OrdersMobileForm = () => {
                               textStyles={"text-white"}></CustomButton>
 
                 {productTypeMap.length === 0 && (
-                    <Text className={"mt-2"} style={{color: '#3E86D8'}}> No products available in the warehouse </Text>
+                    <Text className={"mt-2"} style={{color: '#3E86D8'}}> No products available in the
+                        warehouse </Text>
                 )}
 
                 <CustomButton title={"Create order"} handlePress={() => handleAddOrder()}
