@@ -1,12 +1,14 @@
 import {
+    ActionSheetIOS,
     ActivityIndicator,
     Animated,
-    FlatList,
+    FlatList, Modal,
     RefreshControl,
     SafeAreaView,
     Text,
     TouchableOpacity,
-    View
+    View,
+    Platform
 } from "react-native";
 import {ScrollView} from "react-native-gesture-handler";
 import {Divider} from "react-native-elements";
@@ -20,11 +22,14 @@ import {useFocusEffect} from "expo-router";
 import Feather from "react-native-vector-icons/Feather";
 import orderStatusTypeMap from "../../data/Mappers/orderStatusType";
 import CustomSelectList from "../selects/CustomSelectList";
+import OrderDetailModalDisplayer from "./OrderDetailModalDisplayer";
+import orderDetailService from "../../services/dataServices/orderDetailService";
+import productService from "../../services/dataServices/productService";
 
 const OrdersMobileDisplayer = () => {
 
     const [data, setData] = useState([]);
-    const [currentlyDisplayedOrder, setCurrentlyDisplayedOrder] = useState({});
+    const [currentOrderDetail, setCurrentOrderDetail] = useState({});
     const [refreshing, setRefreshing] = useState(false);
     const [loading, setLoading] = useState(true);
     const [flatListHeight, setFlatListHeight] = useState(0);
@@ -33,6 +38,7 @@ const OrdersMobileDisplayer = () => {
     const [filteredData, setFilteredData] = useState([]);
     const [selectKey, setSelectKey] = useState(0);
     const [isDeletedItem, setIsDeletedItem] = useState(false);
+    const [isOrderDetailModalVisible, setIsOrderDetailModalVisible] = useState(false);
 
 
     const fetchData = async () => {
@@ -54,10 +60,6 @@ const OrdersMobileDisplayer = () => {
         }
     }
 
-    const handleEdit = (object) => {
-        console.log("Edit")
-    }
-
     const handleDelete = async (id) => {
         try {
             await orderHeaderService.Delete(id);
@@ -67,9 +69,35 @@ const OrdersMobileDisplayer = () => {
         setIsDeletedItem(true);
     };
 
-    const handleOrderDetailDisplay = (item) => {
-        console.log("");
+    const handleOrderDetailDisplay = (id) => {
+        orderDetailService.GetAllByOrderHeader(id)
+            .then(result => {
+                Promise.all(
+                    result.data.map(order =>
+                    productService.Get(order.productsProductId)
+                            .then(product => ({
+                                quantity: order.quantity,
+                                productName: product.data.productName,
+                            }))
+                            .catch(err => {
+                                console.error(`Błąd pobierania produktu: ${err}`);
+                                return null;
+                            })
+                    )
+                )
+                    .then(data => {
+                        const tempData = data;
+                        setCurrentOrderDetail(tempData)
+                        setIsOrderDetailModalVisible(true)
+                        //console.log(data)
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    });
+            })
+            .catch(err => console.log(err))
     }
+
 
     const renderItem = ({item}) => (
         <FallingTiles>
@@ -80,8 +108,10 @@ const OrdersMobileDisplayer = () => {
                     <Feather name="truck" size={24} color={"black"}/>=
                 </View>
 
-                <TouchableOpacity onPress={() => handleOrderDetailDisplay(item)}
+                <TouchableOpacity onPress={() => handleOrderDetailDisplay(item.ordersHeaderId)}
                                   hitSlop={{top: 15, bottom: 15, left: 25, right: 25}}>
+
+
                     <View className={"px-2 py-2 mx-4"}>
                         <Text className={"text-center"}>{item.destinationAddress}</Text>
 
@@ -92,7 +122,7 @@ const OrdersMobileDisplayer = () => {
                                 day: 'numeric'
                             })}
                         </Text>
-                        <Text>Status: {item.statusName}</Text>
+                        <Text className={"text-center"}>Status: {item.statusName}</Text>
 
                     </View>
                 </TouchableOpacity>
@@ -213,6 +243,18 @@ const OrdersMobileDisplayer = () => {
                     )
                 }
             />
+
+            {/*<CustomButton title={"Pokaz"} handlePress={() => console.log(currentOrderDetail)}/>*/}
+
+            <Modal
+                visible = {isOrderDetailModalVisible}
+                animationType={Platform.OS !== "ios" ? "" : "slide"}
+                presentationStyle={Platform.OS === "ios" ? "pageSheet" : ""}
+                onRequestClose={() => setIsOrderDetailModalVisible(false)}
+            >
+                <OrderDetailModalDisplayer currentOrderDetail={currentOrderDetail} setIsModalVisible={setIsOrderDetailModalVisible}></OrderDetailModalDisplayer>
+
+            </Modal>
 
         </SafeAreaView>
     )

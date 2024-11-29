@@ -1,11 +1,10 @@
 import { Text, View } from 'react-native'
+import TasksMobileDisplayer from "../../../components/tasks/TasksMobileDisplayer";
 
-const AlertMain = () => {
+const TaskMain = () => {
   return (
-    <View>
-      <Text>Wszystkie alerty</Text>
-    </View>
+      <TasksMobileDisplayer></TasksMobileDisplayer>
   )
 }
 
-export default AlertMain
+export default TaskMain

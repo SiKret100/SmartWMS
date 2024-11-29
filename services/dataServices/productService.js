@@ -8,6 +8,31 @@ import ProductDto from "data/DTOs/productDto.js";
 export default class productService {
     static ip = process.env.EXPO_PUBLIC_IP
 
+    static Get = async (id) => {
+
+        const token = Platform.OS !== "web" ? SecureStore.getItem("token") : "";
+        const config = {
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+        };
+
+        try {
+            let response;
+            if (Platform.OS === "web") {
+                response = await axios.get(`${this.ip}/api/Product/${id}`);
+            } else {
+                response = await axios.get(`${this.ip}/api/Product/${id}`, config);
+            }
+
+            //console.log(response);
+            return response;
+        } catch (err) {
+            return err.response.data;
+        }
+    }
+
     static GetAll = async () => {
 
         const token = Platform.OS !== "web" ? SecureStore.getItem("token") : "";

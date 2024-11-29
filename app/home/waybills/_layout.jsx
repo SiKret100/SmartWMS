@@ -11,28 +11,28 @@ const WaybillLayout = () => {
         tabBarLabelStyle: { fontSize: 13, fontWeight: 'bold'}}
     }>
       <Tabs.Screen name='index' options={{
-        title:"Listy przewozowe",
+        title:"Waybills",
         headerShown: false,
         tabBarIcon: ({ color }) => (
           <Feather name="home" size={24} color={color} />
         )
       }}/>
       <Tabs.Screen name='add' options={{
-        title:"Dodaj",
+        title:"Add",
         headerShown: false,
         tabBarIcon: ({ color, size }) => (
           <Feather name="plus-circle" size={24} color={color} />
         )
       }}/>
       <Tabs.Screen name='update' options={{
-        title:"Edytuj",
+        title:"Edit",
         headerShown: false,
         tabBarIcon: ({ color, size }) => (
           <Feather name="edit" size={24} color={color} />
         )
       }}/>
       <Tabs.Screen name='delete' options={{
-        title:"Usuń",
+        title:"Delete",
         headerShown: false,
         tabBarIcon: ({ color, size }) => (
           <Feather name="trash" size={24} color={color} />
