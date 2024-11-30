@@ -1,10 +1,10 @@
 import { Text, View } from 'react-native'
 import ProductsMobileForm from "../../../components/products/ProductsMobileForm";
 
-const AlertAdd = () => {
+const ProductAdd = () => {
   return (
       <ProductsMobileForm/>
   )
 }
 
-export default AlertAdd;
+export default ProductAdd;

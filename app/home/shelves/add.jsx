@@ -1,10 +1,10 @@
 import { Text, View } from 'react-native'
 import LanesMobileForm from "../../../components/lanes/LanesMobileForm";
 
-const AlertAdd = () => {
+const ShelfAdd = () => {
   return (
     <LanesMobileForm/>
   )
 }
 
-export default AlertAdd;
+export default ShelfAdd;

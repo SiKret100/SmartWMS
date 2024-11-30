@@ -1,6 +1,6 @@
 import { Text, View } from 'react-native'
 
-const AlertUpdate = () => {
+const WaybillUpdate = () => {
   return (
     <View>
       <Text>Edytuj alert</Text>
@@ -8,4 +8,4 @@ const AlertUpdate = () => {
   )
 }
 
-export default AlertUpdate;
+export default WaybillUpdate;

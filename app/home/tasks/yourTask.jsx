@@ -1,6 +1,6 @@
 import { Text, View } from 'react-native'
 
-const AlertAdd = () => {
+const YourTask = () => {
   return (
     <View>
       <Text>Dodaj alert</Text>
@@ -8,4 +8,4 @@ const AlertAdd = () => {
   )
 }
 
-export default AlertAdd;
+export default YourTask;

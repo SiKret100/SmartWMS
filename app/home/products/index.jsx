@@ -1,10 +1,10 @@
 import { Text, View } from 'react-native'
 import ProductsMobileDisplayer from "../../../components/products/ProductsMobileDisplayer";
 
-const AlertMain = () => {
+const ProductMain = () => {
   return (
    <ProductsMobileDisplayer></ProductsMobileDisplayer>
   )
 }
 
-export default AlertMain
+export default ProductMain;

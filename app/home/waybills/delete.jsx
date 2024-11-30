@@ -1,6 +1,6 @@
 import { Text, View } from 'react-native'
 
-const AlertDelete = () => {
+const WaybillDelete = () => {
   return (
     <View>
       <Text>Usuń alert</Text>
@@ -8,4 +8,4 @@ const AlertDelete = () => {
   )
 }
 
-export default AlertDelete;
+export default WaybillDelete;

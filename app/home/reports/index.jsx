@@ -1,6 +1,6 @@
 import { Text, View } from 'react-native'
 
-const AlertMain = () => {
+const ReportMain = () => {
   return (
     <View>
       <Text>Wszystkie alerty</Text>
@@ -8,4 +8,4 @@ const AlertMain = () => {
   )
 }
 
-export default AlertMain
+export default ReportMain;

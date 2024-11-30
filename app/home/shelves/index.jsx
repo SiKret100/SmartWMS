@@ -1,10 +1,10 @@
 import { Text, View } from 'react-native'
 import ShelvesMobileDisplayer from "../../../components/shelves/ShelvesMobileDisplayer";
 
-const AlertMain = () => {
+const ShelfMain = () => {
   return (
     <ShelvesMobileDisplayer/>
   )
 }
 
-export default AlertMain
+export default ShelfMain;
