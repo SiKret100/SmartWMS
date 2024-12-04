@@ -46,7 +46,7 @@ const BarcodeScanner = ({form=null, setForm=null, setIsModalVisible}) => {
                         style={styles.camera}
                         facing={"back"}
                         barcodeScannerSettings={{
-                            barcodeTypes: ["ean8", "ean13", "itf14", "upc_e", "upc_a"],
+                            barcodeTypes: ["ean8", "ean13"],
                         }}
                         onBarcodeScanned={({data}) => {
                             handleBarCodeScanned(data)
