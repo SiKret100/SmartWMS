@@ -3,11 +3,10 @@ import React, { useState } from 'react';
 import {Button, StyleSheet, Text, View, Modal} from 'react-native';
 import CancelButton from "../buttons/CancelButton";
 
-const BarcodeScanner = ({form, setForm, setIsModalVisible}) => {
+const BarcodeScanner = ({form=null, setForm=null, setIsModalVisible}) => {
     const [permission, requestPermission] = useCameraPermissions();
     const [facing, setFacing] = useState('back');
     const [scanned, setScanned] = useState(false);
-    const [barcodeData, setBarcodeData] = useState('');
 
 
     if (!permission) {
@@ -26,10 +25,14 @@ const BarcodeScanner = ({form, setForm, setIsModalVisible}) => {
     }
 
     const handleBarCodeScanned = (data) => {
-        setForm({...form, barcode: data});
-        setIsModalVisible(false);
-        console.log(data);
+        if (!scanned) {
+            setScanned(true);
+            setForm({...form, barcode: data});
+            setIsModalVisible(false);
+            console.log(data);
+        }
     };
+
 
     return (
 
@@ -46,7 +49,7 @@ const BarcodeScanner = ({form, setForm, setIsModalVisible}) => {
                             barcodeTypes: ["ean8", "ean13", "itf14", "upc_e", "upc_a"],
                         }}
                         onBarcodeScanned={({data}) => {
-                            {scanned ? undefined : handleBarCodeScanned(data)}
+                            handleBarCodeScanned(data)
                         }}>
                         <View style={styles.buttonContainer}>
 

@@ -1,10 +1,9 @@
 import { Text, View } from 'react-native'
+import ReportsMobileForm from "../../../components/reports/ReportsMobileForm";
 
 const ReportMain = () => {
   return (
-    <View>
-      <Text>Wszystkie alerty</Text>
-    </View>
+      <ReportsMobileForm />
   )
 }
 

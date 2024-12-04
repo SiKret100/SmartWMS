@@ -1,10 +1,9 @@
 import { Text, View } from 'react-native'
+import YourTaskMobileDisplayer from "../../../components/tasks/YourTaskMobileDisplayer";
 
 const YourTask = () => {
   return (
-    <View>
-      <Text>Dodaj alert</Text>
-    </View>
+    <YourTaskMobileDisplayer></YourTaskMobileDisplayer>
   )
 }
 

@@ -38,7 +38,7 @@ const ProductsMobileForm = () => {
     const [productDescriptionError, setProductDescriptionError] = useState(true);
     const [priceError, setPriceError] = useState(true);
     const [quantityError, setQuantityError] = useState(true);
-    const [barcodeError, setBarcodeError] = useState(true);
+    const [barcodeError, setBarcodeError] = useState(false);
     const [assignedShelvesError, setAssignedShelvesError] = useState(true);
     const [subcategoriesSubcategoryIdError, setSubcategoriesSubcategoryIdError] = useState(true);
     const [errors, setErrors] = useState({});
@@ -181,11 +181,9 @@ const ProductsMobileForm = () => {
     const handleBarcode = (barcode) => {
         const regexp = new RegExp("^[\\d]{8,14}$");
         //const barcodeVar = e.nativeEvent.text;
-        console.log(barcode);
+        setBarcodeError(false);
 
         if (regexp.test(barcode)) {
-            console.log("")
-            setBarcodeError(false);
             setBarcodeErrorMessage("");
         } else {
             setBarcodeError(true);

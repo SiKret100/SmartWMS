@@ -33,6 +33,32 @@ export default class productService {
         }
     }
 
+    static GetByBarcode = async (barcode) => {
+
+        const token = Platform.OS !== "web" ? SecureStore.getItem("token") : "";
+        const config = {
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+        };
+
+        try {
+            let response;
+            if (Platform.OS === "web") {
+                response = await axios.get(`${this.ip}/api/Product/byBarcode/${barcode}`);
+            } else {
+                response = await axios.get(`${this.ip}/api/Product/byBarcode/${barcode}`, config);
+            }
+
+            // console.log("Response from service: " + JSON.stringify(response));
+            return response;
+        } catch (err) {
+            // console.log("Error from service: " + err);
+            return err.response.data;
+        }
+    }
+
     static GetAll = async () => {
 
         const token = Platform.OS !== "web" ? SecureStore.getItem("token") : "";

@@ -183,6 +183,19 @@ const OrdersMobileForm = () => {
 
         try{
             await orderHeaderService.Add(request);
+            setForm({
+                address: "",
+                countryId: -1,
+                postalCode: "",
+                supplierName: "",
+                town: ""
+            });
+
+            setAssignedProducts([]);
+
+            setSelectKey(prev => prev + 1);
+            setSelectKeyForSupplier(prev => prev + 1);
+
             router.push("/home/orders");
         }
         catch(err){
@@ -191,18 +204,7 @@ const OrdersMobileForm = () => {
 
         console.log("Request: " + JSON.stringify(request));
 
-        //here methode from service to send post
 
-        // setForm({
-        //     address: "",
-        //     countryId: -1,
-        //     postalCode: "",
-        //     supplierName: "",
-        //     town: ""
-        // })
-        // setSelectKey(prev => prev + 1)
-        // setSelectKeyForSupplier(prev => prev + 1);
-        //router.push("/home/orders")
     }
 
     const renderItem = ({item}) => (
@@ -232,15 +234,15 @@ const OrdersMobileForm = () => {
 
 
     //USE EFFECT HOOKS=========================================================================================
-    // useFocusEffect(
-    //     useCallback(() => {
-    //         fetchCountries();
-    //         fetchProducts();
-    //         setSelectKey(prev => prev+1);
-    //         setDefaultOption({key: -1, value: "Choose country..."});
-    //         console.log("Wywolanie useFocusEffect")
-    //     }, [])
-    // );
+    useFocusEffect(
+        useCallback(() => {
+            fetchCountries();
+            fetchProducts();
+            setSelectKey(prev => prev+1);
+            setDefaultOption({key: -1, value: "Choose country..."});
+            console.log("Wywolanie useFocusEffect")
+        }, [])
+    );
 
     useEffect(() => {
         fetchProducts();

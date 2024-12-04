@@ -13,7 +13,7 @@ import {
 
 import taskService from "../../services/dataServices/taskService";
 import CustomButton from "../buttons/CustomButton";
-import {useFocusEffect} from "expo-router";
+import {router, useFocusEffect} from "expo-router";
 import FallingTiles from "../FallingTiles";
 import EditButton from "../buttons/EditButton";
 import DeleteButton from "../buttons/DeleteButton";
@@ -34,6 +34,7 @@ const TasksMobileDisplayer = () => {
 
         taskService.GetAll()
             .then(result => {
+                setLoading(false);
                 const filteredTasks = result.data.filter(item => item.taken === false);
 
                 console.log("Filtered task: " + JSON.stringify(filteredTasks));
@@ -56,6 +57,7 @@ const TasksMobileDisplayer = () => {
                                 }
                             )
                             .catch(err => {
+                                setLoading(false);
                                 console.error(`Błąd pobierania szczegółów zamówienia: ${err}`);
                                 return {...task, products: []};
                             })
@@ -67,6 +69,7 @@ const TasksMobileDisplayer = () => {
                 setData(enrichedTasks);
             })
             .catch(err => {
+                    setLoading(false);
                 console.error(`Błąd w procesie fetchData: ${err}`);
             });
     };
@@ -173,13 +176,13 @@ const TasksMobileDisplayer = () => {
                     <RefreshControl refreshing={refreshing} onRefresh={onRefresh}/>
                 }
                 ListEmptyComponent={
-                    !loading ? (
+                    loading ? (
                         <View className={"justify-center align-center"}>
                             <ActivityIndicator size="small" color="#000"/>
                         </View>
                     ) : (
                         <View className={"justify-center align-center"}>
-                            <Text className={"text-center my-5"}>No products</Text>
+                            <Text className={"text-center my-5 text-red-600 font-bold"}>No tasks</Text>
                         </View>
                     )
                 }

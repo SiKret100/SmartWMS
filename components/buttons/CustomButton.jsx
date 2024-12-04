@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import React from "react";
 import { ActivityIndicator } from "react-native";
+import Feather from "react-native-vector-icons/Feather";
 
 export default function CustomButton({
   title,
@@ -9,6 +10,7 @@ export default function CustomButton({
   textStyles,
   isLoading,
   showLoading = true,
+    iconName=""
 }) {
   return (
     <TouchableOpacity
@@ -22,11 +24,17 @@ export default function CustomButton({
         {showLoading & isLoading ?   <ActivityIndicator size="small" color="#fff"/> : null}
 
         <Text className={`text-lg ${textStyles} ${isLoading ? "ml-2" : ""}`}>
-          {title}
+          {title+"  "}
         </Text>
 
-      </View>
+        {
+          iconName !== "" ?
+              (
+                  <Feather color={"white"} name={iconName} size={24}/>
+              ) : null
+        }
 
+      </View>
 
     </TouchableOpacity>
   );

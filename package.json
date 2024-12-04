@@ -54,6 +54,7 @@
     "react-native-dropdown-select-list": "^2.0.5",
     "react-native-elements": "^3.4.3",
     "react-native-gesture-handler": "~2.20.2",
+    "react-native-html-to-pdf": "^0.12.0",
     "react-native-ios-context-menu": "^2.5.2",
     "react-native-popup-menu": "^0.16.1",
     "react-native-reanimated": "~3.16.1",
@@ -61,7 +62,9 @@
     "react-native-screens": "~4.1.0",
     "react-native-svg": "15.8.0",
     "react-native-web": "~0.19.13",
-    "tailwindcss": "^3.4.11"
+    "tailwindcss": "^3.4.11",
+    "expo-print": "~14.0.2",
+    "expo-sharing": "~13.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

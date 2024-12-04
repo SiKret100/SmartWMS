@@ -9,6 +9,7 @@ import shelfService from "../../services/dataServices/shelfService";
 import ProductDeliveryDistributionForm from "./ProductDeliveryDistributionForm";
 import CustomButton from "../buttons/CustomButton";
 import productErrorMessages from "../../data/ErrorMessages/productErrorMessages";
+import {router} from "expo-router";
 
 
 const ProductMobileTakeDeliveryModal = ({setIsModalVisible}) => {
@@ -76,6 +77,7 @@ const ProductMobileTakeDeliveryModal = ({setIsModalVisible}) => {
             else {
                 // console.log("Delivery taken");
                 setIsModalVisible(false);
+                router.push("/home/products")
             }
         }
         catch(err){

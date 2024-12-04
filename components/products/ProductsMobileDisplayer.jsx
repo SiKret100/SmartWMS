@@ -25,6 +25,7 @@ const ProductsMobileDisplayer = () => {
     const [currentlyEditItem, setCurrentlyEditItem] = useState(null);
     const [isDeletedItem, setIsDeletedItem] = useState(false);
 
+
     //FUNCTIONS================================================================================================
     const fetchData = async () => {
         try {
@@ -93,9 +94,8 @@ const ProductsMobileDisplayer = () => {
         setRefreshing(false);
     }, []);
 
-//USE EFFECT HOOKS=========================================================================================
 
-
+    //USE EFFECT HOOKS=========================================================================================
     useFocusEffect((
         useCallback(
             () => {
