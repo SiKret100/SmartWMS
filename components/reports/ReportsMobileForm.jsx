@@ -1,7 +1,6 @@
 import React, {useState} from 'react';
-import {SafeAreaView, Text, TouchableHighlight, View} from 'react-native';
-import * as Print from 'expo-print';
-import { shareAsync } from 'expo-sharing';
+import {SafeAreaView, Text, View} from 'react-native';
+import {WebView} from 'react-native-webview';
 import CustomButton from "../buttons/CustomButton";
 import ReportGenerator from "../../services/reports/reportGenerator";
 import CustomSelectList from "../selects/CustomSelectList";
@@ -11,6 +10,10 @@ import reportPeriodMap from "../../data/Mappers/reportPeriod";
 import productService from "../../services/dataServices/productService";
 import barcodeGenerator from "../../services/reports/barcodeGenerator";
 import subcategoryService from "../../services/dataServices/subcategoryService";
+import {Feather} from "@expo/vector-icons";
+import {Divider} from "react-native-elements";
+import orderHeaderService from "../../services/dataServices/orderHeaderService";
+import allOrderState from "../../data/reportTemplates/allOrderState";
 
 const ReportsMobileForm = () => {
 
@@ -24,7 +27,8 @@ const ReportsMobileForm = () => {
 
     const [periodError, setPeriodError] = useState(true);
     const [typeError, setTypeError] = useState(true);
-    const [isLoadig, setIsLoadig] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [rawData, setRawData] = useState([]);
 
     //FUNCTIONS=============================================================================================
     const handleReportType = () => {
@@ -32,69 +36,127 @@ const ReportsMobileForm = () => {
     }
 
     const handleReportPeriod = () => {
+        console.log(`Chosen period: ${form.reportPeriod}`)
         form.reportPeriod === -1 ? setPeriodError(true) : setPeriodError(false);
     }
 
-
-
     const handleCreateReport = async () => {
-        let result;
+        setIsLoading(true);
 
-        setIsLoadig(true)
-
-        switch(form.reportType) {
+        switch (form.reportType) {
             case 0:
+                setForm(prev => ({...prev, reportPeriod: 0}));
                 const result = await productService.GetAll();
-                //console.log(result.data);
                 const data = await Promise.all(result.data.map(async product => {
                     const generatedLink = await barcodeGenerator.GenerateBarcode(product.barcode);
                     const subcategoryResponse = await subcategoryService.Get(product.subcategoriesSubcategoryId);
-                    console.log("PODKATEGORIA: " + subcategoryResponse.data);
                     const subcategoryName = subcategoryResponse.data.subcategoryName;
-                    return ({...product, barcode: generatedLink, subcategoriesSubcategoryId: subcategoryName});
+                    return {...product, barcode: generatedLink, subcategoriesSubcategoryId: subcategoryName};
                 }));
 
-                console.log("Nasza data" + JSON.stringify(data));
-                await ReportGenerator.printToFile(allProductState, data);
-                setIsLoadig(false);
+                setHtmlTemplate(allProductState(data));
+                setRawData(data);
                 break;
-            case 2:
 
-                //ReportGenerator.printToFile(allProductState)
+            case 2:
+                const orderHeaderResponse = await orderHeaderService.GetWithDetails();
+                const preparedOrderHeader = await Promise.all(
+                    orderHeaderResponse.data.map(async (oh) => {
+                        const preparedOrderDetails = await Promise.all(
+                            oh.orderDetails.map(async (od) => {
+                                const productInfo = await productService.Get(od.productsProductId);
+                                return { ...od, price: productInfo.data.price * od.quantity };
+                            })
+                        );
+
+                        const parsedDate = new Date(oh.deliveryDate).toString();
+                        return {
+                            ...oh,
+                            orderDetails: preparedOrderDetails,
+                            deliveryDate: parsedDate
+                        };
+                    })
+                );
+
+                let endDate = new Date();
+                let beginningDate = new Date(endDate);
+
+                switch(form.reportPeriod) {
+                    case 0:
+                        beginningDate.setDate(beginningDate.getDate() - 1);
+                        break;
+                    case 1:
+                        beginningDate.setDate(beginningDate.getDate() - 7);
+                        break;
+                    case 2:
+                        beginningDate.setMonth(beginningDate.getMonth() - 1);
+                        break;
+                    case 3:
+                        beginningDate.setMonth(beginningDate.getMonth() - 3);
+                        break;
+                    case 4:
+                        beginningDate.setFullYear(beginningDate.getFullYear() - 1);
+                        break;
+                }
+
+                const filteredPreparedOrderHeader =  preparedOrderHeader.filter(order => new Date(order.deliveryDate) >= beginningDate && new Date (order.deliveryDate) <= endDate);
+                setHtmlTemplate(allOrderState(filteredPreparedOrderHeader));
+                setRawData(filteredPreparedOrderHeader);
                 break;
+
             case 4:
-                //ReportGenerator.printToFile(allProductState)
                 break;
         }
     }
 
+    const handleSaveReport = async () => {
 
-    //USE EFFECT HOOKS=========================================================================================
+
+        switch (form.reportType) {
+            case 0:
+                console.log("Form: " + JSON.stringify(form))
+                await ReportGenerator.printToFile(allProductState, rawData, form);
+                break;
+            case 2:
+                await ReportGenerator.printToFile(allOrderState, rawData, form);
+                break;
+            case 4:
+                break;
+        }
+        setIsLoading(false);
+    }
 
     return (
-        <SafeAreaView className={"justify-start align-center mx-2 px-4 py-2"}>
 
-            <View className={"space-y-6 mt-6 mb-2"}>
-                <Text
-                    className='text-base font-pmedium'> Report type
-                </Text>
 
-                <CustomSelectList
-                    selectKey={selectKey}
-                    setSelected={val => setForm({...form, reportType: val})}
-                    typeMap={reportTypeMap}
-                    defaultOption={{key: -1, value: "Select report type..."}}
-                    onSelect={() => handleReportType()}
-                />
-            </View>
+        isLoading === false ? (
+            <SafeAreaView className="justify-start align-center mx-2 px-4 py-2">
 
-            {
-                form.reportType !== 0 ? (
-                    <View className={"mt-6 mb-12"}>
-                        <Text
-                            className='text-base font-pmedium'> Report period
-                        </Text>
 
+                <View className="flex-row items-center gap-2 bg-slate-200 rounded-lg shadow p-2 pt-2 ">
+                    <Feather className="flex-3 shadow " name="pie-chart" size={72} color="#3E86D8" />
+                    <View className="flex-1 justify-center">
+                        <Text className="text-4xl text-center" >Generate Report</Text>
+                    </View>
+                </View>
+
+
+                <Divider width={2} className={"my-4 color-gray-400"}/>
+
+                <View className={"mb-6"}>
+                    <Text className='text-base font-pmedium'> Report type </Text>
+                    <CustomSelectList
+                        selectKey={selectKey}
+                        setSelected={val => setForm({...form, reportType: val})}
+                        typeMap={reportTypeMap}
+                        defaultOption={{key: -1, value: "Select report type..."}}
+                        onSelect={() => handleReportType()}
+                    />
+                </View>
+
+                {form.reportType !== 0 && (
+                    <View className="mb-12">
+                        <Text className='text-base font-pmedium'> Report period </Text>
                         <CustomSelectList
                             selectKey={selectKey}
                             setSelected={val => setForm({...form, reportPeriod: val})}
@@ -103,21 +165,43 @@ const ReportsMobileForm = () => {
                             onSelect={() => handleReportPeriod()}
                         />
                     </View>
-                ) : null
-            }
+                )}
 
-            <CustomButton title={"Product report"}
-                          textStyles={"text-white"}
-                          containerStyles={"mb-2 py-6"}
-                          handlePress={() => handleCreateReport() }
-                          isLoading={!!isLoadig ? true : form.reportType !== 0 ? (!!typeError || !!periodError) : (!!typeError)}
-                          showLoading={!!isLoadig}
+                <CustomButton
+                    title={"Product report"}
+                    textStyles={"text-white"}
+                    containerStyles={"mb-2 py-6"}
+                    handlePress={() => handleCreateReport()}
+                    isLoading={!!isLoading ? true : form.reportType !== 0 ? (!!typeError || !!periodError) : (!!typeError)}
+                    showLoading={!!isLoading}
 
-            />
-            
-            <CustomButton title={"Push me"} handlePress={() =>barcodeGenerator.GenerateBarcode("01234565")}></CustomButton>
+                />
 
-        </SafeAreaView>
+            </SafeAreaView>
+        ) : (
+
+            <View className="flex-1 mt-4">
+                <WebView
+                    source={{html: htmlTemplate}}
+                    style={{flex: 1}}
+                />
+                <CustomButton
+                    title={"Save Report"}
+                    textStyles={"text-white"}
+                    containerStyles={"mb-2 py-6 mx-2"}
+                    handlePress={async () => await handleSaveReport()}
+                />
+                <CustomButton
+                    title={"Cancel"}
+                    textStyles={"text-white"}
+                    containerStyles={"mb-2 py-6 mx-2 bg-rose-500"}
+                    handlePress={() => setIsLoading(false)}
+                />
+            </View>
+
+        )
+
+
     );
 };
 

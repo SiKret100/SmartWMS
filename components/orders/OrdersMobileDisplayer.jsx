@@ -224,7 +224,7 @@ const OrdersMobileDisplayer = () => {
                 }
                 onLayout={(e) => {
                     const {height} = e.nativeEvent.layout;
-                    setFlatListHeight(height); // Save the height of the FlatList
+                    setFlatListHeight(height);
                 }}
                 style={{
                     transform: [{translateY: animatedTranslateY}],

@@ -34,7 +34,7 @@ const allProductState = (data) => {
                         <tr>
                             <th>Product Name</th>
                             <th>Barcode</th>
-                            <th>Price (USD)</th>
+                            <th>Price</th>
                             <th>Description</th>
                             <th>Quantity</th>
                             <th>Subcategory</th>

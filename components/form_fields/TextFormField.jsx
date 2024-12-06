@@ -1,4 +1,4 @@
-import {View, Text, TextInput, StyleSheet, Touchable, TouchableOpacity} from 'react-native';
+ import {View, Text, TextInput, StyleSheet, Touchable, TouchableOpacity} from 'react-native';
 import React, {useState} from 'react';
 import Feather from "react-native-vector-icons/Feather";
 import FallingTiles from '../FallingTiles';
