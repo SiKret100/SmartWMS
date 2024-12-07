@@ -1,11 +1,10 @@
 import { Text, View } from 'react-native'
+import WaybillsMobileDisplayer from "../../../components/waybills/WaybillsMobileDisplayer";
 
 const WaybillMain = () => {
   return (
-    <View>
-      <Text>Wszystkie alerty</Text>
-    </View>
-  )
+    <WaybillsMobileDisplayer/>
+)
 }
 
 export default WaybillMain;

@@ -11,24 +11,25 @@ class ReportGenerator {
         try {
             const { uri } = await Print.printToFileAsync({ html });
             console.log('File has been saved to:', uri);
-
             await shareAsync(uri, { UTI: '.pdf', mimeType: 'application/pdf' });
 
-            const reportData = await reportService.Add(form);
-            console.log('Report data: ', reportData);
+            if(form !== null) {
 
-            const pdfBlob = await fetch(uri).then((res) => res.blob());
+                const reportData = await reportService.Add(form);
+                console.log('Report data: ', reportData);
 
-            const formData = new FormData();
+                const pdfBlob = await fetch(uri).then((res) => res.blob());
 
-            formData.append('file', {
-                uri: uri,
-                type: 'application/pdf',
-                name: `report-${reportData.data.reportId}.pdf`,
-            });
+                const formData = new FormData();
 
-            const response = await reportService.UploadFile(reportData.data.reportId, formData);
+                formData.append('file', {
+                    uri: uri,
+                    type: 'application/pdf',
+                    name: `report-${reportData.data.reportId}.pdf`,
+                });
 
+                const response = await reportService.UploadFile(reportData.data.reportId, formData);
+            }
 
         } catch (error) {
             console.error('Error creating PDF:', error);

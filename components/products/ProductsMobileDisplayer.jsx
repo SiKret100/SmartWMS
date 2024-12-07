@@ -1,16 +1,17 @@
-import {useState, useCallback, useEffect} from "react";
-import {ScrollView, TouchableOpacity} from "react-native-gesture-handler";
+import {useState, useCallback, useEffect, useContext} from "react";
+import {TouchableOpacity} from "react-native-gesture-handler";
 import {Platform, ActivityIndicator, FlatList, Modal, RefreshControl, SafeAreaView, Text, View} from "react-native";
 import CustomButton from "../buttons/CustomButton";
 import productService from "../../services/dataServices/productService";
 import FallingTiles from "../FallingTiles";
-import Feather from "react-native-vector-icons/Feather";
 import DeleteButton from "../buttons/DeleteButton";
 import EditButton from "../buttons/EditButton";
 import ProductsMobileDetailDisplayer from "./ProductsMobileDetailDisplayer";
 import {useFocusEffect} from "expo-router";
 import ProductMobileTakeDeliveryModal from "./ProductMobileTakeDeliveryModal";
 import ProductMobileEditForm from "./ProductMobileEditForm";
+import NoPermissionAlert from "../popupAlerts/NoPermissionAlert";
+import {UserDataContext} from "../../app/home/_layout";
 
 const ProductsMobileDisplayer = () => {
 
@@ -24,18 +25,15 @@ const ProductsMobileDisplayer = () => {
     const [isEditProductModalVisible, setIsEditProductModalVisible] = useState(false);
     const [currentlyEditItem, setCurrentlyEditItem] = useState(null);
     const [isDeletedItem, setIsDeletedItem] = useState(false);
+    const userData = useContext(UserDataContext);
 
 
     //FUNCTIONS================================================================================================
     const fetchData = async () => {
         try {
-            // const result = await productService.GetAll();
-            //console.log(JSON.stringify(result.data));
+
             const result = await productService.GetAllWithShelves();
             setData([...result.data])
-
-            console.log("wywolanie")
-
         } catch (err) {
             console.log(err);
         }
@@ -66,11 +64,10 @@ const ProductsMobileDisplayer = () => {
     const renderItem = ({item}) => (
         <FallingTiles>
 
-
             <View
                 className={"flex-row justify-between items-center flex-0.5 px-2 py-2 mx-2 my-2 shadow rounded-lg bg-slate-200"}>
 
-                <EditButton onEdit={() =>(handleEdit(item)) }/>
+                <EditButton onEdit={() => userData.role === "Employee" ? NoPermissionAlert() : (handleEdit(item)) }/>
 
                 <TouchableOpacity onPress={() => handleProductDetailDisplay(item)}
                                   hitSlop={{top: 15, bottom: 15, left: 25, right: 25}}>
@@ -80,7 +77,7 @@ const ProductsMobileDisplayer = () => {
                 </TouchableOpacity>
 
 
-                <DeleteButton onDelete={() => (handleDelete(item.productId))}/>
+                <DeleteButton onDelete={() => userData.role === "Employee" ? NoPermissionAlert() : (handleDelete(item.productId))}/>
 
             </View>
 
@@ -105,7 +102,6 @@ const ProductsMobileDisplayer = () => {
 
     useEffect(() => {
         fetchData();
-
         console.log("Modala nie ma ")
         if (isDeletedItem) setIsDeletedItem(false);
 

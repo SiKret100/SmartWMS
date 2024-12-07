@@ -19,7 +19,8 @@ const AlertLayout = () => {
         }}
       />
       <Tabs.Screen 
-        name='add' 
+        name='add'
+        redirect={userData.role === 'Employee'}
         options={{
           title: "Add",
           headerShown: false,

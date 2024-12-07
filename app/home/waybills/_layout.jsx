@@ -17,27 +17,7 @@ const WaybillLayout = () => {
           <Feather name="home" size={24} color={color} />
         )
       }}/>
-      <Tabs.Screen name='add' options={{
-        title:"Add",
-        headerShown: false,
-        tabBarIcon: ({ color, size }) => (
-          <Feather name="plus-circle" size={24} color={color} />
-        )
-      }}/>
-      <Tabs.Screen name='update' options={{
-        title:"Edit",
-        headerShown: false,
-        tabBarIcon: ({ color, size }) => (
-          <Feather name="edit" size={24} color={color} />
-        )
-      }}/>
-      <Tabs.Screen name='delete' options={{
-        title:"Delete",
-        headerShown: false,
-        tabBarIcon: ({ color, size }) => (
-          <Feather name="trash" size={24} color={color} />
-        )
-      }}/>
+   
     </Tabs>
   )
 }

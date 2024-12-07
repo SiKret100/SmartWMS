@@ -1,5 +1,5 @@
-import {SafeAreaView, Text, View, Modal, Platform, ActivityIndicator, FlatList, Animated} from "react-native";
-import {useRef, useState, useEffect, useCallback} from "react";
+import {SafeAreaView, Text, View, Modal, Platform, ActivityIndicator, FlatList, Animated, Alert} from "react-native";
+import {useRef, useState, useEffect, useCallback, createContext, useContext} from "react";
 import alertService from "../../services/dataServices/alertService";
 import Feather from "react-native-vector-icons/Feather";
 import {Button} from "react-native-elements";
@@ -15,6 +15,11 @@ import FallingTiles from "../FallingTiles";
 import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
 import CustomSelectList from "../selects/CustomSelectList";
 import CustomButton from "../buttons/CustomButton";
+import {UserDataContext} from "../../app/home/_layout";
+import noPermissionAllert from "../popupAlerts/NoPermissionAlert";
+import NoPermissionAllert from "../popupAlerts/NoPermissionAlert";
+import NoPermissionAlert from "../popupAlerts/NoPermissionAlert";
+import noPermissionAlert from "../popupAlerts/NoPermissionAlert";
 
 const AlertMobileDisplayer = () => {
 
@@ -29,7 +34,7 @@ const AlertMobileDisplayer = () => {
     const [currentEditItem, setCurrentEditItem] = useState(null);
     const [selected, setSelected] = useState(undefined);
     const [defaultOption, setDefaultOption] = useState();
-    const [flatListHeight, setFlatListHeight] = useState(0);  // To store FlatList height
+    const [flatListHeight, setFlatListHeight] = useState(0);
 
     const scrollY = useRef(new Animated.Value(0)).current;
 
@@ -44,25 +49,23 @@ const AlertMobileDisplayer = () => {
         <FallingTiles>
             <View
                 className={"flex-row justify-between items-center flex-0.5 px-2 py-2 mx-2 my-2 shadow rounded-lg bg-slate-200"}>
-                <DeleteButton onDelete={() => handleDelete(item.alertId)}/>
+
+               <DeleteButton  onDelete={() => userData.role === "Employee" ? NoPermissionAlert() : handleDelete(item.alertId)}/>
+
+
+
+
                 <View className={"px-2 py-2 mx-4"}>
                     <View>
                         <Text className={"text-center"}>{item.title}</Text>
                         <Text className={"text-center"}>{item.description}</Text>
                         <Text className={"text-center"}>{moment(item.alertDate).format("DD MMMM YYYY")}</Text>
-
-                        {/*     SEEN STATUS     */}
-
-                        {/*<Text className={"text-center"}>*/}
-                        {/*    {item.seen === 0 ? "Widziano" : "Nie widziano"}*/}
-                        {/*</Text>*/}
-
                         <Text className={"text-center"}>
                             {alertTypeMap.find(alert => alert.key === item.alertType)?.value || "Unknown"}
                         </Text>
                     </View>
                 </View>
-                <EditButton onEdit={() => handleModalEdit(item)}/>
+                <EditButton onEdit={() =>  userData.role === "Employee" ? NoPermissionAlert() : handleModalEdit(item)}/>
 
             </View>
         </FallingTiles>
@@ -97,7 +100,6 @@ const AlertMobileDisplayer = () => {
             })
     };
 
-    // Save selected value to AsyncStorage
     const saveSelected = async () => {
         try {
             if (selected !== undefined && selected !== null) {
@@ -128,7 +130,7 @@ const AlertMobileDisplayer = () => {
                 setDefaultOption(foundOption)
 
             } else {
-                setDefaultOption({key: -1, value: "Test pokazywania"});
+                setDefaultOption({key: -1, value: "All"});
                 setSelected(-1);
             }
         } catch (error) {
@@ -190,7 +192,6 @@ const AlertMobileDisplayer = () => {
     }, [data, selected]);
 
 
-
     return (
         <SafeAreaView className={"flex-1 justify-start align-center"}>
             <Animated.View
@@ -226,10 +227,10 @@ const AlertMobileDisplayer = () => {
                 onScroll={handleScroll}
                 onLayout={(e) => {
                     const {height} = e.nativeEvent.layout;
-                    setFlatListHeight(height); // Save the height of the FlatList
+                    setFlatListHeight(height);
                 }}
                 style={{
-                    transform: [{translateY: animatedTranslateY}], // Move the FlatList vertically
+                    transform: [{translateY: animatedTranslateY}],
                 }}
                 ListEmptyComponent={
                     !loading ? (

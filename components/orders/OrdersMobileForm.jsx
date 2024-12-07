@@ -13,7 +13,7 @@ import EditButton from "../buttons/EditButton";
 import DeleteButton from "../buttons/DeleteButton";
 import EditProductModal from "./EditProductModal";
 import CustomSelectList from "../selects/CustomSelectList";
-import CountryService from "../../services/dataServices/countryService";
+import countryService from "../../services/dataServices/countryService";
 import orderHeaderService from "../../services/dataServices/orderHeaderService";
 import {post} from "axios";
 import supplierTypeMap from "../../data/Mappers/supplierType";
@@ -90,7 +90,7 @@ const OrdersMobileForm = () => {
 
     const fetchCountries = async () => {
         try {
-            const result = await CountryService.GetAll();
+            const result = await countryService.GetAll();
             setCountryTypeMap(result.data.map(country => ({key: country.countryId, value: country.countryName})))
         } catch (err) {
             console.log(err);

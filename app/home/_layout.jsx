@@ -91,7 +91,6 @@ const RootLayout = () => {
 
                     <Drawer.Screen
                         name='alerts'
-                        redirect={userData.role == 'Employee'}
                         options={{
                             drawerLabel: 'Alerts',
                             title: 'Alerts',
@@ -101,6 +100,7 @@ const RootLayout = () => {
 
                     <Drawer.Screen
                         name='categories'
+                        redirect={userData.role === 'Employee'}
                         options={{
                             drawerLabel: 'Categories',
                             title: 'Categories',
@@ -111,6 +111,7 @@ const RootLayout = () => {
 
                     <Drawer.Screen
                         name='orders'
+                        redirect={userData.role === 'Employee'}
                         options={{
                             drawerLabel: 'Orders',
                             title: 'Orders',
@@ -131,6 +132,7 @@ const RootLayout = () => {
 
                     <Drawer.Screen
                         name='reports'
+                        redirect={userData.role === 'Employee'}
                         options={{
                             drawerLabel: 'Reports',
                             title: 'Reports',
@@ -141,6 +143,7 @@ const RootLayout = () => {
 
                     <Drawer.Screen
                         name='shelves'
+                        redirect={userData.role === 'Employee'}
                         options={{
                             drawerLabel: 'Shelves',
                             title: 'Shelves',
@@ -161,6 +164,7 @@ const RootLayout = () => {
 
                     <Drawer.Screen
                         name='users'
+                        redirect={userData.role === 'Employee'}
                         options={{
                             drawerLabel: 'Users',
                             title: 'Users',
