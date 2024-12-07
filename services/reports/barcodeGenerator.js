@@ -4,6 +4,7 @@ import axios from "axios";
 import {router} from "expo-router";
 
 export default class barcodeGenerator {
+
     static GenerateBarcode = async(barcode) => {
         let barcodeType;
 

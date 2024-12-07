@@ -1,8 +1,12 @@
 import { Tabs } from 'expo-router';
 import Feather from "react-native-vector-icons/Feather";
+import {useContext} from "react";
+import {UserDataContext} from "../_layout";
 
 const AlertLayout = () => {
-  return (
+    const userData = useContext(UserDataContext);
+
+    return (
     <Tabs screenOptions={{
       tabBarActiveTintColor: '#3E86D8',
       tabBarStyle: { height: 85 },

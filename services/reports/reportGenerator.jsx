@@ -3,7 +3,7 @@ import {shareAsync} from 'expo-sharing';
 import reportService from "../dataServices/reportService";
 class ReportGenerator {
 
-    static printToFile = async (template, data, form) => {
+    static printToFile = async (template, data, form=null) => {
         const html = template(data);
 
         console.log("Data from generator: " + JSON.stringify(data, null, 2));

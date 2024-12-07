@@ -24,6 +24,7 @@ import noPermissionAlert from "../popupAlerts/NoPermissionAlert";
 const AlertMobileDisplayer = () => {
 
     //PROPS====================================================================================================
+    const userData = useContext(UserDataContext);
     const [data, setData] = useState([]);
     const [filteredData, setFilteredData] = useState([]);
     const [err, setError] = useState("");
@@ -193,6 +194,7 @@ const AlertMobileDisplayer = () => {
 
 
     return (
+
         <SafeAreaView className={"flex-1 justify-start align-center"}>
             <Animated.View
                 style={{

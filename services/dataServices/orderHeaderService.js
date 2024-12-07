@@ -58,6 +58,30 @@ export default class orderHeaderService {
         }
     };
 
+    static Get = async (id) => {
+        const token = Platform.OS !== "web" ? SecureStore.getItem("token") : "";
+        const config = {
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+        };
+
+        try {
+            let response;
+            if (Platform.OS === "web") {
+                response = await axios.get(`${this.ip}/api/OrderHeader/${id}`);
+            } else {
+               response = await axios.get(`${this.ip}/api/OrderHeader/${id}`, config);
+            }
+
+            //console.log(response);
+            return response;
+        } catch (err) {
+            return err.response.data;
+        }
+    };
+
     static GetWithDetails = async () => {
         const token = Platform.OS !== "web" ? SecureStore.getItem("token") : "";
         const config = {
