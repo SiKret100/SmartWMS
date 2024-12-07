@@ -6,6 +6,8 @@ class ReportGenerator {
     static printToFile = async (template, data, form) => {
         const html = template(data);
 
+        console.log("Data from generator: " + JSON.stringify(data, null, 2));
+
         try {
             const { uri } = await Print.printToFileAsync({ html });
             console.log('File has been saved to:', uri);

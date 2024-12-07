@@ -14,6 +14,8 @@ import {Feather} from "@expo/vector-icons";
 import {Divider} from "react-native-elements";
 import orderHeaderService from "../../services/dataServices/orderHeaderService";
 import allOrderState from "../../data/reportTemplates/allOrderState";
+import reportService from "../../services/dataServices/reportService";
+import allUsersTasksState from "../../data/reportTemplates/allUsersTasksState";
 
 const ReportsMobileForm = () => {
 
@@ -65,7 +67,7 @@ const ReportsMobileForm = () => {
                         const preparedOrderDetails = await Promise.all(
                             oh.orderDetails.map(async (od) => {
                                 const productInfo = await productService.Get(od.productsProductId);
-                                return { ...od, price: productInfo.data.price * od.quantity };
+                                return {...od, price: productInfo.data.price * od.quantity};
                             })
                         );
 
@@ -81,7 +83,7 @@ const ReportsMobileForm = () => {
                 let endDate = new Date();
                 let beginningDate = new Date(endDate);
 
-                switch(form.reportPeriod) {
+                switch (form.reportPeriod) {
                     case 0:
                         beginningDate.setDate(beginningDate.getDate() - 1);
                         break;
@@ -99,12 +101,59 @@ const ReportsMobileForm = () => {
                         break;
                 }
 
-                const filteredPreparedOrderHeader =  preparedOrderHeader.filter(order => new Date(order.deliveryDate) >= beginningDate && new Date (order.deliveryDate) <= endDate);
+                const filteredPreparedOrderHeader = preparedOrderHeader.filter(order => new Date(order.deliveryDate) >= beginningDate && new Date(order.deliveryDate) <= endDate);
                 setHtmlTemplate(allOrderState(filteredPreparedOrderHeader));
                 setRawData(filteredPreparedOrderHeader);
                 break;
 
             case 4:
+                const usersTasks = await reportService.UsersFinishedTasks();
+                console.log("Raw users tasks: ", JSON.stringify(usersTasks.data, null, 2));
+                endDate = new Date();
+                beginningDate = new Date(endDate);
+
+
+                switch (form.reportPeriod) {
+                    case 0:
+                        beginningDate.setDate(beginningDate.getDate() - 1);
+                        break;
+                    case 1:
+                        beginningDate.setDate(beginningDate.getDate() - 7);
+                        break;
+                    case 2:
+                        beginningDate.setMonth(beginningDate.getMonth() - 1);
+                        break;
+                    case 3:
+                        beginningDate.setMonth(beginningDate.getMonth() - 3);
+                        break;
+                    case 4:
+                        beginningDate.setFullYear(beginningDate.getFullYear() - 1);
+                        break;
+                }
+
+                console.log("Beginning date: ", beginningDate);
+                console.log("End date: ", endDate);
+                let filteredUsersFinishedTasks = usersTasks.data.map(user => {
+                    const filteredTasks = user.tasks.filter(task =>
+                        new Date(task.finishDate) >= beginningDate && new Date(task.finishDate) <= endDate
+                    );
+                    return {
+                        ...user,
+                        tasks: filteredTasks,
+                        completedTasksCount: filteredTasks.length
+                    };
+                });
+
+                filteredUsersFinishedTasks = {
+                    startDate: beginningDate,
+                    endDate: endDate,
+                    filteredTasks: filteredUsersFinishedTasks
+                };
+
+                // console.log("Filtered users tasks: ", JSON.stringify(filteredUsersFinishedTasks,null,2));
+
+                setHtmlTemplate(allUsersTasksState(filteredUsersFinishedTasks));
+                setRawData(filteredUsersFinishedTasks);
                 break;
         }
     }
@@ -121,6 +170,8 @@ const ReportsMobileForm = () => {
                 await ReportGenerator.printToFile(allOrderState, rawData, form);
                 break;
             case 4:
+                console.log("Save button")
+                await ReportGenerator.printToFile(allUsersTasksState, rawData, form);
                 break;
         }
         setIsLoading(false);
@@ -134,9 +185,9 @@ const ReportsMobileForm = () => {
 
 
                 <View className="flex-row items-center gap-2 bg-slate-200 rounded-lg shadow p-2 pt-2 ">
-                    <Feather className="flex-3 shadow " name="pie-chart" size={72} color="#3E86D8" />
+                    <Feather className="flex-3 shadow " name="pie-chart" size={72} color="#3E86D8"/>
                     <View className="flex-1 justify-center">
-                        <Text className="text-4xl text-center" >Generate Report</Text>
+                        <Text className="text-4xl text-center">Generate Report</Text>
                     </View>
                 </View>
 
