@@ -14,6 +14,7 @@ const NumberFormField = ({
                              isError = 0,
                              iconsVisible = false,
                              editable = true,
+                             textStyles,
                              ...props
                          }) => {
 
@@ -28,7 +29,7 @@ const NumberFormField = ({
             }>
             <
                 Text
-                className='text-base font-pmedium'>{title}
+                className={`text-base font-pmedium ${textStyles}`}>{title}
             </Text>
 
             <View className={`

@@ -6,10 +6,14 @@ import {UserDataContext} from "../_layout";
 
 const ProductLayout = () => {
   const userData = useContext(UserDataContext);
+    const hide = userData.role === 'Employee'
+
+
     return (
         <Tabs screenOptions={{
             tabBarActiveTintColor: '#3E86D8',
-            tabBarStyle: {height: 85},
+            tabBarStyle: {height: 85,
+                display : hide ? "none" : "flex"},
             tabBarLabelStyle: {fontSize: 13, fontWeight: 'bold'}
         }
         }>

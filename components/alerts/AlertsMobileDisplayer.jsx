@@ -45,29 +45,6 @@ const AlertMobileDisplayer = () => {
 
     //FUNCTIONS================================================================================================
     const renderItem = ({item}) => (
-        // <FallingTiles>
-        //     <View
-        //         className={"flex-row justify-between items-center flex-0.5 px-2 py-2 mx-2 my-2 shadow rounded-lg bg-slate-200"}>
-        //
-        //        <DeleteButton  onDelete={() => userData.role === "Employee" ? CustomAlert("You can't delete alert.") : handleDelete(item.alertId)}/>
-        //
-        //
-        //
-        //
-        //         <View className={"px-2 py-2 mx-4"}>
-        //             <View>
-        //                 <Text className={"text-center"}>{item.title}</Text>
-        //                 <Text className={"text-center"}>{item.description}</Text>
-        //                 <Text className={"text-center"}>{moment(item.alertDate).format("DD MMMM YYYY")}</Text>
-        //                 <Text className={"text-center"}>
-        //                     {alertTypeMap.find(alert => alert.key === item.alertType).value}
-        //                 </Text>
-        //             </View>
-        //         </View>
-        //         <EditButton onEdit={() =>  userData.role === "Employee" ? CustomAlert("You can't edit alert.") : handleModalEdit(item)}/>
-        //
-        //     </View>
-        // </FallingTiles>
 
         <FallingTiles>
 
@@ -258,6 +235,7 @@ const AlertMobileDisplayer = () => {
                             translateY: scrollY.interpolate({
                                 inputRange: [0, 90],
                                 outputRange: [0, -130],
+                                extrapolate: 'clamp',
                             }),
                         },
                     ],

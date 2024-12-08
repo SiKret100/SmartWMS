@@ -118,7 +118,7 @@ const ProductsMobileDetailDisplayer = ({product, setIsModalVisible}) => {
                                     </View>
 
 
-                                    <View className="flex-autoflex-col bg-slate-200 rounded-lg items-center justify-center flex-2 px-5">
+                                    <View className="flex-col bg-slate-200 rounded-lg items-center justify-center flex-2 px-5">
 
                                         <Text className="text-center font-bold color-gray-500">
                                             Items left
