@@ -8,6 +8,7 @@ import {Divider} from "react-native-elements";
 import {Feather} from "@expo/vector-icons";
 import BarcodeScanner from "../barcode_scanner/BarcodeScanner";
 import productService from "../../services/dataServices/productService";
+import * as Progress from "react-native-progress";
 
 const YourTaskMobileDisplayer = props => {
 
@@ -23,6 +24,7 @@ const YourTaskMobileDisplayer = props => {
     const [isBarcodeModalVisible, setIsBarcodeModalVisible] = useState(false);
     const [scannedBarcode, setIsScannedBarcode] = useState({barcode: null});
     const [userTaskId, setUserTaskId] = useState(null);
+    const progress = quantityAllocated > 0 ? quantityCollected / quantityAllocated : 0;
 
     //FUNCTIONS================================================================================================
     const fetchData = async () => {
@@ -54,6 +56,9 @@ const YourTaskMobileDisplayer = props => {
         }
     }
 
+
+
+
     //USE EFFECT HOOKS=========================================================================================
     useFocusEffect(
         useCallback(async () => {
@@ -75,12 +80,12 @@ const YourTaskMobileDisplayer = props => {
                 Alert.alert('Warning', 'Wrong product', [
                     {
                         text: 'Ok',
-                        onPress: () => {},
+                        onPress: () => {
+                        },
                         style: 'destructive',
                     },
                 ]);
             } else {
-                console.log("Endpoint!");
 
                 setQuantityCollected((prev) => {
                     const updatedValue = prev + 1;
@@ -90,7 +95,10 @@ const YourTaskMobileDisplayer = props => {
                         fetchData();
                         router.push("/home/tasks")
                         Alert.alert('Completed', 'Task is done, take another one!', [
-                            { text: 'Ok', onPress: () => {}, style: 'destructive' },
+                            {
+                                text: 'Ok', onPress: () => {
+                                }, style: 'destructive'
+                            },
                         ]);
                     }
                     return updatedValue;
@@ -103,13 +111,13 @@ const YourTaskMobileDisplayer = props => {
             Alert.alert('Warning', 'Wrong product', [
                 {
                     text: 'Ok',
-                    onPress: () => {},
+                    onPress: () => {
+                    },
                     style: 'destructive',
                 },
             ]);
         }
     };
-
 
 
     return (
@@ -121,59 +129,96 @@ const YourTaskMobileDisplayer = props => {
             <ScrollView className={"px-2"}>
                 {hasUserTask ? (
                     <View>
-                        <View className={"mb-5 mx-2 px-2 flex-col bg-slate-200 p-2 rounded-lg shadow mt-2"}>
 
-                            <View className={"flex-row justify-between"}>
-                                <Text className={"text-2xl font-bold text-gray-800"}>Product:</Text>
-                                <Text
-                                    className={"text-2xl ml-5 mr-10"}>{product.productName ? product.productName.toUpperCase() : ""}</Text>
+                        <View className={"flex-row mt-2 mb-5"}>
+                            <View className={" flex-auto mx-2 px-2 flex-col bg-slate-200 p-2 rounded-lg shadow"}>
+
+                                <View className={"flex-col justify-between py-1"}>
+                                    <Text className={"text-2xl font-bold text-gray-800 text-smartwms-blue"}>Product</Text>
+                                    <Text
+                                        className={"text-xl color-gray-500"}>{product.productName ? product.productName.toUpperCase() : ""}</Text>
+                                </View>
+
+                                <View className={"flex-col justify-between"}>
+                                    <Text className={"text-2xl font-bold text-gray-800 text-smartwms-blue"}>Barcode</Text>
+                                    <Text className={"text-xl color-gray-500"}>{product.barcode}</Text>
+                                </View>
+
                             </View>
 
-                            <View className={"flex-row justify-between"}>
-                                <Text className={"text-2xl font-bold text-gray-800"}>Barcode:</Text>
-                                <Text className={"text-2xl ml-5 mr-10"}>{product.barcode}</Text>
+                            <View className="flex-auto mx-2 flex-col bg-slate-200 p-2 rounded-lg shadow items-center justify-center">
+
+                                <Text className="text-center font-bold mb-4 color-gray-500">
+                                    To pick
+                                </Text>
+
+                                <Text className="text-2xl text-center font-bold mb-4 text-smartwms-blue">
+                                    {quantityCollected}/{quantityAllocated}
+                                </Text>
+
+                                <Progress.Circle
+                                    className={"px-2"}
+                                    size={60}
+                                    progress={progress}
+                                    thickness={9}
+                                    color="#FFB50C"
+                                    unfilledColor="#d9dbdf"
+                                    borderWidth={0}
+                                />
                             </View>
 
                         </View>
 
-                        <View className={"flex-row justify-between"}>
-                            <Text className={"text-2xl font-bold text-gray-800"}>Pieces remained:</Text>
-                            <Text className={"text-2xl ml-5 mr-10"}>{quantityAllocated - quantityCollected}</Text>
-                        </View>
 
-                        <Divider width={5} className={"mb-5 color-gray-800 rounded"}/>
                         {shelves.map(shelf => (
                             <View key={shelf.id} className={"px-2 shadow mb-5"}>
 
-                                <View className={"flex-row bg-slate-200 p-2 rounded-lg justify-between items-center "}>
+                                <View className={"flex-col bg-slate-200 rounded-lg p-4"}>
 
                                     <View className={"flex-row items-center"}>
-                                        <Feather color="#3E86D8" className={"mr-2"} name={"box"} size={24}/>
 
-                                        <View className="flex-2 flex-col">
-                                            <Text className={"font-bold text-2xl text-gray-800"}>Lane:</Text>
-                                            <Text className={"font-bold text-2xl text-gray-800"}>Rack:</Text>
-                                            <Text className={"font-bold text-2xl text-gray-800"}>Level:</Text>
-                                            <Text className={"font-bold text-2xl text-gray-800"}>Quantity to
-                                                collect:</Text>
+                                        <Feather color="#3E86D8" className={"mr-2"} name={"box"} size={45}/>
 
+                                        <View className={"flex-col"}>
+                                            <Text className={"text-smartwms-blue text-2xl font-bold"}>To collect</Text>
+                                            <Text className={"text-xl color-gray-500"}>{shelf.currentQuant}</Text>
                                         </View>
+
                                     </View>
 
 
-                                    <View className={"flex-col mr-10"}>
-                                        <Text
-                                            className={" text-2xl text-gray-800"}>{shelf.rackLane.lane.laneCode}</Text>
-                                        <Text className={"text-2xl text-gray-800"}>{shelf.rackLane.rackNumber}</Text>
-                                        <Text className={"text-2xl text-gray-800"}>{shelf.level}</Text>
-                                        <Text className={" text-2xl text-gray-800"}>{shelf.currentQuant}</Text>
+                                    <View className={"flex-row gap-4 my-2"}>
+                                        <View className={"flex-row"}>
+                                            <View className={"h-full w-2 rounded bg-smartwms-orange mr-2"} />
+                                            <View className={"flex-col"}>
+                                                <Text className={"text-smartwms-blue text-xl font-bold"}>Lane</Text>
+                                                <Text className={" color-gray-500"}>{shelf.rackLane.lane.laneCode}</Text>
+                                            </View>
+                                        </View>
+
+                                        <View className={"flex-row"}>
+                                            <View className={"h-full w-2 rounded bg-smartwms-orange mr-2"} />
+                                            <View className={"flex-col"}>
+                                                <Text className={"text-smartwms-blue text-xl font-bold"}>Rack</Text>
+                                                <Text className={" color-gray-500"}>{shelf.rackLane.rackNumber}</Text>
+                                            </View>
+                                        </View>
+
+                                        <View className={"flex-row"}>
+                                            <View className={"h-full w-2 rounded bg-smartwms-orange mr-2"} />
+                                            <View className={"flex-col"}>
+                                                <Text className={"text-smartwms-blue text-xl font-bold"}>Level</Text>
+                                                <Text className={"color-gray-500"}>{shelf.level}</Text>
+                                            </View>
+                                        </View>
+
                                     </View>
 
                                 </View>
 
                             </View>
                         ))}
-                        <CustomButton textStyles={"text-white"} title={`Scan`}
+                        <CustomButton containerStyles={"mx-2 shadow"} textStyles={"text-white"} title={`Scan`}
                                       handlePress={() => setIsBarcodeModalVisible(true)} iconName={"maximize"}/>
 
                     </View>

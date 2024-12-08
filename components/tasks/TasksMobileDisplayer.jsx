@@ -1,12 +1,11 @@
-import React, {useCallback, useState} from "react";
+import React, {useCallback, useContext, useState} from "react";
 import {
     ActivityIndicator,
     FlatList,
     RefreshControl,
     SafeAreaView,
     Text,
-    View,
-    TouchableOpacity
+    View
 } from "react-native";
 import taskService from "../../services/dataServices/taskService";
 import {router, useFocusEffect} from "expo-router";
@@ -16,13 +15,15 @@ import {Button} from "react-native-elements";
 import {Feather} from "@expo/vector-icons";
 import orderDetailService from "../../services/dataServices/orderDetailService";
 import productService from "../../services/dataServices/productService";
+import {UserDataContext} from "../../app/home/_layout";
+import CustomAlert from "../popupAlerts/TaskAlreadyTaken";
 
 const TasksMobileDisplayer = () => {
     //PROPS====================================================================================================
     const [data, setData] = useState({});
     const [refreshing, setRefreshing] = useState(false);
     const [loading, setLoading] = useState(false);
-
+    const userData = useContext(UserDataContext);
 
     //FUNCTIONS================================================================================================
     const fetchData = () => {
@@ -32,17 +33,14 @@ const TasksMobileDisplayer = () => {
                 setLoading(false);
                 const filteredTasks = result.data.filter(item => item.taken === false);
 
-                console.log("Filtered task: " + JSON.stringify(filteredTasks));
 
                 return Promise.all(
                     filteredTasks.map(task =>
                         orderDetailService.Get(task.orderDetailsOrderDetailId)
                             .then(orderDetail => {
-                                    console.log("Order detail: " + JSON.stringify(orderDetail.data));
 
                                     return productService.Get(orderDetail.data.productsProductId)
                                         .then(result => {
-                                                console.log("Product: " + JSON.stringify(result.data));
                                                 return {
                                                     ...task,
                                                     productName: result.data.productName
@@ -53,38 +51,30 @@ const TasksMobileDisplayer = () => {
                             )
                             .catch(err => {
                                 setLoading(false);
-                                // console.error(`Błąd pobierania szczegółów zamówienia: ${err}`);
                                 return {...task, products: []};
                             })
                     )
                 );
             })
             .then(enrichedTasks => {
-                console.log("Endriched tasks: " + JSON.stringify(enrichedTasks));
                 setData(enrichedTasks);
             })
             .catch(err => {
                 setLoading(false);
-                console.error(`Błąd w procesie fetchData: ${err}`);
             });
     };
 
     const checkIfUserHasTask = async (taskId) => {
-        console.log("Checking if user");
         try {
             const response = await taskService.UserTasks()
             if (response === "User has no tasks") {
-                console.log("USER HAS NO TASKS but its being taken")
-
                 const response = await taskService.TakeTask(taskId);
-                // console.log("Response from func " + response)
                 router.push("./yourTask", {relativeToDirectory: true});
 
             } else {
-                console.log("USER HAS TASK")
+                CustomAlert("You already have task taken.")
             }
         } catch (err) {
-            console.log("Err from func: " + JSON.stringify(err));
         }
     }
 
@@ -124,7 +114,7 @@ const TasksMobileDisplayer = () => {
                 </View>
 
 
-                <Button onPress={() => checkIfUserHasTask(item.taskId)} type='clear' icon={
+                <Button onPress={() => userData.role !== "Employee" ? CustomAlert("Admin nor Manager can't take task.") : checkIfUserHasTask(item.taskId)} type='clear' icon={
                     <Feather name="plus-circle" size={24} color="#32a856"/>
                 }
                 />

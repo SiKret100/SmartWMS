@@ -16,10 +16,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage'; // Import 
 import CustomSelectList from "../selects/CustomSelectList";
 import CustomButton from "../buttons/CustomButton";
 import {UserDataContext} from "../../app/home/_layout";
-import noPermissionAllert from "../popupAlerts/NoPermissionAlert";
-import NoPermissionAllert from "../popupAlerts/NoPermissionAlert";
-import NoPermissionAlert from "../popupAlerts/NoPermissionAlert";
-import noPermissionAlert from "../popupAlerts/NoPermissionAlert";
+import CustomAlert from "../popupAlerts/TaskAlreadyTaken";
 
 const AlertMobileDisplayer = () => {
 
@@ -51,7 +48,7 @@ const AlertMobileDisplayer = () => {
             <View
                 className={"flex-row justify-between items-center flex-0.5 px-2 py-2 mx-2 my-2 shadow rounded-lg bg-slate-200"}>
 
-               <DeleteButton  onDelete={() => userData.role === "Employee" ? NoPermissionAlert() : handleDelete(item.alertId)}/>
+               <DeleteButton  onDelete={() => userData.role === "Employee" ? CustomAlert("You can't delete alert.") : handleDelete(item.alertId)}/>
 
 
 
@@ -62,11 +59,11 @@ const AlertMobileDisplayer = () => {
                         <Text className={"text-center"}>{item.description}</Text>
                         <Text className={"text-center"}>{moment(item.alertDate).format("DD MMMM YYYY")}</Text>
                         <Text className={"text-center"}>
-                            {alertTypeMap.find(alert => alert.key === item.alertType)?.value || "Unknown"}
+                            {alertTypeMap.find(alert => alert.key === item.alertType).value}
                         </Text>
                     </View>
                 </View>
-                <EditButton onEdit={() =>  userData.role === "Employee" ? NoPermissionAlert() : handleModalEdit(item)}/>
+                <EditButton onEdit={() =>  userData.role === "Employee" ? CustomAlert("You can't edit alert.") : handleModalEdit(item)}/>
 
             </View>
         </FallingTiles>

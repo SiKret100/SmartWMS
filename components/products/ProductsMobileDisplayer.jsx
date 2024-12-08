@@ -12,6 +12,7 @@ import ProductMobileTakeDeliveryModal from "./ProductMobileTakeDeliveryModal";
 import ProductMobileEditForm from "./ProductMobileEditForm";
 import NoPermissionAlert from "../popupAlerts/NoPermissionAlert";
 import {UserDataContext} from "../../app/home/_layout";
+import CustomAlert from "../popupAlerts/TaskAlreadyTaken";
 
 const ProductsMobileDisplayer = () => {
 
@@ -67,7 +68,7 @@ const ProductsMobileDisplayer = () => {
             <View
                 className={"flex-row justify-between items-center flex-0.5 px-2 py-2 mx-2 my-2 shadow rounded-lg bg-slate-200"}>
 
-                <EditButton onEdit={() => userData.role === "Employee" ? NoPermissionAlert() : (handleEdit(item)) }/>
+                <EditButton onEdit={() => userData.role === "Employee" ? CustomAlert("You can't edit product.") : (handleEdit(item)) }/>
 
                 <TouchableOpacity onPress={() => handleProductDetailDisplay(item)}
                                   hitSlop={{top: 15, bottom: 15, left: 25, right: 25}}>
@@ -77,7 +78,7 @@ const ProductsMobileDisplayer = () => {
                 </TouchableOpacity>
 
 
-                <DeleteButton onDelete={() => userData.role === "Employee" ? NoPermissionAlert() : (handleDelete(item.productId))}/>
+                <DeleteButton onDelete={() => userData.role === "Employee" ? CustomAlert("You can't delete product.") : (handleDelete(item.productId))}/>
 
             </View>
 

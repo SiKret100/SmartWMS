@@ -1,8 +1,7 @@
-import {Platform, ActivityIndicator, FlatList, Modal, RefreshControl, SafeAreaView, Text, View} from "react-native";
+import {Platform, Modal, SafeAreaView, Text, View} from "react-native";
 import CancelButton from "../buttons/CancelButton";
 import React, {useState, useEffect} from "react";
 import CustomSelectList from "../selects/CustomSelectList";
-import subcategoryService from "../../services/dataServices/subcategoryService";
 import productService from "../../services/dataServices/productService";
 import NumberFormField from "../form_fields/NumberFormField";
 import shelfService from "../../services/dataServices/shelfService";
@@ -48,7 +47,6 @@ const ProductMobileTakeDeliveryModal = ({setIsModalVisible}) => {
                 value: product.productName,
             })));
         } catch (err) {
-            // console.log(`Bledy fetchSubcategories: ${JSON.stringify(err)}`)
             setErrors(err)
         }
     }
@@ -59,11 +57,9 @@ const ProductMobileTakeDeliveryModal = ({setIsModalVisible}) => {
 
             let filteredShelves = result.data.filter(shelf => shelf.productId === null || shelf.productId === form.productsProductId);
             setShelvesList(filteredShelves);
-            // console.log(`Otrzymane shelfy: ${JSON.stringify(filteredShelves)}`);
         }
         catch(err){
             setErrors(err);
-            // console.log(`Bledy w komponencie: ${JSON.stringify(err)}`);
         }
     }
 
@@ -72,17 +68,14 @@ const ProductMobileTakeDeliveryModal = ({setIsModalVisible}) => {
             const result = productService.ProductDeliveryDistribution(request)
             if(result.errors){
                 setErrors(result.errors);
-                //console.log(`Błędy przechwycone: ${JSON.stringify(result.errors)}`);
             }
             else {
-                // console.log("Delivery taken");
                 setIsModalVisible(false);
                 router.push("/home/products")
             }
         }
         catch(err){
             setErrors(err);
-            // console.log(`Bledy w komponencie: ${JSON.stringify(err)}`);
         }
     }
 
@@ -101,7 +94,6 @@ const ProductMobileTakeDeliveryModal = ({setIsModalVisible}) => {
             if (isNaN(parsedMaxQuantity)) {
                 setQuantityError(true);
                 setQuantityErrorMessage(productErrorMessages.invalidQuantity);
-                console.log('Error: not a number');
             } else {
                 //setAssignedShelvesError(false);
                 if (parsedMaxQuantity <= 999) {
@@ -109,32 +101,26 @@ const ProductMobileTakeDeliveryModal = ({setIsModalVisible}) => {
                     if (assignedShelves.length > 0) {
 
                         const summedQuantity = assignedShelves.reduce((acc, shelf) => acc + parseInt(shelf.currentQuant), 0);
-                        console.log("Summed quantity: " + summedQuantity);
                         if (summedQuantity === parsedMaxQuantity) {
                             setAssignedShelvesError(false);
                             setQuantityErrorMessage("");
-                            console.log('No error');
                         } else {
                             setQuantityErrorMessage(productErrorMessages.quantityToShelvesMismatch);
                             setAssignedShelvesError(true);
-                            console.log('Error');
                         }
                     } else {
                         setAssignedShelvesError(true);
                         setQuantityErrorMessage("");
-                        console.log('No error');
                     }
 
                 } else {
                     setQuantityError(true);
                     setQuantityErrorMessage(productErrorMessages.excessiveQuantity)
-                    console.log('Error');
                 }
             }
         } else {
             setQuantityError(true);
             setQuantityErrorMessage(productErrorMessages.invalidQuantity);
-            console.log('error');
         }
     }
 
@@ -152,15 +138,10 @@ const ProductMobileTakeDeliveryModal = ({setIsModalVisible}) => {
     useEffect(() => {
         console.log("WESZLO W USEEFFECT")
         let prodForRequest = productList.filter(item => item.productId === form.productsProductId);
-        // console.log("Prod for req: " + JSON.stringify(prodForRequest));
 
         let product = prodForRequest.length > 0 ? prodForRequest[0] : null;
-        // console.log(`Wartosc quantity z forma: ${form.currentQuant}, dlugosc tablicy shelves: ${assignedShelves.length}`)
-        console.log("Assignes shelves: " + JSON.stringify(assignedShelves))
 
         if (!isNaN(parseInt(form.currentQuant)) && assignedShelves.length > 0) {
-            //const summedQuantity = assignedShelves.reduce((acc, shelf) => acc + parseInt(shelf.currentQuant), 0);
-
             const summedQuantity = assignedShelves.reduce((acc, shelf) => {
                 const oldShelf = shelvesList.find((item) => item.shelfId === shelf.shelfId);
                 const oldQuantity = parseInt(oldShelf.currentQuant);
@@ -168,17 +149,12 @@ const ProductMobileTakeDeliveryModal = ({setIsModalVisible}) => {
                 return acc + netQuantity;
             }, 0);
 
-            console.log("Summed quantity: " + summedQuantity);
             if (summedQuantity === parseInt(form.currentQuant)) {
                 const tempError = false;
                 setAssignedShelvesError(tempError);
-
-                 console.log('No error');
             } else {
                 const tempError = true;
-
                 setAssignedShelvesError(tempError);
-                 console.log('Error');
             }
         }
         else {
@@ -204,9 +180,6 @@ const ProductMobileTakeDeliveryModal = ({setIsModalVisible}) => {
                 racksRackId: shelf.rackId,
             }))
         });
-
-        console.log("Assigned shleves: " +  JSON.stringify(assignedShelves));
-        console.log("Assignes shelves error: " + JSON.stringify(assignedShelvesError));
     }, [assignedShelves]);
 
 
@@ -266,17 +239,6 @@ const ProductMobileTakeDeliveryModal = ({setIsModalVisible}) => {
                               showLoading={false}
                               textStyles={"text-white"}
                 />
-
-                <CustomButton title={"DIsplay state"}
-                              handlePress={() => console.log(`Assigned: ${assignedShelvesError}, quantity: ${quantityError}, productIdError: ${productIdError}`)}
-                />
-                <CustomButton title={"Shelves list"}
-                              handlePress={() => console.log("Assignes shelves: " + JSON.stringify(shelvesList))}
-                />
-                <CustomButton title={"Assignes shelves"}
-                              handlePress={() => console.log("Assignes shelves: " + JSON.stringify(assignedShelves))}
-                />
-
 
                 <Modal
                     visible={isModalShelfAssignFormVisible}
