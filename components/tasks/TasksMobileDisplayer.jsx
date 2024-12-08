@@ -17,6 +17,9 @@ import orderDetailService from "../../services/dataServices/orderDetailService";
 import productService from "../../services/dataServices/productService";
 import {UserDataContext} from "../../app/home/_layout";
 import CustomAlert from "../popupAlerts/TaskAlreadyTaken";
+import {TouchableOpacity} from "react-native-gesture-handler";
+import CustomButtonFlatList from "../buttons/CustomDeleteButtonFlatList";
+import CustomEditButtonFlatList from "../buttons/CustomEditButtonFlatList";
 
 const TasksMobileDisplayer = () => {
     //PROPS====================================================================================================
@@ -79,51 +82,63 @@ const TasksMobileDisplayer = () => {
     }
 
     const renderItem = ({item}) => (
+
         <FallingTiles>
 
 
-            <View
-                className={"flex-row justify-between items-center flex-0.5 px-2 py-2 mx-2 my-2 shadow rounded-lg bg-slate-200"}>
-
-                <Feather className={"pl-2"} name="clipboard" size={24} color="#3E86D8"/>
+            <View className={"flex-col justify-start bg-slate-200 pt-2 rounded-lg mt-5 mx-4 shadow"}>
 
 
-                <View className="px-2 py-2 mx-4  rounded  ">
 
-                    <View className={"flex-row justify-center align-items-center align-middle"}>
-                        <Text className={"text-center font-bold"}>Product: </Text>
-                        <Text className={"text-center"}>{item.productName}</Text>
 
-                    </View>
+                    <View className={"flex-row bg-blue-200  items-center mx-2 rounded-lg w-fit"}>
 
-                    <View className={"flex-row justify-center align-items-center align-middle"}>
-                        <Text className={"text-center font-bold"}>Quantity: </Text>
-                        <Text className={"text-center"}>{item.quantityAllocated}</Text>
+                        <View className="flex-row bg-smartwms-blue rounded-lg justify-center items-center p-2">
+                            <Feather color="#ffffff" className={""} name={"package"} size={45}/>
+                        </View>
+
+                        <View className={"flex-col mx-2"}>
+                            <Text className={"text-smartwms-blue text-2xl font-bold"}>{item.productName}</Text>
+                            <Text className={"text-xl color-gray-500"}>{item.taken ? "Task taken" : "Ready to be taken"}</Text>
+                        </View>
 
                     </View>
 
 
-                    <View className={"flex-row justify-center align-items-center align-middle"}>
-                        <Text className={"text-center font-bold"}>Priority: </Text>
 
-                        <Text
-                            className={`text-center ${item.priority === 5 ? "text-red-500" : (item.priority >= 2 && item.priority <= 4) ? "text-yellow-600" : "text-green-500"}`}>{item.priority}</Text>
-
+                <View className={"flex-row gap-4 my-2 p-2"}>
+                    <View className={"flex-row"}>
+                        <View className={"h-full w-2 rounded bg-smartwms-orange mr-2"} />
+                        <View className={"flex-col"}>
+                            <Text className={"text-smartwms-blue text-xl font-bold"}>Quantity</Text>
+                            <Text className={" color-gray-500"}>{item.quantityAllocated}</Text>
+                        </View>
                     </View>
+
+                    <View className={"flex-row"}>
+                        <View className={"h-full w-2 rounded bg-smartwms-orange mr-2"} />
+                        <View className={"flex-col"}>
+                            <Text className={"text-smartwms-blue text-xl font-bold"}>Priority</Text>
+                            <Text className={" color-gray-500"}>{item.priority}</Text>
+                        </View>
+                    </View>
+
 
                 </View>
 
 
-                <Button onPress={() => userData.role !== "Employee" ? CustomAlert("Admin nor Manager can't take task.") : checkIfUserHasTask(item.taskId)} type='clear' icon={
-                    <Feather name="plus-circle" size={24} color="#32a856"/>
-                }
-                />
+                <View className="mt-2 flex-row  justify-center items-cente">
 
+                    <CustomEditButtonFlatList onEdit={() => userData.role !== "Employee" ? CustomAlert("Admin nor Manager can't take task.") : checkIfUserHasTask(item.taskId) } icon={"plus-circle"} title={"Take" } containerStyles={"flex-1 bg-green-500 rounded-b-lg"} textStyles={"text-white"}></CustomEditButtonFlatList>
+
+                </View>
 
             </View>
 
 
         </FallingTiles>
+
+
     );
 
     const onRefresh = useCallback(() => {

@@ -22,17 +22,17 @@ export default function CustomButton({
       <View className= "flex-row">
 
         {showLoading & isLoading ?   <ActivityIndicator size="small" color="#fff"/> : null}
-
-        <Text className={`text-lg ${textStyles} ${isLoading ? "ml-2" : ""}`}>
-          {title+"  "}
-        </Text>
-
         {
           iconName !== "" ?
               (
                   <Feather color={"white"} name={iconName} size={24}/>
               ) : null
         }
+        <Text className={`text-lg ${textStyles} ${isLoading ? "ml-2" : ""}`}>
+          {" "+title}
+        </Text>
+
+
 
       </View>
 

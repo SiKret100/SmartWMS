@@ -1,4 +1,4 @@
-import {useState, useCallback, useEffect, useContext} from "react";
+import React, {useState, useCallback, useEffect, useContext} from "react";
 import {TouchableOpacity} from "react-native-gesture-handler";
 import {Platform, ActivityIndicator, FlatList, Modal, RefreshControl, SafeAreaView, Text, View} from "react-native";
 import CustomButton from "../buttons/CustomButton";
@@ -13,6 +13,9 @@ import ProductMobileEditForm from "./ProductMobileEditForm";
 import NoPermissionAlert from "../popupAlerts/NoPermissionAlert";
 import {UserDataContext} from "../../app/home/_layout";
 import CustomAlert from "../popupAlerts/TaskAlreadyTaken";
+import {Feather} from "@expo/vector-icons";
+import CustomDeleteButtonFlatList from "../buttons/CustomDeleteButtonFlatList";
+import CustomEditButtonFlatList from "../buttons/CustomEditButtonFlatList";
 
 const ProductsMobileDisplayer = () => {
 
@@ -65,20 +68,34 @@ const ProductsMobileDisplayer = () => {
     const renderItem = ({item}) => (
         <FallingTiles>
 
-            <View
-                className={"flex-row justify-between items-center flex-0.5 px-2 py-2 mx-2 my-2 shadow rounded-lg bg-slate-200"}>
 
-                <EditButton onEdit={() => userData.role === "Employee" ? CustomAlert("You can't edit product.") : (handleEdit(item)) }/>
+            <View className={"flex flex-col justify-start bg-slate-200 pt-2 rounded-lg mt-5 mx-4 shadow"}>
+
 
                 <TouchableOpacity onPress={() => handleProductDetailDisplay(item)}
                                   hitSlop={{top: 15, bottom: 15, left: 25, right: 25}}>
-                    <View className={"px-2 py-2 mx-4"}>
-                        <Text className={"text-center"}>{item.productName}</Text>
+                    <View className={"flex-row items-center ml-2"}>
+
+                        <Feather color="#3E86D8" className={"mr-2"} name={"package"} size={45}/>
+
+                        <View className={"h-full w-2 rounded bg-smartwms-orange mr-2"} />
+
+
+                        <View className={"flex-col"}>
+                            <Text className={"text-smartwms-blue text-2xl font-bold"}>{item.productName}</Text>
+                            <Text className={"text-xl color-gray-500"}>{item.barcode}</Text>
+                        </View>
+
                     </View>
                 </TouchableOpacity>
 
 
-                <DeleteButton onDelete={() => userData.role === "Employee" ? CustomAlert("You can't delete product.") : (handleDelete(item.productId))}/>
+                <View className="mt-2 flex-row  justify-center items-cente">
+
+                    <CustomDeleteButtonFlatList onDelete={() => userData.role === "Employee" ? CustomAlert("You can't delete product.") : (handleDelete(item.productId))} icon={"trash-2"} title={"Delete"} containerStyles={"flex-1 bg-red-500 rounded-bl-lg "} textStyles={"text-white "}></CustomDeleteButtonFlatList>
+                    <CustomEditButtonFlatList onEdit={() => userData.role === "Employee" ? CustomAlert("You can't edit product.") : (handleEdit(item)) } icon={"edit"} title={"Edit" } containerStyles={"flex-1 bg-smartwms-blue rounded-br-lg"} textStyles={"text-white"}></CustomEditButtonFlatList>
+
+                </View>
 
             </View>
 
@@ -136,7 +153,7 @@ const ProductsMobileDisplayer = () => {
 
             />
 
-            <CustomButton title={"Take new delivery"} textStyles={"text-white"} containerStyles={"px-2 mb-2 mx-2"}
+            <CustomButton iconName={"truck"} title={"Take new delivery"} textStyles={"text-white"} containerStyles={"px-2 mb-2 mx-2"}
                           handlePress={() => setIsTakeDeliveryModalVisible(true)}/>
 
             <Modal
@@ -168,7 +185,8 @@ const ProductsMobileDisplayer = () => {
                 presentationStyle={Platform.OS === "ios" ? "pageSheet" : ""}
                 onRequestClose={() => setIsEditProductModalVisible(false)}
             >
-                <ProductMobileEditForm setIsModalVisible={setIsEditProductModalVisible} object={currentlyEditItem}></ProductMobileEditForm>
+                <ProductMobileEditForm setIsModalVisible={setIsEditProductModalVisible}
+                                       object={currentlyEditItem}></ProductMobileEditForm>
 
             </Modal>
         </SafeAreaView>

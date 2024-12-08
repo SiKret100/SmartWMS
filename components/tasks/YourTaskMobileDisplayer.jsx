@@ -9,6 +9,7 @@ import {Feather} from "@expo/vector-icons";
 import BarcodeScanner from "../barcode_scanner/BarcodeScanner";
 import productService from "../../services/dataServices/productService";
 import * as Progress from "react-native-progress";
+import moment from "moment-timezone";
 
 const YourTaskMobileDisplayer = props => {
 
@@ -126,44 +127,46 @@ const YourTaskMobileDisplayer = props => {
                 <ActivityIndicator size="large" color="#000"/>
             </View>
         ) : (
-            <ScrollView className={"px-2"}>
+            <ScrollView className={"px-4"}>
                 {hasUserTask ? (
                     <View>
 
-                        <View className={"flex-row mt-2 mb-5"}>
-                            <View className={" flex-auto mx-2 px-2 flex-col bg-slate-200 p-2 rounded-lg shadow"}>
+                        <View className={"flex-row mt-2 gap-5"}>
 
-                                <View className={"flex-col justify-between py-1"}>
+                            <View className={" flex-auto px-2 flex-col bg-slate-200 rounded-lg shadow "}>
+
+                                <View className={"flex-col justify-between py-1 ml-3 mt-3"}>
                                     <Text className={"text-2xl font-bold text-gray-800 text-smartwms-blue"}>Product</Text>
                                     <Text
                                         className={"text-xl color-gray-500"}>{product.productName ? product.productName.toUpperCase() : ""}</Text>
                                 </View>
 
-                                <View className={"flex-col justify-between"}>
+                                <View className={"flex-col justify-between ml-3 mt-3"}>
                                     <Text className={"text-2xl font-bold text-gray-800 text-smartwms-blue"}>Barcode</Text>
                                     <Text className={"text-xl color-gray-500"}>{product.barcode}</Text>
                                 </View>
 
                             </View>
 
-                            <View className="flex-auto mx-2 flex-col bg-slate-200 p-2 rounded-lg shadow items-center justify-center">
+                            <View className="flex-auto flex-col bg-slate-200 p-2 rounded-lg shadow items-center justify-center">
 
-                                <Text className="text-center font-bold mb-4 color-gray-500">
-                                    To pick
+                                <Text className="text-center font-bold color-gray-500">
+                                    Collected
                                 </Text>
 
-                                <Text className="text-2xl text-center font-bold mb-4 text-smartwms-blue">
+                                <Text className="text-2xl text-center font-bold text-smartwms-blue">
                                     {quantityCollected}/{quantityAllocated}
                                 </Text>
 
                                 <Progress.Circle
-                                    className={"px-2"}
-                                    size={60}
+                                    className={"px-2 shadow py-2"}
+                                    size={80}
                                     progress={progress}
-                                    thickness={9}
+                                    thickness={19}
                                     color="#FFB50C"
                                     unfilledColor="#d9dbdf"
-                                    borderWidth={0}
+                                    borderWidth={5}
+                                    borderColor={"#475f9c"}
                                 />
                             </View>
 
@@ -171,15 +174,19 @@ const YourTaskMobileDisplayer = props => {
 
 
                         {shelves.map(shelf => (
-                            <View key={shelf.id} className={"px-2 shadow mb-5"}>
+                            <View key={shelf.id} className={"shadow mt-5"}>
 
-                                <View className={"flex-col bg-slate-200 rounded-lg p-4"}>
+                                <View className={"flex-col bg-slate-200 rounded-lg p-4 gap-5"}>
 
-                                    <View className={"flex-row items-center"}>
 
-                                        <Feather color="#3E86D8" className={"mr-2"} name={"box"} size={45}/>
 
-                                        <View className={"flex-col"}>
+                                    <View className={"flex-row bg-blue-200  items-center rounded-lg w-fit"}>
+
+                                        <View className="flex-row bg-smartwms-blue rounded-lg justify-center items-center p-2">
+                                            <Feather color="#ffffff"  name={"box"} size={40}/>
+                                        </View>
+
+                                        <View className={"flex-col mx-2"}>
                                             <Text className={"text-smartwms-blue text-2xl font-bold"}>To collect</Text>
                                             <Text className={"text-xl color-gray-500"}>{shelf.currentQuant}</Text>
                                         </View>
@@ -187,7 +194,7 @@ const YourTaskMobileDisplayer = props => {
                                     </View>
 
 
-                                    <View className={"flex-row gap-4 my-2"}>
+                                    <View className={"flex-row gap-5 my-2"}>
                                         <View className={"flex-row"}>
                                             <View className={"h-full w-2 rounded bg-smartwms-orange mr-2"} />
                                             <View className={"flex-col"}>
@@ -218,7 +225,7 @@ const YourTaskMobileDisplayer = props => {
 
                             </View>
                         ))}
-                        <CustomButton containerStyles={"mx-2 shadow"} textStyles={"text-white"} title={`Scan`}
+                        <CustomButton containerStyles={"shadow mt-5"} textStyles={"text-white"} title={`Scan`}
                                       handlePress={() => setIsBarcodeModalVisible(true)} iconName={"maximize"}/>
 
                     </View>

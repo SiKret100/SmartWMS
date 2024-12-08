@@ -1,5 +1,5 @@
 import {SafeAreaView, Text, View, Modal, Platform, ActivityIndicator, FlatList, Animated, Alert} from "react-native";
-import {useRef, useState, useEffect, useCallback, createContext, useContext} from "react";
+import React, {useRef, useState, useEffect, useCallback, createContext, useContext} from "react";
 import alertService from "../../services/dataServices/alertService";
 import Feather from "react-native-vector-icons/Feather";
 import {Button} from "react-native-elements";
@@ -17,6 +17,7 @@ import CustomSelectList from "../selects/CustomSelectList";
 import CustomButton from "../buttons/CustomButton";
 import {UserDataContext} from "../../app/home/_layout";
 import CustomAlert from "../popupAlerts/TaskAlreadyTaken";
+import CustomEditButtonFlatList from "../buttons/CustomEditButtonFlatList";
 
 const AlertMobileDisplayer = () => {
 
@@ -44,29 +45,86 @@ const AlertMobileDisplayer = () => {
 
     //FUNCTIONS================================================================================================
     const renderItem = ({item}) => (
+        // <FallingTiles>
+        //     <View
+        //         className={"flex-row justify-between items-center flex-0.5 px-2 py-2 mx-2 my-2 shadow rounded-lg bg-slate-200"}>
+        //
+        //        <DeleteButton  onDelete={() => userData.role === "Employee" ? CustomAlert("You can't delete alert.") : handleDelete(item.alertId)}/>
+        //
+        //
+        //
+        //
+        //         <View className={"px-2 py-2 mx-4"}>
+        //             <View>
+        //                 <Text className={"text-center"}>{item.title}</Text>
+        //                 <Text className={"text-center"}>{item.description}</Text>
+        //                 <Text className={"text-center"}>{moment(item.alertDate).format("DD MMMM YYYY")}</Text>
+        //                 <Text className={"text-center"}>
+        //                     {alertTypeMap.find(alert => alert.key === item.alertType).value}
+        //                 </Text>
+        //             </View>
+        //         </View>
+        //         <EditButton onEdit={() =>  userData.role === "Employee" ? CustomAlert("You can't edit alert.") : handleModalEdit(item)}/>
+        //
+        //     </View>
+        // </FallingTiles>
+
         <FallingTiles>
-            <View
-                className={"flex-row justify-between items-center flex-0.5 px-2 py-2 mx-2 my-2 shadow rounded-lg bg-slate-200"}>
 
-               <DeleteButton  onDelete={() => userData.role === "Employee" ? CustomAlert("You can't delete alert.") : handleDelete(item.alertId)}/>
 
+            <View className={"flex-col justify-start bg-slate-200 pt-2 rounded-lg mt-5 mx-4 shadow"}>
 
 
 
-                <View className={"px-2 py-2 mx-4"}>
-                    <View>
-                        <Text className={"text-center"}>{item.title}</Text>
-                        <Text className={"text-center"}>{item.description}</Text>
-                        <Text className={"text-center"}>{moment(item.alertDate).format("DD MMMM YYYY")}</Text>
-                        <Text className={"text-center"}>
-                            {alertTypeMap.find(alert => alert.key === item.alertType).value}
-                        </Text>
+
+                <View className={"flex-row bg-blue-200  items-center mx-2 rounded-lg w-fit"}>
+
+                    <View className="flex-row bg-smartwms-blue rounded-lg justify-center items-center p-2">
+                        <Feather color="#ffffff" className={""} name={"bell"} size={45}/>
                     </View>
+
+                    <View className={"flex-col mx-2"}>
+                        <Text className={"text-smartwms-blue text-2xl font-bold"}>{item.title}</Text>
+                        <Text className={"text-xl color-gray-500"}>{moment(item.alertDate).format("DD MMMM YYYY")}</Text>
+                    </View>
+
                 </View>
-                <EditButton onEdit={() =>  userData.role === "Employee" ? CustomAlert("You can't edit alert.") : handleModalEdit(item)}/>
+
+
+
+                <View className={"flex-row gap-4 my-2 p-2"}>
+                    <View className={"flex-row"}>
+                        <View className={"h-full w-2 rounded bg-smartwms-orange mr-2"} />
+                        <View className={"flex-col"}>
+                            <Text className={"text-smartwms-blue text-xl font-bold"}>Type</Text>
+                            <Text className={" color-gray-500"}> {alertTypeMap.find(alert => alert.key === item.alertType).value} </Text>
+                        </View>
+                    </View>
+
+                    <View className={"flex-row"}>
+                        <View className={"h-full w-2 rounded bg-smartwms-orange mr-2"} />
+
+                        <View className="flex-col w-44">
+                            <Text className="text-smartwms-blue text-xl font-bold">Description</Text>
+                            <Text className="color-gray-500 flex-wrap">{item.description}</Text>
+                        </View>
+                    </View>
+
+
+                </View>
+
+
+                <View className="mt-2 flex-row  justify-center items-cente">
+
+                    <CustomEditButtonFlatList onEdit={() =>  userData.role === "Employee" ? CustomAlert("You can't edit alert.") : handleModalEdit(item) } icon={"edit"} title={"Edit" } containerStyles={"flex-1 bg-smartwms-orange rounded-b-lg"} textStyles={"text-white"}></CustomEditButtonFlatList>
+
+                </View>
 
             </View>
+
+
         </FallingTiles>
+
     );
 
     const fetchData = async () => {
