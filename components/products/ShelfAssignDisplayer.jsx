@@ -2,7 +2,6 @@ import { Text, View } from "react-native";
 import CancelButton from "../buttons/CancelButton";
 import React from "react";
 import { ScrollView } from "react-native-gesture-handler";
-import { Divider } from "react-native-elements";
 
 const ShelfAssignDisplayer = ({ assignedShelves, setIsModalVisible }) => {
     return (

@@ -1,13 +1,10 @@
-import {SafeAreaView, Text, View} from "react-native";
+import {Text, View} from "react-native";
 import React, {useEffect, useState} from "react";
 import NumberFormField from "../form_fields/NumberFormField";
 import {ScrollView} from "react-native-gesture-handler";
-import rackErrorMessages from "../../data/ErrorMessages/rackErrorMessages";
 import CancelButton from "../buttons/CancelButton";
-import CustomButton from "../buttons/CustomButton";
 import {Feather} from "@expo/vector-icons";
 import {Button} from "react-native-elements";
-import {Keyboard as navigation} from "react-native-web";
 import shelfAssignmentErrorMessages from "../../data/ErrorMessages/shelfAssignmentErrorMessages";
 
 
@@ -15,15 +12,10 @@ const ShelfAssignForm = ({shelvesList, assignedShelves, setAssignedShelves, setI
 
     //PROPS====================================================================================================
     const [currentlyAssignedProductQuantity, setCurrentlyAssignedProductQuantity] = useState(productQuantity);
-    //const [tempShelvesList, setTempShelvesList] = useState(shelvesList);
     const [localAssignedShelves, setLocalAssignedShelves] = useState([]);
-
-    //FUNCTIONS=============================================================================================
-
 
 
     //USE EFFECT HOOKS=========================================================================================
-
     useEffect(() => {
         if (currentlyAssignedProductQuantity === 0 ){
             setAssignedShelves(localAssignedShelves);
@@ -36,7 +28,6 @@ const ShelfAssignForm = ({shelvesList, assignedShelves, setAssignedShelves, setI
 
         }
     },[currentlyAssignedProductQuantity])
-
 
 
     return (
@@ -68,7 +59,7 @@ const ShelfAssignForm = ({shelvesList, assignedShelves, setAssignedShelves, setI
                                 lane: shelf.rackLane.lane.laneCode,
                                 rack: shelf.rackLane.rackNumber
 
-                            })
+                            });
 
                             const [maxQuantError, setMaxQuantError] = useState(true);
                             const [currentQuantError, setCurrentQuantError] = useState(true);
@@ -81,14 +72,7 @@ const ShelfAssignForm = ({shelvesList, assignedShelves, setAssignedShelves, setI
                             const handleAssignShelf = () => {
                                 setCurrentlyAssignedProductQuantity(prevQuantity => prevQuantity - parseInt(form.currentQuant));
                                 setLocalAssignedShelves(prevArr => [...prevArr, form])
-
-                                // if(currentlyAssignedProductQuantity === 0){
-                                //     setIsModalVisible(false);
-                                //     console.log("Wszystkie rozdysponowane")
-                                // }
-
                                 setIsAssignedToShelf(true)
-                                //setTempShelvesList(tempShelvesList.filter(shelf => shelf.shelfId !== form.shelfId));'
                                 console.log("Currently assigned" + currentlyAssignedProductQuantity)
                             }
 

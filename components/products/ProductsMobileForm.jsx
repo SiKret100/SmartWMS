@@ -11,10 +11,9 @@ import ShelfAssignForm from "components/products/ShelfAssignForm.jsx";
 import {ScrollView} from "react-native-gesture-handler";
 import ShelfAssignDisplayer from "./ShelfAssignDisplayer";
 import productService from "../../services/dataServices/productService";
-import userErrorMessage from "../../data/ErrorMessages/userErrorMessages";
 import productErrorMessages from "../../data/ErrorMessages/productErrorMessages";
-import {Feather} from "@expo/vector-icons";
 import BarcodeScanner from "../barcode_scanner/BarcodeScanner";
+import crudService from "../../services/dataServices/crudService";
 
 const ProductsMobileForm = () => {
 
@@ -27,6 +26,7 @@ const ProductsMobileForm = () => {
         barcode: "",
         subcategoriesSubcategoryId: -1,
     })
+
     const [selectKey, setSelectKey] = useState(0);
     const [subcategoryTypeMap, setsubcategoryTypeMap] = useState([]);
 
@@ -56,35 +56,28 @@ const ProductsMobileForm = () => {
 
     const defaultOption = {key: -1, value: "Choose subcategory"};
 
+
     //FUNCTIONS=============================================================================================
     const fetchSubcategories = async () => {
         try {
-            const result = await subcategoryService.GetAll();
+            const result = await crudService.GetAll("Subcategory");
             setsubcategoryTypeMap(result.data.map(subcategory => ({
                 key: subcategory.subcategoryId,
                 value: subcategory.subcategoryName,
             })));
         } catch (err) {
-            // console.log(`Bledy fetchSubcategories: ${JSON.stringify(err)}`)
             setErrors(err)
         }
     }
 
     const fetchShelves = async () => {
         try {
-            const result = await shelfService.GetShelfWithRackLane()
+            const result = await crudService.GetAll("Shelf/withRackLane");
 
             let filteredShelves = result.data.filter(shelf => shelf.productId === null);
             setShelvesList(filteredShelves);
 
-            // setShelvesTypeMap(filteredShelves.map(shelf => ({
-            //     key: shelf.shelfId,
-            //     value: "Lane: " + shelf.rackLane.lane.laneCode + " Rack: "+ shelf.rackLane.rackNumber + " Level: " + shelf.level
-            // })))
-
-
         } catch (err) {
-            // console.log(`Bledy fetchShelves: ${JSON.stringify(err)}`)
             setErrors(err);
         }
     }
@@ -97,7 +90,6 @@ const ProductsMobileForm = () => {
     const handleProductDescription = (e) => {
         const productDescriptionVar = e.nativeEvent.text;
         productDescriptionVar.length > 0 ? setProductDescriptionError(false) : setProductDescriptionError(true);
-
     }
 
     const handlePrice = (e) => {
@@ -107,27 +99,22 @@ const ProductsMobileForm = () => {
         if (price.length >= 1 && regexp.test(price)) {
 
             const parsedPrice = parseFloat(price);
-            // console.log(parsedPrice);
 
             if (isNaN(parsedPrice)) {
                 setPriceError(true);
                 setPriceErrorMessage(productErrorMessages.invalidPrice);
-                console.log('Error: not a number');
             } else {
                 if (parsedPrice <= 999999999) {
                     setPriceErrorMessage("");
                     setPriceError(false);
-                    console.log('No error');
                 } else {
                     setPriceErrorMessage(productErrorMessages.excessiveValue);
                     setPriceError(true);
-                    console.log('Error');
                 }
             }
         } else {
             setPriceError(true);
             setPriceErrorMessage(productErrorMessages.invalidPrice);
-            console.log('No error');
         }
     }
 
@@ -136,51 +123,41 @@ const ProductsMobileForm = () => {
         const regexp = new RegExp("^[1-9]{1}\\d*$");
         if (regexp.test(quantity)) {
             const parsedMaxQuantity = parseInt(quantity);
-            console.log(parsedMaxQuantity);
 
             if (isNaN(parsedMaxQuantity)) {
                 setQuantityError(true);
                 setQuantityErrorMessage(productErrorMessages.invalidQuantity);
-                console.log('Error: not a number');
             } else {
-                //setAssignedShelvesError(false);
                 if (parsedMaxQuantity <= 999) {
                     setQuantityError(false)
                     if (assignedShelves.length > 0) {
 
                         const summedQuantity = assignedShelves.reduce((acc, shelf) => acc + parseInt(shelf.currentQuant), 0);
-                        console.log("Summed quantity: " + summedQuantity);
                         if (summedQuantity === parsedMaxQuantity) {
                             setAssignedShelvesError(false);
                             setQuantityErrorMessage("");
-                            console.log('No error');
                         } else {
                             setQuantityErrorMessage(productErrorMessages.quantityToShelvesMismatch);
                             setAssignedShelvesError(true);
-                            console.log('Error');
                         }
                     } else {
                         setAssignedShelvesError(true);
                         setQuantityErrorMessage("");
-                        console.log('No error');
                     }
 
                 } else {
                     setQuantityError(true);
                     setQuantityErrorMessage(productErrorMessages.excessiveQuantity)
-                    console.log('Error');
                 }
             }
         } else {
             setQuantityError(true);
             setQuantityErrorMessage(productErrorMessages.invalidQuantity);
-            console.log('error');
         }
     }
 
     const handleBarcode = (barcode) => {
         const regexp = new RegExp("^[\\d]{8,14}$");
-        //const barcodeVar = e.nativeEvent.text;
         setBarcodeError(false);
 
         if (regexp.test(barcode)) {
@@ -200,15 +177,11 @@ const ProductsMobileForm = () => {
     }
 
     const handleCreateProduct = async () => {
-
-        // console.log("Form: " + JSON.stringify(form))
-        // console.log("Assignes shelces " + JSON.stringify(assignedShelves))
-
         try{
-            const result = await productService.AddProductAndAssignShelves(request);
+            const result = await crudService.Post(request, "Product/createAndAssignToShelves");
+
             if(result.errors){
                 setErrors(result.errors);
-                // console.log(`Błędy przechwycone: ${JSON.stringify(result.errors)}`);
             }else{
                 setForm({
                     productName: "",
@@ -230,30 +203,16 @@ const ProductsMobileForm = () => {
                 });
 
                 setAssignedShelves([]);
-                // setForm({
-                //     laneCode: ""
-                // })
+
                 setSelectKey((prevKey) => prevKey + 1);
             }
         }
         catch(err){
             setErrors(err);
-            //console.log(`Bledy w komponencie: ${JSON.stringify(err)}`);
         }
 
     }
 
-    const createAlert = (title, message) => {
-        return (
-            Alert.alert(title, message, [
-                {
-                    text: "Ok",
-                    onPress: () => {},
-                    style: "cancel"
-                }
-            ])
-        )
-    }
 
     //USE EFFECT HOOKS=========================================================================================
     useFocusEffect(
@@ -267,13 +226,10 @@ const ProductsMobileForm = () => {
         handleAssignedShelves();
         if(!isNaN(parseInt(form.quantity)) && assignedShelves.length > 0) {
             const summedQuantity = assignedShelves.reduce((acc, shelf) => acc + parseInt(shelf.currentQuant), 0);
-            // console.log("Summed quantity: " + summedQuantity);
             if (summedQuantity === parseInt(form.quantity)) {
                 setQuantityError(false);
-                //console.log('No error');
             } else {
                 setQuantityError(true);
-                //console.log('Error');
             }
         }
     }, [isShelfAssignmentModalVisible])
@@ -307,6 +263,7 @@ const ProductsMobileForm = () => {
             handleBarcode(form.barcode);
 
     }, [barcodeModalVisible])
+
 
     return (
         <SafeAreaView>
@@ -415,9 +372,6 @@ const ProductsMobileForm = () => {
                         />
                     </View>
 
-
-                    {/*//przycisk do przechodzenia do modala musi byc wlaczony jesli pole quantity w formularzu jestustawione i przeszlo waldiacje*/}
-
                     <CustomButton title={"Assign shelves"}
                                   handlePress={() => setIsShelfAssignmentModalVisible(true)}
                                   containerStyles={"mt-7"}
@@ -441,8 +395,6 @@ const ProductsMobileForm = () => {
                                   showLoading={false}
                                   textStyles={"text-white"}
                     />
-
-                    {/*<CustomButton handlePress={() => console.log(JSON.stringify(assignedShelves))}></CustomButton>*/}
 
                     <Modal
                         visible={!!isShelfAssignmentModalVisible}

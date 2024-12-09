@@ -7,7 +7,7 @@ axios.defaults.withCredentials = true;
 export default class crudService {
     static ip = process.env.EXPO_PUBLIC_IP;
 
-    static Add = async (data, url) => {
+    static Post = async (data, url) => {
         console.log("Crud service add");
         const token = Platform.OS !== "web" ? SecureStore.getItem("token") : "";
         const config = {
@@ -70,7 +70,7 @@ export default class crudService {
         }
     };
 
-    static Delete = async(id, url) => {
+    static Delete = async (id, url) => {
         console.log("Delete crud service");
         const token = Platform.OS !== "web" ? SecureStore.getItem("token") : "";
         const config = {

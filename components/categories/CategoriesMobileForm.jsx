@@ -52,7 +52,7 @@ const CategoriesMobileForm = ({object = {}, header, setIsModalVisible}) => {
     const handleAdd = async(form) => {
         try {
             const categoryDto = new CategoryDto(form);
-            const result = await crudService.Add(categoryDto, "Category");
+            const result = await crudService.Post(categoryDto, "Category");
 
             if(result.errors){
                 setErrors(result.errors);

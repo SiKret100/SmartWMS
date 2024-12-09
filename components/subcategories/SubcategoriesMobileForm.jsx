@@ -66,7 +66,7 @@ const SubcategoryMobileForm = ({object = {}, header, setIsModalVisible, categori
     const handleAdd = async (form) => {
         try{
             const subcategoryDto = new SubcategoryDto(form);
-            const result = await crudService.Add(form, "Subcategory");
+            const result = await crudService.Post(form, "Subcategory");
 
             if (result.errors){
                 setErrors(result.errors)

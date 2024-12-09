@@ -9,6 +9,7 @@ import ProductDeliveryDistributionForm from "./ProductDeliveryDistributionForm";
 import CustomButton from "../buttons/CustomButton";
 import productErrorMessages from "../../data/ErrorMessages/productErrorMessages";
 import {router} from "expo-router";
+import crudService from "../../services/dataServices/crudService";
 
 
 const ProductMobileTakeDeliveryModal = ({setIsModalVisible}) => {
@@ -34,13 +35,11 @@ const ProductMobileTakeDeliveryModal = ({setIsModalVisible}) => {
     const [productList, setProductList] = useState([]);
 
 
-
-
     //FUNCS
     const fetchData = async () => {
         try {
-            const result = await productService.GetAll();
-            setProductList(result.data)
+            const result = await crudService.GetAll("Product");
+            setProductList(result.data);
 
             setProductTypeMap(result.data.map(product => ({
                 key: product.productId,
@@ -53,7 +52,7 @@ const ProductMobileTakeDeliveryModal = ({setIsModalVisible}) => {
 
     const fetchShelves = async () => {
         try{
-            const result = await shelfService.GetShelfWithRackLane();
+            const result = await crudService.GetAll("Shelf/withRackLane");
 
             let filteredShelves = result.data.filter(shelf => shelf.productId === null || shelf.productId === form.productsProductId);
             setShelvesList(filteredShelves);
@@ -65,7 +64,7 @@ const ProductMobileTakeDeliveryModal = ({setIsModalVisible}) => {
 
     const handleDeliveryAndDistribution = async () => {
         try{
-            const result = productService.ProductDeliveryDistribution(request)
+            const result = await crudService.Post(request, "Product/takeDeliveryAndDistribute")
             if(result.errors){
                 setErrors(result.errors);
             }
@@ -89,13 +88,11 @@ const ProductMobileTakeDeliveryModal = ({setIsModalVisible}) => {
         const regexp = new RegExp("^[1-9]{1}\\d*$");
         if (regexp.test(quantity)) {
             const parsedMaxQuantity = parseInt(quantity);
-            console.log(parsedMaxQuantity);
 
             if (isNaN(parsedMaxQuantity)) {
                 setQuantityError(true);
                 setQuantityErrorMessage(productErrorMessages.invalidQuantity);
             } else {
-                //setAssignedShelvesError(false);
                 if (parsedMaxQuantity <= 999) {
                     setQuantityError(false)
                     if (assignedShelves.length > 0) {
@@ -124,6 +121,7 @@ const ProductMobileTakeDeliveryModal = ({setIsModalVisible}) => {
         }
     }
 
+
     //USE EFFECT HOOKS=========================================================================================
     useEffect(() => {
         fetchData();
@@ -136,7 +134,6 @@ const ProductMobileTakeDeliveryModal = ({setIsModalVisible}) => {
     },[form.productsProductId]);
 
     useEffect(() => {
-        console.log("WESZLO W USEEFFECT")
         let prodForRequest = productList.filter(item => item.productId === form.productsProductId);
 
         let product = prodForRequest.length > 0 ? prodForRequest[0] : null;
@@ -181,7 +178,6 @@ const ProductMobileTakeDeliveryModal = ({setIsModalVisible}) => {
             }))
         });
     }, [assignedShelves]);
-
 
 
     return (

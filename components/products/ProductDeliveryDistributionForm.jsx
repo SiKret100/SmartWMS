@@ -3,14 +3,11 @@ import {ScrollView} from "react-native-gesture-handler";
 import CancelButton from "../buttons/CancelButton";
 import React, {useEffect, useState} from "react";
 import NumberFormField from "../form_fields/NumberFormField";
-import {Button} from "react-native-elements";
 import {Feather} from "@expo/vector-icons";
-import CustomButton from "../buttons/CustomButton";
 import shelfAssignmentErrorMessages from "../../data/ErrorMessages/shelfAssignmentErrorMessages";
 import * as Progress from "react-native-progress";
 import CustomEditButtonFlatList from "../buttons/CustomEditButtonFlatList";
-import CustomAlert from "../popupAlerts/TaskAlreadyTaken";
-
+import Animated from "react-native-reanimated";
 
 const ProductDeliveryDistributionForm = ({
                                              productQuantity,
@@ -23,10 +20,7 @@ const ProductDeliveryDistributionForm = ({
     const [currentlyAssignedProductQuantity, setCurrentlyAssignedProductQuantity] = useState(productQuantity);
     const [localAssignedShelves, setLocalAssignedShelves] = useState([]);
     const [totalToAssign, setTotalToAssign] = useState(productQuantity);
-    const progress =  (totalToAssign - currentlyAssignedProductQuantity)/ totalToAssign ;
-
-    //const [tempShelvesList, setTempShelvesList] = useState(shelvesList);
-
+    const progress = (totalToAssign - currentlyAssignedProductQuantity) / totalToAssign;
 
     useEffect(() => {
         if (currentlyAssignedProductQuantity === 0) {
@@ -73,7 +67,7 @@ const ProductDeliveryDistributionForm = ({
                     </Text>
 
                     <Text className="text-2xl text-center font-bold text-smartwms-blue">
-                        { (totalToAssign - currentlyAssignedProductQuantity)} / { totalToAssign}
+                        {(totalToAssign - currentlyAssignedProductQuantity)} / {totalToAssign}
                     </Text>
 
                     <Progress.Circle
@@ -116,11 +110,7 @@ const ProductDeliveryDistributionForm = ({
 
                         //FUNCTIONS=============================================================================================
                         const handleAssignShelf = () => {
-                            console.log(`Aktualna wartosc dla shelfa: ${shelf.currentQuant}`);
-
                             const newQuant = (parseInt(form.currentQuant) + parseInt(shelf.currentQuant)).toString();
-                            // const newQuant = parseInt(form.currentQuant).toString();
-                            console.log("New quant: " + newQuant);
 
                             setCurrentlyAssignedQuantityToShelf(form.currentQuant);
 
@@ -137,29 +127,22 @@ const ProductDeliveryDistributionForm = ({
 
                             if (currentlyAssignedProductQuantity === 0) {
                                 setIsModalVisible(false);
-                                console.log("Wszystkie rozdysponowane");
                             }
 
                             setIsAssignedToShelf(true);
 
-                            console.log("Currently assigned: " + currentlyAssignedProductQuantity);
                         };
 
 
                         const handleMaxQuant = (e) => {
                             const maxQuantVar = e.nativeEvent.text;
                             setIsAssignedToShelf(false);
-                            // if(form.maxQuant.length !== 0 && form.currentQuant.length !== 0 ){
-                            //     setErrorMessage("Maximum quantity is required");
-                            // }
                             const regexp = new RegExp("^[1-9]{1}\\d*$");
                             if (regexp.test(maxQuantVar)) {
                                 const parsedMaxQuant = parseInt(maxQuantVar);
-                                // console.log(`Parsed max: ${parsedMaxQuant}`);
                                 if (isNaN(parsedMaxQuant)) {
                                     setMaxQuantError(true);
                                     setMaxQuantErrorMessage(shelfAssignmentErrorMessages.invalidMaxQuant);
-                                    // console.log('Error: not a number');
                                 } else {
                                     const parsedCurrentQuant = parseInt(form.currentQuant);
                                     if (parsedMaxQuant > 0 && parsedMaxQuant <= 2147483647) {
@@ -195,19 +178,16 @@ const ProductDeliveryDistributionForm = ({
                             setIsAssignedToShelf(false);
 
                             if (alreadyAssignedShelf.length > 0) {
-                                //console.log("Znaleziono")
                                 setCurrentlyAssignedProductQuantity(prevQuantity => prevQuantity + parseInt(alreadyAssignedShelf[0].currentQuant));
                                 setLocalAssignedShelves(assignedShelves.filter(shelf => shelf.shelfId !== form.shelfId));
                             }
                             const regexp = new RegExp("^[1-9]{1}\\d*$");
                             if (regexp.test(currentQuant)) {
                                 const parsedCurrentQuant = parseInt(currentQuant);
-                                //console.log(parsedCurrentQuant);
 
                                 if (isNaN(parsedCurrentQuant)) {
                                     setCurrentQuantError(true);
                                     setCurrentQuantErrorMessage(shelfAssignmentErrorMessages.invalidMaxQuant)
-                                    // console.log('Entered value for current quantity is not a number');
                                 } else {
                                     const parsedMaxQuant = parseInt(form.maxQuant);
                                     if (parsedCurrentQuant > 0 && parsedCurrentQuant <= currentlyAssignedProductQuantity) {
@@ -215,16 +195,13 @@ const ProductDeliveryDistributionForm = ({
                                             if (parsedCurrentQuant <= parsedMaxQuant) {
                                                 setCurrentQuantError(false);
                                                 setCurrentQuantErrorMessage("");
-                                                // console.log('No error');
                                             } else {
                                                 setCurrentQuantError(true);
                                                 setCurrentQuantErrorMessage(shelfAssignmentErrorMessages.currentQuantToMaxQuantMismatch);
-                                                // console.log('No error');
                                             }
                                         } else {
                                             setCurrentQuantError(false);
                                             setCurrentQuantErrorMessage("");
-                                            // console.log('No Error');
                                         }
 
                                     } else {
@@ -246,19 +223,14 @@ const ProductDeliveryDistributionForm = ({
                             setIsAssignedToShelf(false);
 
                             if (alreadyAssignedShelf.length > 0) {
-                                //console.log("Znaleziono")
                                 setCurrentlyAssignedProductQuantity(prevQuantity => prevQuantity + parseInt(alreadyAssignedShelf[0].currentQuant));
-                                // setCurrentlyAssignedProductQuantity( parseInt(alreadyAssignedShelf[0].currentQuant));
                                 setLocalAssignedShelves(assignedShelves.filter(shelf => shelf.shelfId !== form.shelfId));
                             }
 
                             const regexp = new RegExp("^[1-9]{1}\\d*$");
                             if (regexp.test(currentQuant)) {
-                                // console.log("Przeszlo");
                                 setCurrentQuantError(false);
                                 const parsedCurrentQuant = parseInt(currentQuant);
-                                // console.log(`Sparsowane: ${parsedCurrentQuant}`)
-                                // console.log(`Pozostale: ${shelf.maxQuant - shelf.currentQuant}`)
                                 if (parsedCurrentQuant <= shelf.maxQuant - shelf.currentQuant) {
                                     if (parsedCurrentQuant <= currentlyAssignedProductQuantity) {
                                         setCurrentQuantError(false);
@@ -274,8 +246,6 @@ const ProductDeliveryDistributionForm = ({
                             } else {
                                 setCurrentQuantError(true)
                                 setCurrentQuantErrorMessage(shelfAssignmentErrorMessages.currentQuantValidNumber);
-                                // console.log("Nie Przeszlo")
-
                             }
                         }
 
@@ -283,7 +253,8 @@ const ProductDeliveryDistributionForm = ({
                         return (
 
 
-                            <View key={shelf.shelfId} className={"bg-slate-200 flex-col justify-stretch gap-2 mt-5 mx-4 rounded-lg shadow"}>
+                            <View key={shelf.shelfId}
+                                  className={"bg-slate-200 flex-col justify-stretch gap-2 mt-5 mx-4 rounded-lg shadow"}>
 
                                 <View className={"flex-row"}>
                                     <View className={"flex-col flex-1 basis-3/5 justify-center gap-2 rounded-lg  p-2"}>
@@ -367,9 +338,28 @@ const ProductDeliveryDistributionForm = ({
                                     </View>
                                 </View>
 
-                                <View className="flex-row  justify-center items-cente">
+                                <View className="flex-col  justify-center items-cente">
 
-                                    <CustomEditButtonFlatList  disabled={currentQuantError || maxQuantError || isAssignedToShelf} onEdit={() => handleAssignShelf() } icon={"plus-circle"} title={"Add" } containerStyles={`flex-1 ${currentQuantError || maxQuantError || isAssignedToShelf ? "bg-gray-500" : " bg-green-500"}   rounded-b-lg`} textStyles={"text-white"}></CustomEditButtonFlatList>
+                                    { ( (currentQuantError && form.currentQuant.length > 0) ||  (maxQuantError && form.maxQuant.length > 0) ) &&
+                                        (
+                                            <Animated.View className={"m-2 mb-4 p-2 shadow bg-red-100 rounded-lg"}>
+                                                {(currentQuantError && form.currentQuant.length > 0) ? (
+                                                    <Text className="text-red-600"> {currentQuantErrorMessage} </Text>
+                                                ) : null}
+
+                                                {(maxQuantError && form.maxQuant.length > 0) ? (
+                                                    <Text className="text-red-600"> {maxQuantErrorMessage} </Text>
+                                                ) : null}
+                                            </Animated.View>
+                                        )
+
+                                    }
+
+                                    <CustomEditButtonFlatList
+                                        disabled={currentQuantError || maxQuantError || isAssignedToShelf}
+                                        onEdit={() => handleAssignShelf()} icon={"plus-circle"} title={"Add"}
+                                        containerStyles={`flex-1 ${currentQuantError || maxQuantError || isAssignedToShelf ? "bg-gray-500" : " bg-green-500"}   rounded-b-lg`}
+                                        textStyles={"text-white"}></CustomEditButtonFlatList>
 
                                 </View>
 

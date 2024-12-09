@@ -2,20 +2,17 @@ import React, {useState, useCallback, useEffect, useContext} from "react";
 import {TouchableOpacity} from "react-native-gesture-handler";
 import {Platform, ActivityIndicator, FlatList, Modal, RefreshControl, SafeAreaView, Text, View} from "react-native";
 import CustomButton from "../buttons/CustomButton";
-import productService from "../../services/dataServices/productService";
 import FallingTiles from "../FallingTiles";
-import DeleteButton from "../buttons/DeleteButton";
-import EditButton from "../buttons/EditButton";
 import ProductsMobileDetailDisplayer from "./ProductsMobileDetailDisplayer";
 import {useFocusEffect} from "expo-router";
 import ProductMobileTakeDeliveryModal from "./ProductMobileTakeDeliveryModal";
 import ProductMobileEditForm from "./ProductMobileEditForm";
-import NoPermissionAlert from "../popupAlerts/NoPermissionAlert";
 import {UserDataContext} from "../../app/home/_layout";
 import CustomAlert from "../popupAlerts/TaskAlreadyTaken";
 import {Feather} from "@expo/vector-icons";
 import CustomDeleteButtonFlatList from "../buttons/CustomDeleteButtonFlatList";
 import CustomEditButtonFlatList from "../buttons/CustomEditButtonFlatList";
+import crudService from "../../services/dataServices/crudService";
 
 const ProductsMobileDisplayer = () => {
 
@@ -36,7 +33,7 @@ const ProductsMobileDisplayer = () => {
     const fetchData = async () => {
         try {
 
-            const result = await productService.GetAllWithShelves();
+            const result = await crudService.GetAll("Product/withShelves")
             setData([...result.data])
         } catch (err) {
             console.log(err);
@@ -48,11 +45,11 @@ const ProductsMobileDisplayer = () => {
         setIsProductDetailModalVisible(true);
     }
 
-    const handleDelete = (id) => {
+    const handleDelete = async (id) => {
 
         try {
-            productService.Delete(id)
-            setIsDeletedItem(true)
+            await crudService.Delete(id, "Product");
+            setIsDeletedItem(true);
 
         } catch (err) {
             console.log(err);
@@ -61,8 +58,7 @@ const ProductsMobileDisplayer = () => {
 
     const handleEdit = (object) => {
         setCurrentlyEditItem(object);
-        setIsEditProductModalVisible(true)
-        console.log(JSON.stringify(object));
+        setIsEditProductModalVisible(true);
     }
 
     const renderItem = ({item}) => (
@@ -122,7 +118,7 @@ const ProductsMobileDisplayer = () => {
         fetchData();
         if (isDeletedItem) setIsDeletedItem(false);
 
-    }, [isTakeDeliveryModalVisible, isEditProductModalVisible])
+    }, [isTakeDeliveryModalVisible, isEditProductModalVisible]);
 
     useEffect(() => {
         fetchData();
@@ -131,6 +127,7 @@ const ProductsMobileDisplayer = () => {
 
     return (
         <SafeAreaView className={"flex-1 justify-start align-center"}>
+
             <FlatList
                 data={data.reverse()}
                 keyExtractor={(item) => item.productId.toString()}
@@ -149,7 +146,6 @@ const ProductsMobileDisplayer = () => {
                         </View>
                     )
                 }
-
             />
 
             <CustomButton iconName={"truck"} title={"Take new delivery"} textStyles={"text-white"} containerStyles={"px-2 mb-2 mx-2"}
@@ -162,8 +158,11 @@ const ProductsMobileDisplayer = () => {
                 onRequestClose={() => setIsProductDetailModalVisible(false)}
             >
                 <View className="flex-auto mt-5 bg-background-light">
+
                     <ProductsMobileDetailDisplayer product={currentProductDetail}
-                                                   setIsModalVisible={setIsProductDetailModalVisible}/>
+                                                   setIsModalVisible={setIsProductDetailModalVisible}
+                    />
+
                 </View>
 
             </Modal>
@@ -185,11 +184,12 @@ const ProductsMobileDisplayer = () => {
                 onRequestClose={() => setIsEditProductModalVisible(false)}
             >
                 <ProductMobileEditForm setIsModalVisible={setIsEditProductModalVisible}
-                                       object={currentlyEditItem}></ProductMobileEditForm>
+                                       object={currentlyEditItem}
+                />
 
             </Modal>
-        </SafeAreaView>
 
+        </SafeAreaView>
 
     )
 }

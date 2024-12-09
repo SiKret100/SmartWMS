@@ -51,7 +51,7 @@ const LanesMobileForm = () => {
             form.laneCode = form.laneCode.toUpperCase();
 
             const laneDto = new LaneDto(form);
-            const result = await crudService.Add(laneDto, "Lane");
+            const result = await crudService.Post(laneDto, "Lane");
 
             if(result.errors){
                 setErrors(result.errors);

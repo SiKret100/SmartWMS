@@ -74,7 +74,7 @@ const AlertMobileForm = ({object = {}, header, setIsModalVisible}) => {
     const handleAdd = async (form) => {
         try {
             const alertDto = new AlertDto(form);
-            const result = await crudService.Add(alertDto, "Alert");
+            const result = await crudService.Post(alertDto, "Alert");
 
             if (result.errors) {
                 setErrors(result.errors);

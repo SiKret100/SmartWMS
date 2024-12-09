@@ -7,9 +7,9 @@ import CustomButton from "../buttons/CustomButton";
 import NumberFormField from "../form_fields/NumberFormField";
 import productErrorMessages from "../../data/ErrorMessages/productErrorMessages";
 import BarcodeScanner from "../barcode_scanner/BarcodeScanner";
-import subcategoryService from "../../services/dataServices/subcategoryService";
 import CustomSelectList from "../selects/CustomSelectList";
-import productService from "../../services/dataServices/productService";
+import crudService from "../../services/dataServices/crudService";
+import ProductDto from "../../data/DTOs/productDto";
 
 const ProductMobileEditForm = ({object={}, setIsModalVisible}) => {
 
@@ -26,10 +26,8 @@ const ProductMobileEditForm = ({object={}, setIsModalVisible}) => {
     const [subcategoryTypeMap, setsubcategoryTypeMap] = useState([]);
     const [selectKey, setSelectKey] = useState(0);
     const [subcategoriesSubcategoryIdError, setSubcategoriesSubcategoryIdError] = useState(false);
-    const [errors, setErrors] = useState({});
     const [defaultOption, setDefaultOption] = useState({});
     const [isSubcategoriesLoaded, setIsSubcategoriesLoaded] = useState(false);
-
     const [form, setForm] = useState({
         productName: object?.productName || "",
         productDescription: object?.productDescription || "",
@@ -43,7 +41,7 @@ const ProductMobileEditForm = ({object={}, setIsModalVisible}) => {
     //FUNCTIONS=============================================================================================
     const fetchSubcategories = async () => {
         try {
-            const result = await subcategoryService.GetAll();
+            const result = await crudService.GetAll("Subcategory");
             const subcategoryData = result.data.map(subcategory => ({
                 key: subcategory.subcategoryId,
                 value: subcategory.subcategoryName,
@@ -63,10 +61,10 @@ const ProductMobileEditForm = ({object={}, setIsModalVisible}) => {
         const productNameVar = e.nativeEvent.text;
         productNameVar.length > 0 ? setProductNameError(false) : setProductNameError(true);
     }
+
     const handleProductDescription = (e) => {
         const productDescriptionVar = e.nativeEvent.text;
         productDescriptionVar.length > 0 ? setProductDescriptionError(false) : setProductDescriptionError(true);
-
     }
 
     const handlePrice = (e) => {
@@ -76,31 +74,24 @@ const ProductMobileEditForm = ({object={}, setIsModalVisible}) => {
         if (price.length >= 1 && regexp.test(price)) {
 
             const parsedPrice = parseFloat(price);
-            console.log(parsedPrice);
 
             if (isNaN(parsedPrice)) {
                 setPriceError(true);
                 setPriceErrorMessage(productErrorMessages.invalidPrice);
-                console.log('Error: not a number');
             } else {
                 if (parsedPrice <= 999999999) {
                     setPriceErrorMessage("");
                     setPriceError(false);
-                    console.log('No error');
                 } else {
                     setPriceErrorMessage(productErrorMessages.excessiveValue);
                     setPriceError(true);
-                    console.log('Error');
                 }
             }
         } else {
             setPriceError(true);
             setPriceErrorMessage(productErrorMessages.invalidPrice);
-            console.log('No error');
         }
     }
-
-
 
     const handleSubcategoryId = () => {
         form.subcategoriesSubcategoryId === -1 ? setSubcategoriesSubcategoryIdError(true) : setSubcategoriesSubcategoryIdError(false);
@@ -108,7 +99,8 @@ const ProductMobileEditForm = ({object={}, setIsModalVisible}) => {
 
     const handleEdit = async () => {
         try{
-            const result = await productService.Update(object.productId, form);
+            const productDto = new ProductDto(form);
+            await crudService.Update(object.productId, productDto, "Product");
             setIsModalVisible(false);
         }
         catch(err) {
@@ -168,16 +160,6 @@ const ProductMobileEditForm = ({object={}, setIsModalVisible}) => {
                         :
                         null
                     }
-
-                    {/*<NumberFormField*/}
-                    {/*    title={"Quantity"}*/}
-                    {/*    value={form.quantity.toString()}*/}
-                    {/*    handleChangeText={(e) => setForm({...form, quantity: e})}*/}
-                    {/*    onChange={e => handleQuantity(e)}*/}
-                    {/*    isError={!!quantityError}*/}
-                    {/*    iconsVisible={true}*/}
-                    {/*    otherStyles={"mt-7"}*/}
-                    {/*/>*/}
 
                     {form.quantity.length === 0 ? null : quantityError ?
 

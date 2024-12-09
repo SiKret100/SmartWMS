@@ -2,7 +2,6 @@ import {Text, View} from "react-native";
 import CancelButton from "../buttons/CancelButton";
 import React from "react";
 import {ScrollView} from "react-native-gesture-handler";
-import {Divider} from "react-native-elements";
 import {Feather} from "@expo/vector-icons";
 import * as Progress from "react-native-progress";
 
@@ -35,7 +34,7 @@ const ProductsMobileDetailDisplayer = ({product, setIsModalVisible}) => {
 
                         <View className={"flex-row gap-4 my-2"}>
                             <View className={"flex-row"}>
-                                <View className={"h-full w-2 rounded bg-smartwms-orange mr-2"} />
+                                <View className={"h-full w-2 rounded bg-smartwms-orange mr-2"}/>
                                 <View className={"flex-col"}>
                                     <Text className={"text-smartwms-blue text-xl font-bold"}>Quantity</Text>
                                     <Text className={" color-gray-500"}>{product.quantity}</Text>
@@ -43,7 +42,7 @@ const ProductsMobileDetailDisplayer = ({product, setIsModalVisible}) => {
                             </View>
 
                             <View className={"flex-row"}>
-                                <View className={"h-full w-2 rounded bg-smartwms-orange mr-2"} />
+                                <View className={"h-full w-2 rounded bg-smartwms-orange mr-2"}/>
                                 <View className={"flex-col"}>
                                     <Text className={"text-smartwms-blue text-xl font-bold"}>Price</Text>
                                     <Text className={" color-gray-500"}>{product.price}</Text>
@@ -51,7 +50,7 @@ const ProductsMobileDetailDisplayer = ({product, setIsModalVisible}) => {
                             </View>
 
                             <View className="flex-row">
-                                <View className="h-full w-2 rounded bg-smartwms-orange mr-2" />
+                                <View className="h-full w-2 rounded bg-smartwms-orange mr-2"/>
                                 <View className="flex-col w-44">
                                     <Text className="text-smartwms-blue text-xl font-bold">Description</Text>
                                     <Text className="color-gray-500 flex-wrap">{product.productDescription}</Text>
@@ -63,7 +62,7 @@ const ProductsMobileDetailDisplayer = ({product, setIsModalVisible}) => {
                     </View>
 
                     {product.shelves.length > 0 && product.shelves.map(shelf => {
-                        const progress =  shelf.currentQuant / shelf.maxQuant
+                            const progress = shelf.currentQuant / shelf.maxQuant
                             const stockPercentage = (shelf.currentQuant / shelf.maxQuant) * 100;
                             const textColor = stockPercentage < 25 ? "rgb(239 68 68)"
                                 : stockPercentage < 75 ? "#FFC031"
@@ -78,33 +77,38 @@ const ProductsMobileDetailDisplayer = ({product, setIsModalVisible}) => {
                                         <View className={"flex-col gap-2 w-full"}>
                                             <View className={"flex-row bg-blue-200 rounded-lg"}>
 
-                                                <View className="flex-row bg-smartwms-blue rounded-lg justify-center items-center p-2">
+                                                <View
+                                                    className="flex-row bg-smartwms-blue rounded-lg justify-center items-center p-2">
                                                     <Feather name="git-pull-request" size={30} color="#FFFFFF"/>
                                                 </View>
 
                                                 <View className={"flex-col mx-2 my-1"}>
                                                     <Text className={"text-smartwms-blue text-xl font-bold"}>Lane</Text>
-                                                    <Text className={"text-smartwms-blue"}>{shelf.rackLane.lane.laneCode}</Text>
+                                                    <Text
+                                                        className={"text-smartwms-blue"}>{shelf.rackLane.lane.laneCode}</Text>
                                                 </View>
 
                                             </View>
 
                                             <View className={"flex-row bg-blue-200 rounded-lg "}>
 
-                                                <View className="flex-row bg-smartwms-blue rounded-lg justify-center items-center p-2">
+                                                <View
+                                                    className="flex-row bg-smartwms-blue rounded-lg justify-center items-center p-2">
                                                     <Feather name="grid" size={30} color="#FFFFFF"/>
                                                 </View>
 
                                                 <View className={"flex-col mx-2 my-1"}>
                                                     <Text className={"text-smartwms-blue text-xl font-bold"}>Rack</Text>
-                                                    <Text className={"text-smartwms-blue "}>{shelf.rackLane.rackNumber}</Text>
+                                                    <Text
+                                                        className={"text-smartwms-blue "}>{shelf.rackLane.rackNumber}</Text>
                                                 </View>
 
                                             </View>
 
                                             <View className={"flex-row bg-blue-200 rounded-lg "}>
 
-                                                <View className="flex-row bg-smartwms-blue rounded-lg justify-center items-center p-2">
+                                                <View
+                                                    className="flex-row bg-smartwms-blue rounded-lg justify-center items-center p-2">
                                                     <Feather name="align-justify" size={30} color="#FFFFFF"/>
                                                 </View>
 
@@ -118,7 +122,8 @@ const ProductsMobileDetailDisplayer = ({product, setIsModalVisible}) => {
                                     </View>
 
 
-                                    <View className="flex-col bg-slate-200 rounded-lg items-center justify-center flex-2 px-5">
+                                    <View
+                                        className="flex-col bg-slate-200 rounded-lg items-center justify-center flex-2 px-5">
 
                                         <Text className="text-center font-bold color-gray-500">
                                             Items left
@@ -148,7 +153,6 @@ const ProductsMobileDetailDisplayer = ({product, setIsModalVisible}) => {
                     )}
 
                 </ScrollView>
-
 
             </View>
         </View>
