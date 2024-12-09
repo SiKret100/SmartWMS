@@ -8,7 +8,6 @@ export default class crudService {
     static ip = process.env.EXPO_PUBLIC_IP;
 
     static Post = async (data, url) => {
-        console.log("Crud service add");
         const token = Platform.OS !== "web" ? SecureStore.getItem("token") : "";
         const config = {
             headers: {
@@ -28,7 +27,6 @@ export default class crudService {
     };
 
     static GetAll = async (url) => {
-        console.log("Get all crud service");
         const token = Platform.OS !== "web" ? SecureStore.getItem("token") : "";
         const config = {
             headers: {
@@ -49,7 +47,6 @@ export default class crudService {
     };
 
     static Update = async (id, data, url) => {
-        console.log("Crud service update");
 
         const token = Platform.OS !== "web" ? SecureStore.getItem("token") : "";
         const config = {
@@ -70,7 +67,6 @@ export default class crudService {
     };
 
     static Delete = async (id, url) => {
-        console.log("Delete crud service");
         const token = Platform.OS !== "web" ? SecureStore.getItem("token") : "";
         const config = {
             headers: {
@@ -85,7 +81,7 @@ export default class crudService {
 
         } catch(err) {
 
-            throw err;
+            throw err.response.data;
 
         }
     }

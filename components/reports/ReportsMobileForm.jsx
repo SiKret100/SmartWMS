@@ -13,6 +13,7 @@ import {Divider} from "react-native-elements";
 import allOrderState from "../../data/reportTemplates/allOrderState";
 import allUsersTasksState from "../../data/reportTemplates/allUsersTasksState";
 import crudService from "../../services/dataServices/crudService";
+import CustomAlert from "../popupAlerts/TaskAlreadyTaken";
 
 const ReportsMobileForm = () => {
 
@@ -40,126 +41,132 @@ const ReportsMobileForm = () => {
     }
 
     const handleCreateReport = async () => {
-        setIsLoading(true);
+        try{
+            setIsLoading(true);
 
-        switch (form.reportType) {
-            case 0:
-                setForm(prev => ({...prev, reportPeriod: 0}));
+            switch (form.reportType) {
+                case 0:
+                    setForm(prev => ({...prev, reportPeriod: 0}));
 
-                const result = await crudService.GetAll("Product");
+                    const result = await crudService.GetAll("Product");
 
-                const data = await Promise.all(result.data.map(async product => {
-                    const generatedLink = await barcodeGenerator.GenerateBarcode(product.barcode);
-                    const subcategoryResponse = await crudService.Get(product.subcategoriesSubcategoryId, "Subcategory");
-                    const subcategoryName = subcategoryResponse.data.subcategoryName;
-                    return {...product, barcode: generatedLink, subcategoriesSubcategoryId: subcategoryName};
-                }));
+                    const data = await Promise.all(result.data.map(async product => {
+                        const generatedLink = await barcodeGenerator.GenerateBarcode(product.barcode);
+                        const subcategoryResponse = await crudService.Get(product.subcategoriesSubcategoryId, "Subcategory");
+                        const subcategoryName = subcategoryResponse.data.subcategoryName;
+                        return {...product, barcode: generatedLink, subcategoriesSubcategoryId: subcategoryName};
+                    }));
 
-                setHtmlTemplate(allProductState(data));
-                setRawData(data);
-                break;
+                    setHtmlTemplate(allProductState(data));
+                    setRawData(data);
+                    break;
 
-            case 2:
-                const orderHeaderResponse = await crudService.GetAll("OrderHeader/withDetails");
+                case 2:
+                    const orderHeaderResponse = await crudService.GetAll("OrderHeader/withDetails");
 
-                const preparedOrderHeader = await Promise.all(
-                    orderHeaderResponse.data.map(async (oh) => {
-                        const preparedOrderDetails = await Promise.all(
-                            oh.orderDetails.map(async (od) => {
-                                const productInfo = await crudService.Get(od.productsProductId, "Product")
+                    const preparedOrderHeader = await Promise.all(
+                        orderHeaderResponse.data.map(async (oh) => {
+                            const preparedOrderDetails = await Promise.all(
+                                oh.orderDetails.map(async (od) => {
+                                    const productInfo = await crudService.Get(od.productsProductId, "Product")
 
-                                return {...od, price: productInfo.data.price * od.quantity};
-                            })
-                        );
+                                    return {...od, price: productInfo.data.price * od.quantity};
+                                })
+                            );
 
-                        const parsedDate = new Date(oh.deliveryDate).toString();
-                        return {
-                            ...oh,
-                            orderDetails: preparedOrderDetails,
-                            deliveryDate: parsedDate
-                        };
-                    })
-                );
-
-                let endDate = new Date();
-                let beginningDate = new Date(endDate);
-
-                switch (form.reportPeriod) {
-                    case 0:
-                        beginningDate.setDate(beginningDate.getDate() - 1);
-                        break;
-                    case 1:
-                        beginningDate.setDate(beginningDate.getDate() - 7);
-                        break;
-                    case 2:
-                        beginningDate.setMonth(beginningDate.getMonth() - 1);
-                        break;
-                    case 3:
-                        beginningDate.setMonth(beginningDate.getMonth() - 3);
-                        break;
-                    case 4:
-                        beginningDate.setFullYear(beginningDate.getFullYear() - 1);
-                        break;
-                }
-
-                const filteredPreparedOrderHeader = preparedOrderHeader.filter(order => new Date(order.deliveryDate) >= beginningDate && new Date(order.deliveryDate) <= endDate);
-                setHtmlTemplate(allOrderState(filteredPreparedOrderHeader));
-                setRawData(filteredPreparedOrderHeader);
-                break;
-
-            case 4:
-                const usersTasks = await crudService.GetAll("Task/usersFinishedTasks")
-
-
-                endDate = new Date();
-                beginningDate = new Date(endDate);
-
-
-                switch (form.reportPeriod) {
-                    case 0:
-                        beginningDate.setDate(beginningDate.getDate() - 1);
-                        break;
-                    case 1:
-                        beginningDate.setDate(beginningDate.getDate() - 7);
-                        break;
-                    case 2:
-                        beginningDate.setMonth(beginningDate.getMonth() - 1);
-                        break;
-                    case 3:
-                        beginningDate.setMonth(beginningDate.getMonth() - 3);
-                        break;
-                    case 4:
-                        beginningDate.setFullYear(beginningDate.getFullYear() - 1);
-                        break;
-                }
-
-
-                let filteredUsersFinishedTasks = usersTasks.data.map(user => {
-                    const filteredTasks = user.tasks.filter(task =>
-                        new Date(task.finishDate) >= beginningDate && new Date(task.finishDate) <= endDate
+                            const parsedDate = new Date(oh.deliveryDate).toString();
+                            return {
+                                ...oh,
+                                orderDetails: preparedOrderDetails,
+                                deliveryDate: parsedDate
+                            };
+                        })
                     );
-                    return {
-                        ...user,
-                        tasks: filteredTasks,
-                        completedTasksCount: filteredTasks.length
+
+                    let endDate = new Date();
+                    let beginningDate = new Date(endDate);
+
+                    switch (form.reportPeriod) {
+                        case 0:
+                            beginningDate.setDate(beginningDate.getDate() - 1);
+                            break;
+                        case 1:
+                            beginningDate.setDate(beginningDate.getDate() - 7);
+                            break;
+                        case 2:
+                            beginningDate.setMonth(beginningDate.getMonth() - 1);
+                            break;
+                        case 3:
+                            beginningDate.setMonth(beginningDate.getMonth() - 3);
+                            break;
+                        case 4:
+                            beginningDate.setFullYear(beginningDate.getFullYear() - 1);
+                            break;
+                    }
+
+                    const filteredPreparedOrderHeader = preparedOrderHeader.filter(order => new Date(order.deliveryDate) >= beginningDate && new Date(order.deliveryDate) <= endDate);
+                    setHtmlTemplate(allOrderState(filteredPreparedOrderHeader));
+                    setRawData(filteredPreparedOrderHeader);
+                    break;
+
+                case 4:
+                    const usersTasks = await crudService.GetAll("Task/usersFinishedTasks")
+
+
+                    endDate = new Date();
+                    beginningDate = new Date(endDate);
+
+
+                    switch (form.reportPeriod) {
+                        case 0:
+                            beginningDate.setDate(beginningDate.getDate() - 1);
+                            break;
+                        case 1:
+                            beginningDate.setDate(beginningDate.getDate() - 7);
+                            break;
+                        case 2:
+                            beginningDate.setMonth(beginningDate.getMonth() - 1);
+                            break;
+                        case 3:
+                            beginningDate.setMonth(beginningDate.getMonth() - 3);
+                            break;
+                        case 4:
+                            beginningDate.setFullYear(beginningDate.getFullYear() - 1);
+                            break;
+                    }
+
+
+                    let filteredUsersFinishedTasks = usersTasks.data.map(user => {
+                        const filteredTasks = user.tasks.filter(task =>
+                            new Date(task.finishDate) >= beginningDate && new Date(task.finishDate) <= endDate
+                        );
+                        return {
+                            ...user,
+                            tasks: filteredTasks,
+                            completedTasksCount: filteredTasks.length
+                        };
+                    });
+
+                    filteredUsersFinishedTasks = {
+                        startDate: beginningDate,
+                        endDate: endDate,
+                        filteredTasks: filteredUsersFinishedTasks
                     };
-                });
 
-                filteredUsersFinishedTasks = {
-                    startDate: beginningDate,
-                    endDate: endDate,
-                    filteredTasks: filteredUsersFinishedTasks
-                };
-
-                setHtmlTemplate(allUsersTasksState(filteredUsersFinishedTasks));
-                setRawData(filteredUsersFinishedTasks);
-                break;
+                    setHtmlTemplate(allUsersTasksState(filteredUsersFinishedTasks));
+                    setRawData(filteredUsersFinishedTasks);
+                    break;
+            }
+        }catch(err){
+            console.log(JSON.stringify(err));
+            CustomAlert("Error generating document.")
         }
+
     }
 
     const handleSaveReport = async () => {
 
-
+    try{
         switch (form.reportType) {
             case 0:
                 await ReportGenerator.printToFile(allProductState, rawData, form);
@@ -172,6 +179,10 @@ const ReportsMobileForm = () => {
                 break;
         }
         setIsLoading(false);
+    }catch (err){
+        CustomAlert("Error generating document")
+    }
+
     }
 
     return (

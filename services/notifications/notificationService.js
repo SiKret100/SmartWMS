@@ -2,7 +2,6 @@ import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
 
 export const configureNotificationSettings = async () => {
-    // Konfiguracja dla Androida
     if (Platform.OS === 'android') {
         await Notifications.setNotificationChannelAsync('default', {
             name: 'Default',
@@ -12,7 +11,6 @@ export const configureNotificationSettings = async () => {
         });
     }
 
-    // Konfiguracja dla iOS
     if (Platform.OS === 'ios') {
         const { status } = await Notifications.requestPermissionsAsync();
         if (status !== 'granted') {

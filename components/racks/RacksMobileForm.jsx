@@ -7,6 +7,7 @@ import CancelButton from "../buttons/CancelButton";
 import rackErrorMessages from "../../data/ErrorMessages/rackErrorMessages";
 import crudService from "../../services/dataServices/crudService";
 import RackDto from "../../data/DTOs/rackDto";
+import CustomAlert from "../popupAlerts/TaskAlreadyTaken";
 
 const RacksMobileForm = ({object = {}, header, setIsModalVisible, rackId, laneId}) => {
 
@@ -29,6 +30,7 @@ const RacksMobileForm = ({object = {}, header, setIsModalVisible, rackId, laneId
             setLanesRacks(result.data.map(object => object.rackNumber))
         }
         catch(err){
+            CustomAlert("Error fetching data.");
             console.log(err);
         }
     }
@@ -82,6 +84,7 @@ const RacksMobileForm = ({object = {}, header, setIsModalVisible, rackId, laneId
             }
         }
         catch(err) {
+            CustomAlert("Error adding rack.");
             setErrors(err);
         }
     }

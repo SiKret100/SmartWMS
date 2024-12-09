@@ -45,7 +45,7 @@ const ProductsMobileDetailDisplayer = ({product, setIsModalVisible}) => {
                                 <View className={"h-full w-2 rounded bg-smartwms-orange mr-2"}/>
                                 <View className={"flex-col"}>
                                     <Text className={"text-smartwms-blue text-xl font-bold"}>Price</Text>
-                                    <Text className={" color-gray-500"}>{product.price}</Text>
+                                    <Text className={" color-gray-500"}>{product.price} PLN</Text>
                                 </View>
                             </View>
 

@@ -97,9 +97,9 @@ const AlertMobileDisplayer = () => {
 
     );
 
-    const fetchData = async () => {
+    const fetchData = () => {
         setLoading(false);
-        await crudService.GetAll("Alert")
+        crudService.GetAll("Alert")
             .then(response => {
                 setData(response.data);
                 loadSelected();
@@ -120,6 +120,7 @@ const AlertMobileDisplayer = () => {
                 setLoading(true);
             })
             .catch(err => {
+                CustomAlert("Error fetching data.");
                 setError(err);
                 console.log(`Error ${err}`);
             })
@@ -129,10 +130,8 @@ const AlertMobileDisplayer = () => {
         try {
             if (selected !== undefined && selected !== null) {
                 await AsyncStorage.setItem('selectedFilter', selected.toString());
-                // console.log('Selected value after saving:', selected);
 
             } else {
-                // console.log('Selected is undefined or null, not saving to AsyncStorage');
             }
         } catch (error) {
             console.log('Error saving selected filter: ', error);
@@ -252,7 +251,7 @@ const AlertMobileDisplayer = () => {
                     !loading ? (
                         <ActivityIndicator size="small" color="#000"/>
                     ) : (
-                        <Text>No alerts</Text>
+                        <Text className={"text-center font-bold color-red-600 mt-4"}>No alerts</Text>
                     )
                 }
             />

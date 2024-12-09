@@ -4,7 +4,7 @@ import {Platform, ActivityIndicator, FlatList, Modal, RefreshControl, SafeAreaVi
 import CustomButton from "../buttons/CustomButton";
 import FallingTiles from "../FallingTiles";
 import ProductsMobileDetailDisplayer from "./ProductsMobileDetailDisplayer";
-import {useFocusEffect} from "expo-router";
+import {router, useFocusEffect} from "expo-router";
 import ProductMobileTakeDeliveryModal from "./ProductMobileTakeDeliveryModal";
 import ProductMobileEditForm from "./ProductMobileEditForm";
 import {UserDataContext} from "../../app/home/_layout";
@@ -36,6 +36,7 @@ const ProductsMobileDisplayer = () => {
             const result = await crudService.GetAll("Product/withShelves")
             setData([...result.data])
         } catch (err) {
+            CustomAlert("Error fetching data.");
             console.log(err);
         }
     }
@@ -52,6 +53,7 @@ const ProductsMobileDisplayer = () => {
             setIsDeletedItem(true);
 
         } catch (err) {
+            CustomAlert("Error deleting product.");
             console.log(err);
         }
     }
@@ -127,7 +129,6 @@ const ProductsMobileDisplayer = () => {
 
     return (
         <SafeAreaView className={"flex-1 justify-start align-center"}>
-
             <FlatList
                 data={data.reverse()}
                 keyExtractor={(item) => item.productId.toString()}

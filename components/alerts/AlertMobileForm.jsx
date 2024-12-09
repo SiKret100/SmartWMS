@@ -12,6 +12,7 @@ import CancelButton from "../buttons/CancelButton";
 import AlertDto from "../../data/DTOs/alertDto";
 import crudService from "../../services/dataServices/crudService";
 import {router} from "expo-router";
+import CustomAlert from "../popupAlerts/TaskAlreadyTaken";
 
 const AlertMobileForm = ({object = {}, header, setIsModalVisible}) => {
 
@@ -66,6 +67,8 @@ const AlertMobileForm = ({object = {}, header, setIsModalVisible}) => {
                 setSelectKey((prevKey) => prevKey + 1);
             }
         } catch (err) {
+            CustomAlert("Error editing alert.");
+
             console.log(err)
             setErrors(err);
         }
@@ -90,6 +93,7 @@ const AlertMobileForm = ({object = {}, header, setIsModalVisible}) => {
                 router.push('/home/alerts');
             }
         } catch (err) {
+            CustomAlert("Error adding alert.");
             //console.log(err)
             setErrors(err);
         }

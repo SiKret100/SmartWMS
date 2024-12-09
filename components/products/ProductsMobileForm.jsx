@@ -1,20 +1,18 @@
-import {Alert, KeyboardAvoidingView, Modal, Platform, SafeAreaView, Text, View} from "react-native";
+import {KeyboardAvoidingView, Modal, Platform, SafeAreaView, Text, View} from "react-native";
 import React, {useCallback, useEffect, useState} from "react";
 import TextFormField from "../form_fields/TextFormField";
 import NumberFormField from "../form_fields/NumberFormField";
-import subcategoryService from "../../services/dataServices/subcategoryService";
 import {useFocusEffect} from "expo-router";
 import CustomButton from "../buttons/CustomButton";
 import CustomSelectList from "../selects/CustomSelectList";
-import shelfService from "../../services/dataServices/shelfService";
 import ShelfAssignForm from "components/products/ShelfAssignForm.jsx";
 import {ScrollView} from "react-native-gesture-handler";
 import ShelfAssignDisplayer from "./ShelfAssignDisplayer";
-import productService from "../../services/dataServices/productService";
 import productErrorMessages from "../../data/ErrorMessages/productErrorMessages";
 import BarcodeScanner from "../barcode_scanner/BarcodeScanner";
 import crudService from "../../services/dataServices/crudService";
-
+import {router} from "expo-router";
+import CustomAlert from "../popupAlerts/TaskAlreadyTaken";
 const ProductsMobileForm = () => {
 
     //PROPS====================================================================================================
@@ -66,7 +64,8 @@ const ProductsMobileForm = () => {
                 value: subcategory.subcategoryName,
             })));
         } catch (err) {
-            setErrors(err)
+            CustomAlert("Error fetching data.");
+            setErrors(err);
         }
     }
 
@@ -78,6 +77,7 @@ const ProductsMobileForm = () => {
             setShelvesList(filteredShelves);
 
         } catch (err) {
+            CustomAlert("Error fetching data.");
             setErrors(err);
         }
     }
@@ -205,9 +205,11 @@ const ProductsMobileForm = () => {
                 setAssignedShelves([]);
 
                 setSelectKey((prevKey) => prevKey + 1);
+                router.push("/home/products");
             }
         }
         catch(err){
+            CustomAlert("Error creating product.");
             setErrors(err);
         }
 

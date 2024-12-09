@@ -27,10 +27,7 @@ export default class barcodeGenerator {
             return response.request.responseURL;
 
         } catch (err) {
-
-            console.log("Error from barcodeService" + err);
-
-            return err.response.data;
+            throw err;
         }
     }
 }

@@ -1,25 +1,20 @@
 import * as Print from 'expo-print';
 import {shareAsync} from 'expo-sharing';
 import reportService from "../dataServices/reportService";
+import ReportDto from "../../data/DTOs/reportDto";
+import crudService from "../dataServices/crudService";
 class ReportGenerator {
 
     static printToFile = async (template, data, form=null) => {
         const html = template(data);
 
-        console.log("Data from generator: " + JSON.stringify(data, null, 2));
-
         try {
             const { uri } = await Print.printToFileAsync({ html });
-            console.log('File has been saved to:', uri);
             await shareAsync(uri, { UTI: '.pdf', mimeType: 'application/pdf' });
 
             if(form !== null) {
-
-                const reportData = await reportService.Add(form);
-                console.log('Report data: ', reportData);
-
-                const pdfBlob = await fetch(uri).then((res) => res.blob());
-
+                const reportDto = new ReportDto(data);
+                const reportData = await crudService.Post(reportDto, "Report")
                 const formData = new FormData();
 
                 formData.append('file', {
@@ -28,15 +23,13 @@ class ReportGenerator {
                     name: `report-${reportData.data.reportId}.pdf`,
                 });
 
-                const response = await reportService.UploadFile(reportData.data.reportId, formData);
+                await reportService.UploadFile(reportData.data.reportId, formData);
             }
 
         } catch (error) {
-            console.error('Error creating PDF:', error);
+            throw error;
         }
     }
-
-
 }
 
 export default ReportGenerator;

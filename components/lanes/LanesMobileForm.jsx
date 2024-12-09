@@ -6,6 +6,7 @@ import {router, useFocusEffect} from "expo-router";
 import laneErrorMessages from "../../data/ErrorMessages/laneErrorMessages";
 import crudService from "../../services/dataServices/crudService";
 import LaneDto from "../../data/DTOs/laneDto";
+import CustomAlert from "../popupAlerts/TaskAlreadyTaken";
 
 const LanesMobileForm = () => {
 
@@ -64,6 +65,7 @@ const LanesMobileForm = () => {
                 router.push("/home/shelves")
             }
         }catch(err){
+            CustomAlert("Error adding new lane.");
             setErrors(err);
         }
     }
@@ -74,6 +76,8 @@ const LanesMobileForm = () => {
             setLanes(result.data.map(object => object.laneCode));
         }
         catch(err){
+            CustomAlert("Error getting lanes.");
+
             console.log(err);
         }
     }

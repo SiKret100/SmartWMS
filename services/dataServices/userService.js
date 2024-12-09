@@ -24,29 +24,17 @@ export default class userService {
 
       const mainUrl = `${this.ip}/api/User/getUsersByRole`;
 
-      if (roleName === null) { 
-        if (Platform.OS === "web") {
-          response = await axios.get(mainUrl);
-        } else {
+      if (roleName === null) {
           response = await axios.get(mainUrl, config);
-        }
       }else{
         const urlWithRole = `${mainUrl}?roleName=${roleName}`;
-        if (Platform.OS === "web") {
-            response = await axios.get(urlWithRole);
-          } else {
-            response = await axios.get(urlWithRole, config);
-          }
-
+        response = await axios.get(urlWithRole, config);
       }
 
-      //console.log(response);
       return response;
     } catch (err) {
-        console.log(err);
-        //console.log(err.response.data);   
-    
-        return err;
+        //console.log(err);
+        throw err;
     }
   };
 
@@ -61,78 +49,21 @@ export default class userService {
     try {
       const userDto = new UserDto(userData);
       let response;
-      if (Platform.OS === "web") {
-        if (userDto.managerId === null)
-          response = await axios.post(`${this.ip}/api/User/register/manager`, userDto);
-        else
-          response = await axios.post(`${this.ip}/api/User/register/employee`,userDto);
-      } else {
-        if (userDto.managerId === null)
-          response = await axios.post(`${this.ip}/api/User/register/manager`, userDto, config);
-        else
-          response = await axios.post(`${this.ip}/api/User/register/employee`, userDto, config);
-      }
+      if (userDto.managerId === null)
+        response = await axios.post(`${this.ip}/api/User/register/manager`, userDto, config);
+      else
+        response = await axios.post(`${this.ip}/api/User/register/employee`, userDto, config);
+
       
       router.push('/home/users/');
-      console.log("From service: " + JSON.stringify(response));
+      //console.log("From service: " + JSON.stringify(response));
       return response;
 
     } catch (err) {
-        console.log("Error from service: " + JSON.stringify(err));
-        return err.response.data;
+        throw err;
     }
 
     
   };
 
-  static Get = async (id) => {
-    const token = Platform.OS !== "web" ? SecureStore.getItem("token") : "";
-    const config = {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    };
-
-    try {
-        let response;
-        if (Platform.OS === "web") {
-            response = await axios.get(`${this.ip}/api/User/${id}`);
-        } else {
-        response = await axios.get(`${this.ip}/api/User/${id}`, config);
-        }
-    }
-    catch (err){
-        return err.response.data;
-    }
-  }
-
-  static Delete = async (id) => {
-    
-    const token = Platform.OS !== "web" ? SecureStore.getItem("token") : "";
-    const config = {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    };
-
-    try{
-        let response;
-        if (Platform.OS === "web") {
-            response = await axios.delete(`${this.ip}/api/User/delete/${id}`);
-        } else {
-            response = await axios.delete(`${this.ip}/api/User/delete/${id}`, config);
-        }
-        
-        console.log(response);
-        return response;
-    }catch(err){
-      return err.response.data;
-    }
-
-
-    
-
-  }
 }

@@ -58,7 +58,7 @@ const HomeScreen = () => {
                 setQuantityAllocated((userTasksResponse.data)[0].quantityAllocated);
             }
         } catch (err) {
-            //console.log("Err from func: " + JSON.stringify(err));
+            console.log("Err from func: " + JSON.stringify(err));
         }
     }
 

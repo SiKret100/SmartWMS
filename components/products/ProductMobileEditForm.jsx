@@ -10,6 +10,7 @@ import BarcodeScanner from "../barcode_scanner/BarcodeScanner";
 import CustomSelectList from "../selects/CustomSelectList";
 import crudService from "../../services/dataServices/crudService";
 import ProductDto from "../../data/DTOs/productDto";
+import CustomAlert from "../popupAlerts/TaskAlreadyTaken";
 
 const ProductMobileEditForm = ({object={}, setIsModalVisible}) => {
 
@@ -53,6 +54,7 @@ const ProductMobileEditForm = ({object={}, setIsModalVisible}) => {
 
             setIsSubcategoriesLoaded(true);
         } catch (err) {
+            CustomAlert("Error fetching data.");
             console.error("Error fetching subcategories:", err);
         }
     }
@@ -104,6 +106,7 @@ const ProductMobileEditForm = ({object={}, setIsModalVisible}) => {
             setIsModalVisible(false);
         }
         catch(err) {
+            CustomAlert("Error editing product.");
             console.log(`Errors: ${JSON.stringify(err)}`);
         }
     }

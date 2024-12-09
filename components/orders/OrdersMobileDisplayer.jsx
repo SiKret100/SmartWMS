@@ -47,6 +47,7 @@ const OrdersMobileDisplayer = () => {
             setFilteredData(noCancelledOrders);
 
         } catch (err) {
+            CustomAlert("Error fetching data.");
             console.log(err);
         } finally {
             setLoading(false);
@@ -55,18 +56,23 @@ const OrdersMobileDisplayer = () => {
 
     const handleDelete = async (item) => {
 
-        console.log(item)
-        if( item.statusName === "Planned"){
-            try {
-                await crudService.Delete(item.ordersHeaderId,"OrderHeader/cancelOrder");
-            } catch (err) {
-                console.log(err);
-                CustomAlert("You can't delete this order.")
+        try {
+            console.log(item)
+            if (item.statusName === "Planned") {
+                try {
+                    await crudService.Delete(item.ordersHeaderId, "OrderHeader/cancelOrder");
+                } catch (err) {
+                    console.log(err);
+                    CustomAlert("You can't delete this order.")
+                }
+                setIsDeletedItem(true);
+            } else {
+                CustomAlert("You can't delete order other than planned.")
             }
-            setIsDeletedItem(true);
-        }else{
-            CustomAlert("You can't delete order other than planned.")
+        } catch (err) {
+            CustomAlert("Error deleting data.");
         }
+
 
     };
 
@@ -81,7 +87,7 @@ const OrdersMobileDisplayer = () => {
                                 productName: product.data.productName,
                             }))
                             .catch(err => {
-                                return null;
+                                CustomAlert("Error fetching data.");
                             })
                     )
                 )
@@ -91,10 +97,15 @@ const OrdersMobileDisplayer = () => {
                         setIsOrderDetailModalVisible(true)
                     })
                     .catch(err => {
+                        CustomAlert("Error fetching data.");
                         console.log(err);
                     });
             })
-            .catch(err => console.log(err))
+            .catch(err => {
+                    CustomAlert("Error fetching data.");
+                    console.log(err)
+                }
+            )
     }
 
 
@@ -238,7 +249,7 @@ const OrdersMobileDisplayer = () => {
                     ) : (
                         filteredData.length === 0 && (
                             <View className={"justify-center align-center"}>
-                                <Text className={"text-center my-5"}>No orders</Text>
+                                <Text className={"text-center font-bold color-red-600 my-5"}>No orders</Text>
                             </View>
                         )
                     )

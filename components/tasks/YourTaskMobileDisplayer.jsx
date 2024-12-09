@@ -6,8 +6,8 @@ import taskService from "../../services/dataServices/taskService";
 import {ScrollView} from "react-native-gesture-handler";
 import {Feather} from "@expo/vector-icons";
 import BarcodeScanner from "../barcode_scanner/BarcodeScanner";
-import productService from "../../services/dataServices/productService";
 import * as Progress from "react-native-progress";
+import crudService from "../../services/dataServices/crudService";
 
 const YourTaskMobileDisplayer = props => {
 
@@ -27,7 +27,8 @@ const YourTaskMobileDisplayer = props => {
     //FUNCTIONS================================================================================================
     const fetchData = async () => {
         try {
-            const userTasksResponse = await taskService.UserTasks();
+            const userTasksResponse =await taskService.UserTasks()
+
 
             if (userTasksResponse === "User has no tasks") {
                 setHasUserTask(false);
@@ -35,14 +36,14 @@ const YourTaskMobileDisplayer = props => {
                 setHasUserTask(true);
                 const taskId = (userTasksResponse.data)[0].taskId;
                 setUserTaskId(taskId);
-                const taskOrderInfoResponse = await taskService.TaskOrderInfo(taskId);
+                const taskOrderInfoResponse = await crudService.Get(taskId, "Task/orderInfo")
                 setProduct({
                     productName: taskOrderInfoResponse.data.productName,
                     barcode: taskOrderInfoResponse.data.barcode,
                     quantityAll: taskOrderInfoResponse.data.quantityAll
                 });
                 setShelves(taskOrderInfoResponse.data.shelves);
-                const getTaskResponse = await taskService.Get(taskId);
+                const getTaskResponse = await crudService.Get(taskId, "Task")
 
                 setQuantityCollected(getTaskResponse.data.quantityCollected);
                 setQuantityAllocated(getTaskResponse.data.quantityAllocated);
@@ -53,24 +54,9 @@ const YourTaskMobileDisplayer = props => {
         }
     }
 
-
-    //USE EFFECT HOOKS=========================================================================================
-    useFocusEffect(
-        useCallback(async () => {
-            await fetchData()
-                .then(_ => setLoading(false))
-                .catch(err => console.log(err));
-        }, [])
-    );
-
-    useEffect(() => {
-        if (product.barcode !== null && scannedBarcode.barcode !== null)
-            handleBarcodeScanned();
-    }, [scannedBarcode]);
-
     const handleBarcodeScanned = async () => {
         if (scannedBarcode.barcode === product.barcode) {
-            const response = await productService.GetByBarcode(scannedBarcode.barcode);
+            const response = await crudService.Get(scannedBarcode.barcode, "Product/byBarcode")
             if (response === "Product with specified barcode hasn't been found") {
                 Alert.alert('Warning', 'Wrong product', [
                     {
@@ -112,6 +98,21 @@ const YourTaskMobileDisplayer = props => {
             ]);
         }
     };
+
+
+    //USE EFFECT HOOKS=========================================================================================
+    useFocusEffect(
+        useCallback(async () => {
+            await fetchData()
+                .then(_ => setLoading(false))
+                .catch(err => console.log(err));
+        }, [])
+    );
+
+    useEffect(() => {
+        if (product.barcode !== null && scannedBarcode.barcode !== null)
+            handleBarcodeScanned();
+    }, [scannedBarcode]);
 
 
     return (

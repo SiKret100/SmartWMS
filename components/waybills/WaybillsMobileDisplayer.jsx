@@ -7,21 +7,19 @@ import {
     View,
     FlatList
 } from "react-native";
-import waybillService from "../../services/dataServices/waybillService";
 import CustomSelectList from "../selects/CustomSelectList";
 import supplierTypeMap from "../../data/Mappers/supplierType";
 import CustomButton from "../buttons/CustomButton";
 import supplierType from "../../data/Mappers/supplierType";
 import FallingTiles from "../FallingTiles";
 import Feather from "react-native-vector-icons/Feather";
-import countryService from "../../services/dataServices/countryService";
-import orderHeaderService from "../../services/dataServices/orderHeaderService";
 import barcodeGenerator from "../../services/reports/barcodeGenerator";
 import ReportGenerator from "../../services/reports/reportGenerator";
 import {WebView} from "react-native-webview";
 import waybillFile from "../../data/waybillTemplate/waybillFile";
 import CustomEditButtonFlatList from "../buttons/CustomEditButtonFlatList";
 import crudService from "../../services/dataServices/crudService";
+import CustomAlert from "../popupAlerts/TaskAlreadyTaken";
 
 const WaybillsMobileDisplayer = () => {
 
@@ -39,7 +37,7 @@ const WaybillsMobileDisplayer = () => {
     //FUNCTIONS================================================================================================
     const fetchData = async () => {
         try {
-            const result = await waybillService.GetAll();
+            const result = await crudService.GetAll("Waybill")
             const enrichedResult = await Promise.all(
                 result.data.map(async waybill => {
                     const country = await crudService.Get(waybill.countriesCountryId, "Country");
@@ -51,6 +49,7 @@ const WaybillsMobileDisplayer = () => {
             setData(enrichedResult);
 
         } catch (err) {
+            CustomAlert("Error fetching data.");
             console.log(err)
         } finally {
             setIsLoading(false);
@@ -67,6 +66,7 @@ const WaybillsMobileDisplayer = () => {
 
         } catch (err) {
             console.log(JSON.stringify(err, null, 2))
+            CustomAlert("Error generating document");
         }
     }
 

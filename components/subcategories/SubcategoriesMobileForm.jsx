@@ -6,6 +6,7 @@ import CustomButton from "../buttons/CustomButton";
 import CancelButton from "../buttons/CancelButton";
 import crudService from "../../services/dataServices/crudService";
 import SubcategoryDto from "../../data/DTOs/subcategoryDto";
+import CustomAlert from "../popupAlerts/TaskAlreadyTaken";
 
 const SubcategoryMobileForm = ({object = {}, header, setIsModalVisible, categoriesList, categoryId}) => {
 
@@ -34,7 +35,7 @@ const SubcategoryMobileForm = ({object = {}, header, setIsModalVisible, categori
     //FUNCTIONS================================================================================================
     const handleSubcategoryName = (e) => {
         const subcategoryNameVar = e.nativeEvent.text;
-        subcategoryNameVar.length > 0 ? setSubCategoryNameError(false) : setSubCategoryNameError(true);
+        subcategoryNameVar.length >= 3 ? setSubCategoryNameError(false) : setSubCategoryNameError(true);
     }
 
     const handleCategoryId = () => {
@@ -59,6 +60,7 @@ const SubcategoryMobileForm = ({object = {}, header, setIsModalVisible, categori
             }
         }
         catch(err){
+            CustomAlert("Error editing subcategory.");
             setErrors(err);
         }
     }
@@ -66,7 +68,7 @@ const SubcategoryMobileForm = ({object = {}, header, setIsModalVisible, categori
     const handleAdd = async (form) => {
         try{
             const subcategoryDto = new SubcategoryDto(form);
-            const result = await crudService.Post(form, "Subcategory");
+            const result = await crudService.Post(subcategoryDto, "Subcategory");
 
             if (result.errors){
                 setErrors(result.errors)
@@ -76,12 +78,13 @@ const SubcategoryMobileForm = ({object = {}, header, setIsModalVisible, categori
                         subcategoryName: "",
                         categoriesCategoryId: ""
                     }
-                )
+                );
                 setIsModalVisible(false)
                 setSelectKey((prevKey) => prevKey + 1);
             }
         }
         catch(err){
+            CustomAlert("Error adding subcategory.");
             setErrors(err);
         }
     }

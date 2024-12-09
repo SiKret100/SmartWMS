@@ -14,6 +14,7 @@ import EditProductModal from "./EditProductModal";
 import CustomSelectList from "../selects/CustomSelectList";
 import supplierTypeMap from "../../data/Mappers/supplierType";
 import crudService from "../../services/dataServices/crudService";
+import CustomAlert from "../popupAlerts/TaskAlreadyTaken";
 
 const OrdersMobileForm = () => {
 
@@ -76,6 +77,7 @@ const OrdersMobileForm = () => {
             setAllProducts(result.data);
             setProductTypeMap(result.data.map(product => ({key: product.productId, value: product.productName})));
         } catch (err) {
+            CustomAlert("Error fetching data.");
             console.log(`Errory w komponencie: ${JSON.stringify(err)}`);
         }
     }
@@ -85,6 +87,7 @@ const OrdersMobileForm = () => {
             const result = await crudService.GetAll("Country");
             setCountryTypeMap(result.data.map(country => ({key: country.countryId, value: country.countryName})))
         } catch (err) {
+            CustomAlert("Error fetching data.");
             console.log(err);
         }
     }
@@ -174,6 +177,7 @@ const OrdersMobileForm = () => {
             router.push("/home/orders");
         }
         catch(err){
+            CustomAlert("Error adding order.");
             console.log(err);
         }
     }

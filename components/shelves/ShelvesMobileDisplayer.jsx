@@ -1,19 +1,16 @@
 import React, {useEffect, useState,} from "react";
-import laneService from "../../services/dataServices/laneService";
-import {Platform, RefreshControl, Text, View, Modal, SafeAreaView, Alert} from "react-native";
+import {Platform, RefreshControl, Text, View, Modal, Alert} from "react-native";
 import CustomButton from "../buttons/CustomButton";
 import {ScrollView} from "react-native-gesture-handler";
 import Accordion from "react-native-collapsible/Accordion";
 import DeleteButton from "../buttons/DeleteButton";
 import EditButton from "../buttons/EditButton";
 import {Feather} from "@expo/vector-icons";
-import shelfService from "../../services/dataServices/shelfService";
 import ShelvesMobileForm from "./ShelvesMobileForm";
 import RacksMobileForm from "../racks/RacksMobileForm";
 import {useFocusEffect} from "expo-router";
-import rackService from "../../services/dataServices/rackService";
 import crudService from "../../services/dataServices/crudService";
-
+import CustomAlert from "../popupAlerts/TaskAlreadyTaken";
 
 const ShelvesMobileDisplayer = () => {
 
@@ -34,16 +31,16 @@ const ShelvesMobileDisplayer = () => {
     const [laneId, setLaneId] = useState(null);
 
     //FUNCTIONS================================================================================================
-    const fetchData = async () => {
+    const fetchData = () => {
         setSections([]);
-        await crudService.GetAll("Lane/getAllWithRacksShelves")
+        crudService.GetAll("Lane/getAllWithRacksShelves")
             .then(response => {
                 setRawData(response.data);
                 setSections(handlePrepareSections(response.data));
 
             })
             .catch(err => {
-                throw err
+                CustomAlert("Error fetching data.")
             })
     }
 
@@ -169,70 +166,66 @@ const ShelvesMobileDisplayer = () => {
         );
     };
 
-    const createAlert = (title, message) => {
-        return (
-            Alert.alert(title, message, [
-                {
-                    text: "Ok",
-                    onPress: () => {},
-                    style: "cancel"
-                }
-            ])
-        )
-    }
+    const handleDeleteShelf = (shelf) => {
 
-    const handleDeleteShelf = async (shelf) => {
-        if (shelf.productId !== null) {
-            setErrors([...errors, "Cannot deleted shelf with product assigned to it"]);
-        } else {
-            await crudService.Delete(shelf.shelfId, "Shelf")
-                .then(response => {
-                    onRefresh();
-                })
-                .catch(err => {
-                    console.log(err)
-                })
-        }
+            if (shelf.productId !== null) {
+                setErrors([...errors, "Cannot deleted shelf with product assigned to it"]);
+                CustomAlert("Cannot deleted shelf with product assigned to it");
+            } else {
+                crudService.Delete(shelf.shelfId, "Shelf")
+                    .then(response => {
+                        onRefresh();
+                    })
+                    .catch(err => {
+                        CustomAlert("Error deleting shelf");
+                        console.log(err);
+                    })
+            }
     }
 
     const handleDeleteRack = async (rack) => {
-        if(rack.content.length === 0) {
-            try{
-                await crudService.Delete(rack.rackId, "Rack")
-                createAlert("Info", "Rack successfully deleted");
+        try{
+            if(rack.content.length === 0) {
+                await crudService.Delete(rack.rackId, "Rack");
+                CustomAlert("Rack successfully deleted.");
+
                 onRefresh();
+            }else{
+                CustomAlert("Cannot delete Rack with Shelves assigned to it.");
             }
-            catch(err){
-                console.log(err);
-            }
-        }else{
-            createAlert('Warning','Cannot delete Rack with Shelves assigned to it');
+        }
+        catch(err){
+            CustomAlert("Error deleting rack.");
         }
     }
 
     const handleDeleteLane = async (lane) => {
-        if(lane.content.length === 0) {
-            await crudService.Delete(lane.laneId, "Lane");
-            onRefresh();
-            createAlert("Info", "Lane successfully deleted");
+        try{
+            if(lane.content.length === 0) {
+                await crudService.Delete(lane.laneId, "Lane");
+                onRefresh();
+                CustomAlert("Lane successfully deleted.");
+            }
+            else {
+                CustomAlert("Cannot delete lane with racks assigned to it.");
+            }
+        }catch(err){
+            CustomAlert("Error deleting lane.");
+        }
 
-        }
-        else {
-            createAlert('Warning','Cannot delete Lane with Racks assigned to it');
-        }
     }
 
     const handleModalAddShelf = async (rackId) => {
         setCurrentEditShelf(null);
         setIsShelfModalVisible(true);
         setRackId(rackId);
-        setShelfModalHeader("Add")
+        setShelfModalHeader("Add");
     }
 
     const handleModalEditShelf = async (level) => {
         setCurrentEditShelf(level);
         setIsShelfModalVisible(true)
-        console.log(`levels rack id: ${level.rackId}`);
+        //console.log(`levels rack id: ${level.rackId}`);
         setRackId(level.rackId);
         setShelfModalHeader("Edit")
     }
@@ -241,8 +234,8 @@ const ShelvesMobileDisplayer = () => {
         setCurrentEditRack(null);
         setIsRackModalVisible(true);
         setLaneId(laneId);
-        setRackModalHeader("Add")
-        console.log(`Lane id: ${laneId}`);
+        setRackModalHeader("Add");
+        //console.log(`Lane id: ${laneId}`);
     }
 
     const onRefresh = React.useCallback(() => {
@@ -251,21 +244,22 @@ const ShelvesMobileDisplayer = () => {
         setRefreshing(false);
         setActiveLaneSections([]);
         setActiveRackSections([]);
-    }, [])
+    }, []);
+
 
     //USE EFFECT HOOKS=========================================================================================
     useEffect(() => {
         fetchData()
-            .catch(err => console.log(err));
     }, [isShelfModalVisible, isRackModalVisible]);
 
     useFocusEffect(
         React.useCallback(() => {
-            fetchData()
+            fetchData();
             setActiveLaneSections([]);
             setActiveRackSections([]);
         }, [isShelfModalVisible, isRackModalVisible])
     );
+
 
     return (
         <ScrollView

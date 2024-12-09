@@ -9,6 +9,8 @@ import FallingTiles from "../FallingTiles";
 import DeleteButton from "../buttons/DeleteButton";
 import Feather from "react-native-vector-icons/Feather";
 import CustomSelectList from "../selects/CustomSelectList";
+import crudService from "../../services/dataServices/crudService";
+import CustomAlert from "../popupAlerts/TaskAlreadyTaken";
 
 const UserMobileDisplayer = () => {
 
@@ -22,33 +24,18 @@ const UserMobileDisplayer = () => {
     const [refreshing, setRefreshing] = useState(false);
     const [err, setError] = useState("");
     const [isDeletedItem, setIsDeletedItem] = useState(false);
+    const [selectKey, setSelectKey] = useState(0);
 
     //FUNCTIONS================================================================================================
-    const fetchData = async () => {
+    const fetchData = () => {
         setLoading(false);
-        await userService.GetAll()
+        userService.GetAll()
             .then(response => {
                 setData(response.data.reverse());
-
-                loadSelected();
-
-                if (selected !== null) {
-                    const parsedSelected = parseInt(selected);
-                    setSelected(parsedSelected);
-
-                    if (parsedSelected !== -1)
-                        setFilteredData(response.data.filter(record => record.role === getRole(selected)));
-                    else {
-                        setFilteredData(response.data);
-                    }
-
-                } else
-                    setFilteredData(response.data);
-
                 setLoading(true);
-
             })
             .catch(err => {
+                CustomAlert("Error fetching data.");
                 setError(err);
             });
     };
@@ -72,37 +59,6 @@ const UserMobileDisplayer = () => {
         </FallingTiles>
     );
 
-    const loadSelected = async () => {
-        try {
-            const savedSelected = await AsyncStorage.getItem('selectedFilter');
-
-            if (savedSelected !== null && savedSelected !== undefined && savedSelected !== NaN && !isNaN(savedSelected)) {
-                const parsedSelected = parseInt(savedSelected);
-                setSelected(parsedSelected);
-                const foundOption = userTypeMap.find(user => user.key === parsedSelected);
-                setDefaultOption(foundOption)
-
-            } else {
-                setDefaultOption({key: -1, value: "All"});
-                setSelected(-1);
-            }
-        } catch (error) {
-            console.log('Error loading selected filter: ', error);
-        }
-    };
-
-    const saveSelected = async () => {
-        try {
-            if (selected !== undefined && selected !== null) {
-                await AsyncStorage.setItem('selectedFilter', selected.toString());
-
-            } else {
-                console.log('Selected is undefined or null, not saving to AsyncStorage');
-            }
-        } catch (error) {
-            console.log('Error saving selected filter: ', error);
-        }
-    };
 
     const getRole = (selected) => {
         const roleObject = userTypeMap.find(item => item.key === selected);
@@ -112,9 +68,10 @@ const UserMobileDisplayer = () => {
     const handleDelete = async (id) => {
 
         try {
-            await userService.Delete(id);
+            await crudService.Delete(id, "User/delete")
         } catch (err) {
             console.log(err);
+            CustomAlert("You cant delete this user.")
         }
         setIsDeletedItem(true);
     }
@@ -129,12 +86,19 @@ const UserMobileDisplayer = () => {
     //USE EFFECT HOOKS=========================================================================================
     useEffect(() => {
         fetchData();
-        if (isDeletedItem) setIsDeletedItem(false);
+        if (isDeletedItem){
+            setIsDeletedItem(false);
+            setSelectKey(prev => prev + 1);
+        }
+
+
     }, [isDeletedItem]);
 
     useFocusEffect(
         useCallback(() => {
             fetchData();
+            setSelectKey(prev => prev + 1);
+
         }, [isModalVisible])
     );
 
@@ -148,9 +112,6 @@ const UserMobileDisplayer = () => {
         else
             setFilteredData(data);
 
-        if (selected !== undefined && selected !== null && !isNaN(selected)) {
-            saveSelected();
-        }
     }, [data, selected]);
 
 
@@ -160,6 +121,7 @@ const UserMobileDisplayer = () => {
             <View className={"mx-2 mt-2 mb-10"}>
 
                 <CustomSelectList
+                    selectKey={selectKey}
                     setSelected={val => setSelected(val)}
                     typeMap={[{key: -1, value: 'All'}, ...userTypeMap]}
                     defaultOption={defaultOption}

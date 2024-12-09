@@ -11,8 +11,6 @@ import taskService from "../../services/dataServices/taskService";
 import {router, useFocusEffect} from "expo-router";
 import FallingTiles from "../FallingTiles";
 import {Feather} from "@expo/vector-icons";
-import orderDetailService from "../../services/dataServices/orderDetailService";
-import productService from "../../services/dataServices/productService";
 import {UserDataContext} from "../../app/home/_layout";
 import CustomAlert from "../popupAlerts/TaskAlreadyTaken";
 import CustomEditButtonFlatList from "../buttons/CustomEditButtonFlatList";
@@ -29,18 +27,17 @@ const TasksMobileDisplayer = () => {
     //FUNCTIONS================================================================================================
     const fetchData = () => {
 
-        taskService.GetAll()
+        crudService.GetAll("Task")
             .then(result => {
                 setLoading(false);
                 const filteredTasks = result.data.filter(item => item.taken === false);
 
-
                 return Promise.all(
                     filteredTasks.map(task =>
-                        orderDetailService.Get(task.orderDetailsOrderDetailId)
+                        crudService.Get(task.orderDetailsOrderDetailId, "OrderDetail")
                             .then(orderDetail => {
 
-                                    return productService.Get(orderDetail.data.productsProductId)
+                                return crudService.Get(orderDetail.data.productsProductId, "Product")
                                         .then(result => {
                                                 return {
                                                     ...task,
@@ -51,6 +48,7 @@ const TasksMobileDisplayer = () => {
                                 }
                             )
                             .catch(err => {
+                                CustomAlert("Error fetching data.");
                                 setLoading(false);
                                 return {...task, products: []};
                             })
@@ -70,6 +68,7 @@ const TasksMobileDisplayer = () => {
             const response = await taskService.UserTasks()
 
             if (response === "User has no tasks") {
+
                 await taskService.TakeTask(taskId);
 
                 router.push("./yourTask", {relativeToDirectory: true});
@@ -85,26 +84,20 @@ const TasksMobileDisplayer = () => {
 
         <FallingTiles>
 
-
             <View className={"flex-col justify-start bg-slate-200 pt-2 rounded-lg mt-5 mx-4 shadow"}>
 
+                <View className={"flex-row bg-blue-200  items-center mx-2 rounded-lg w-fit"}>
 
-
-
-                    <View className={"flex-row bg-blue-200  items-center mx-2 rounded-lg w-fit"}>
-
-                        <View className="flex-row bg-smartwms-blue rounded-lg justify-center items-center p-2">
-                            <Feather color="#ffffff" className={""} name={"list"} size={45}/>
-                        </View>
-
-                        <View className={"flex-col mx-2"}>
-                            <Text className={"text-smartwms-blue text-2xl font-bold"}>{item.productName}</Text>
-                            <Text className={"text-xl color-gray-500"}>{item.taken ? "Task taken" : "Ready to be taken"}</Text>
-                        </View>
-
+                    <View className="flex-row bg-smartwms-blue rounded-lg justify-center items-center p-2">
+                        <Feather color="#ffffff" className={""} name={"list"} size={45}/>
                     </View>
 
+                    <View className={"flex-col mx-2"}>
+                        <Text className={"text-smartwms-blue text-2xl font-bold"}>{item.productName}</Text>
+                        <Text className={"text-xl color-gray-500"}>{item.taken ? "Task taken" : "Ready to be taken"}</Text>
+                    </View>
 
+                </View>
 
                 <View className={"flex-row gap-4 my-2 p-2"}>
                     <View className={"flex-row"}>
@@ -123,9 +116,7 @@ const TasksMobileDisplayer = () => {
                         </View>
                     </View>
 
-
                 </View>
-
 
                 <View className="mt-2 flex-row  justify-center items-cente">
 
@@ -135,9 +126,7 @@ const TasksMobileDisplayer = () => {
 
             </View>
 
-
         </FallingTiles>
-
 
     );
 

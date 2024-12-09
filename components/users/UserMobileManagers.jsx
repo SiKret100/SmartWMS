@@ -5,6 +5,7 @@ import userService from "../../services/dataServices/userService";
 import FallingTiles from "../FallingTiles";
 import { RefreshControl } from "react-native-gesture-handler";
 import { useFocusEffect } from "expo-router";
+import CustomAlert from "../popupAlerts/TaskAlreadyTaken";
 
 
 const UserMobileManagers = () => {
@@ -30,6 +31,7 @@ const UserMobileManagers = () => {
             setManagers(managersOnly.map(manager => { return { key: manager.id, value: manager.userName } }))
             setLoading(true);
         } catch (err) {
+            CustomAlert("Error fetching data.");
             setError(err);
         }
     };

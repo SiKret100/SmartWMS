@@ -1,16 +1,18 @@
 import CustomSelectList from "../selects/CustomSelectList";
-import { SafeAreaView, Text, View, Platform} from "react-native";
+import {SafeAreaView, Text, View, Platform} from "react-native";
 import React, {useState, useEffect} from "react";
-import { KeyboardAvoidingView } from "react-native";
+import {KeyboardAvoidingView} from "react-native";
 import CustomButton from "../buttons/CustomButton";
 import TextFormField from "../form_fields/TextFormField";
 import userTypeMap from "data/Mappers/userType.js"
 import userService from "services/dataServices/userService.js";
-import { ScrollView } from "react-native-gesture-handler";
+import {ScrollView} from "react-native-gesture-handler";
 import userErrorMessage from "../../data/ErrorMessages/userErrorMessages.jsx"
 import ErrorMessages from "components/errors/ErrorMessages.jsx";
+import CustomAlert from "../popupAlerts/TaskAlreadyTaken";
+import {router} from "expo-router";
 
-const UserMobileForm = ({ object = {}, header }) => {
+const UserMobileForm = ({object = {}, header}) => {
 
     //PROPS====================================================================================================
     const [form, setForm] = useState({
@@ -30,33 +32,28 @@ const UserMobileForm = ({ object = {}, header }) => {
     const [roleError, setRoleError] = useState(true);
     const [managerError, setManagerError] = useState(true);
 
+
     //FUNCTIONS================================================================================================
-     const handleAdd = async (form) => {
+    const handleAdd = async (form) => {
         try {
             setErrors({})
             if ((form.role === 1 && (form.managerId === undefined || form.managerId === -1)))
-                setErrors({ "Description": ["Employee must have manager assigned"] });
+                setErrors({"Description": ["Employee must have manager assigned"]});
 
-            const result = await userService.Add(form);
+            await userService.Add(form);
 
-            if (result.errors) {
-                setErrors((prevErrors) => ({ ...prevErrors, ...result.errors }));
-            } else {
+            setErrors({});
+            setForm({
+                email: "",
+                userName: "",
+                password: "",
+                role: "",
+                managerId: undefined
+            });
+            setSelectKey((prevKey) => prevKey + 1);
 
-                if (!errors.Description) {
-                    setErrors({});
-                    setForm({
-                        email: "",
-                        userName: "",
-                        password: "",
-                        role: "",
-                        managerId: undefined
-                    });
-                    setSelectKey((prevKey) => prevKey + 1);
-                }
-            }
-        }
-        catch (err) {
+        } catch (err) {
+            CustomAlert("Error adding user");
             setErrors(err);
         }
     }
@@ -72,7 +69,9 @@ const UserMobileForm = ({ object = {}, header }) => {
 
     const handleUsername = (e) => {
         const usernameVar = e.nativeEvent.text;
-        if (usernameVar.length >= 5) {
+        const regexp = new RegExp("^[A-Za-z]{5,}$");
+
+        if (regexp.test(usernameVar)) {
             setUsernameError(false);
         } else {
             setUsernameError(true);
@@ -82,7 +81,7 @@ const UserMobileForm = ({ object = {}, header }) => {
     const handlePassword = (e) => {
         const passVar = e.nativeEvent.text;
         const passRegexp = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[#$^+=!*()@%&]).{8,}$/;
-        
+
         if (passVar.match(passRegexp))
             setPasswordError(false)
         else
@@ -94,10 +93,10 @@ const UserMobileForm = ({ object = {}, header }) => {
             setRoleError(true);
         } else {
 
-            if(form.role == 1 && form.managerId == -1){
+            if (form.role == 1 && form.managerId == -1) {
                 setManagerError(true);
 
-            } else { 
+            } else {
                 setManagerError(false);
                 setRoleError(false);
             }
@@ -115,9 +114,11 @@ const UserMobileForm = ({ object = {}, header }) => {
     const fetchManagers = async () => {
         try {
             const response = await userService.GetAll("Manager");
-            setManagers(response.data.map((manager) => { return { key: manager.id, value: manager.userName } }));
-        }
-        catch (err) {
+            setManagers(response.data.map((manager) => {
+                return {key: manager.id, value: manager.userName}
+            }));
+        } catch (err) {
+            CustomAlert("Error fetching data.");
             setErrors(err);
         }
     }
@@ -140,7 +141,7 @@ const UserMobileForm = ({ object = {}, header }) => {
                     <TextFormField
                         title="Email"
                         value={form.email}
-                        handleChangeText={(e) => setForm({ ...form, email: e })}
+                        handleChangeText={(e) => setForm({...form, email: e})}
                         otherStyles=""
                         keyboardType="email-address"
                         onChange={e => handleEmail(e)}
@@ -158,7 +159,7 @@ const UserMobileForm = ({ object = {}, header }) => {
                     <TextFormField
                         title="Username"
                         value={form.userName}
-                        handleChangeText={(e) => setForm({ ...form, userName: e })}
+                        handleChangeText={(e) => setForm({...form, userName: e})}
                         otherStyles="mt-7"
                         onChange={e => handleUsername(e)}
                         isError={usernameError}
@@ -175,7 +176,7 @@ const UserMobileForm = ({ object = {}, header }) => {
                     <TextFormField
                         title="Password"
                         value={form.password}
-                        handleChangeText={(e) => setForm({ ...form, password: e })}
+                        handleChangeText={(e) => setForm({...form, password: e})}
                         otherStyles="mt-7"
                         onChange={e => handlePassword(e)}
                         isError={passwordError}
@@ -195,7 +196,7 @@ const UserMobileForm = ({ object = {}, header }) => {
                             className='text-base font-pmedium'> Role
                         </Text>
                         <CustomSelectList
-                            setSelected={(e) => setForm((prevForm) => ({ ...prevForm, role: e }))}
+                            setSelected={(e) => setForm((prevForm) => ({...prevForm, role: e}))}
                             typeMap={userTypeMap}
                             defaultOption={{key: -1, value: "Select role..."}}
                             onSelect={() => handleRole()}
@@ -211,7 +212,7 @@ const UserMobileForm = ({ object = {}, header }) => {
                                     className='text-base font-pmedium'> Manager
                                 </Text>
                                 <CustomSelectList
-                                    setSelected={(e) => setForm((prevForm) => ({ ...prevForm, managerId: e }))}
+                                    setSelected={(e) => setForm((prevForm) => ({...prevForm, managerId: e}))}
                                     typeMap={managers}
                                     defaultOption={{key: -1, value: "Select manager..."}}
                                     onSelect={() => handleManager()}
@@ -227,7 +228,7 @@ const UserMobileForm = ({ object = {}, header }) => {
                         handlePress={() => handleAdd(form)}
                         containerStyles="w-full mt-7"
                         textStyles={"text-white"}
-                        showLoading = {false}
+                        showLoading={false}
                         isLoading={emailError || passwordError || usernameError || roleError || managerError}
 
                     />
@@ -235,7 +236,7 @@ const UserMobileForm = ({ object = {}, header }) => {
                     {Object.keys(errors).length > 0 && (
                         <ErrorMessages errors={errors}/>
                     )}
-                    
+
                 </KeyboardAvoidingView>
 
             </SafeAreaView>

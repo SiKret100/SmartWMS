@@ -2,18 +2,16 @@ import {Platform, Modal, SafeAreaView, Text, View} from "react-native";
 import CancelButton from "../buttons/CancelButton";
 import React, {useState, useEffect} from "react";
 import CustomSelectList from "../selects/CustomSelectList";
-import productService from "../../services/dataServices/productService";
 import NumberFormField from "../form_fields/NumberFormField";
-import shelfService from "../../services/dataServices/shelfService";
 import ProductDeliveryDistributionForm from "./ProductDeliveryDistributionForm";
 import CustomButton from "../buttons/CustomButton";
 import productErrorMessages from "../../data/ErrorMessages/productErrorMessages";
 import {router} from "expo-router";
 import crudService from "../../services/dataServices/crudService";
+import CustomAlert from "../popupAlerts/TaskAlreadyTaken";
 
 
 const ProductMobileTakeDeliveryModal = ({setIsModalVisible}) => {
-
 
     //PROPS
     const [form, setForm] = useState({
@@ -46,7 +44,8 @@ const ProductMobileTakeDeliveryModal = ({setIsModalVisible}) => {
                 value: product.productName,
             })));
         } catch (err) {
-            setErrors(err)
+            CustomAlert("Error fetching data.");
+            setErrors(err);
         }
     }
 
@@ -58,6 +57,7 @@ const ProductMobileTakeDeliveryModal = ({setIsModalVisible}) => {
             setShelvesList(filteredShelves);
         }
         catch(err){
+            CustomAlert("Error fetching data.");
             setErrors(err);
         }
     }
@@ -74,6 +74,7 @@ const ProductMobileTakeDeliveryModal = ({setIsModalVisible}) => {
             }
         }
         catch(err){
+            CustomAlert("Error taking delivery.");
             setErrors(err);
         }
     }
@@ -81,7 +82,6 @@ const ProductMobileTakeDeliveryModal = ({setIsModalVisible}) => {
     const handleProduct = () => {
         form.productsProductId === -1 ? setProductIdError(true) : setProductIdError(false);
     }
-
 
     const handleQuantity = (e) => {
         const quantity = e.nativeEvent.text;
@@ -155,11 +155,9 @@ const ProductMobileTakeDeliveryModal = ({setIsModalVisible}) => {
             }
         }
         else {
-            const tempError = true
+            const tempError = true;
             setAssignedShelvesError(tempError);
         }
-
-
 
         setRequest({
             productDto: {

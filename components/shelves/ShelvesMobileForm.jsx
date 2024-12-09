@@ -3,11 +3,11 @@ import React, {useState} from "react";
 import CustomSelectList from "../selects/CustomSelectList";
 import shelfTypeMap from "../../data/Mappers/shelfType";
 import CustomButton from "../buttons/CustomButton";
-import shelfService from "../../services/dataServices/shelfService";
 import {useEffect} from "react";
 import CancelButton from "../buttons/CancelButton";
 import crudService from "../../services/dataServices/crudService";
 import ShelfDto from "../../data/DTOs/shelfDto";
+import CustomAlert from "../popupAlerts/TaskAlreadyTaken";
 
 const ShelvesMobileForm = ({object = {}, header, setIsModalVisible, rackId}) => {
 
@@ -31,9 +31,7 @@ const ShelvesMobileForm = ({object = {}, header, setIsModalVisible, rackId}) => 
 
         try {
             const shelfDto = new ShelfDto(form)
-            await crudService.Update(id , shelfDto, "Shelf");
-
-            const result = await shelfService.Update(id, form);
+            const result =  await crudService.Update(id , shelfDto, "Shelf");
 
             if (result.errors) {
                 setErrors(result.errors);
@@ -50,14 +48,13 @@ const ShelvesMobileForm = ({object = {}, header, setIsModalVisible, rackId}) => 
 
             }
         } catch (err) {
-            console.log(err)
+            CustomAlert("Error editing shelf.");
+            console.log(err);
             setErrors(err);
         }
     }
 
     const handleAdd = async(form) => {
-
-
         try{
             const shelfDto = new ShelfDto(form);
             const result = await  crudService.Post(shelfDto, "Shelf");
@@ -80,6 +77,7 @@ const ShelvesMobileForm = ({object = {}, header, setIsModalVisible, rackId}) => 
             }
         }
         catch(err) {
+            CustomAlert("Error adding shelf.");
             setErrors(err);
         }
     }
@@ -101,6 +99,7 @@ const ShelvesMobileForm = ({object = {}, header, setIsModalVisible, rackId}) => 
             setSelectList(shelfTypeMap.filter(shelf => !rackLevels.includes(shelf.key)));
         }
         catch(err){
+            CustomAlert("Error fetching data.");
             console.log(err);
         }
     }
@@ -112,6 +111,7 @@ const ShelvesMobileForm = ({object = {}, header, setIsModalVisible, rackId}) => 
 
     return(
      <SafeAreaView className={"h-full mx-2"}>
+
          <KeyboardAvoidingView
              behavior="padding"
              clasName={`h-full px-4`}>
@@ -147,6 +147,7 @@ const ShelvesMobileForm = ({object = {}, header, setIsModalVisible, rackId}) => 
              />
 
          </KeyboardAvoidingView>
+
      </SafeAreaView>
     )
 }

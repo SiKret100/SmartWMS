@@ -1,7 +1,6 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {
     ActivityIndicator,
-    Animated,
     RefreshControl,
     SafeAreaView,
     Text,
@@ -17,6 +16,8 @@ import {useFocusEffect} from "expo-router";
 import CustomSelectList from "../selects/CustomSelectList";
 import reportTypeMap from "../../data/Mappers/reportType";
 import reportPeriodMap from "../../data/Mappers/reportPeriod";
+import crudService from "../../services/dataServices/crudService";
+import CustomAlert from "../popupAlerts/TaskAlreadyTaken";
 
 
 const ReportsMobileDisplayer = () => {
@@ -34,22 +35,26 @@ const ReportsMobileDisplayer = () => {
 
     //FUNCTIONS================================================================================================
     const fetchData = async () => {
-        try{
-            const result = await reportService.Get();
+        try {
+
+            const result = await crudService.GetAll("Report");
             const data = result.data;
             setFilteredData(data);
             setData(data)
-        }catch(err){
+        } catch (err) {
+            CustomAlert("Error fetching data.");
             console.log(err)
-        }finally {
+        } finally {
             setLoading(false);
         }
     }
 
     const handleDownload = async (Id) => {
-        try{
-            const result = await reportService.Download(Id);
-        }catch (err){
+        try {
+            await reportService.Download(Id);
+        } catch (err) {
+            CustomAlert("Error downloading report.");
+
             console.log(err)
         }
     }
@@ -57,10 +62,11 @@ const ReportsMobileDisplayer = () => {
     const handleDelete = async (id) => {
 
         try {
-            await reportService.Delete(id)
+            await crudService.Delete(id, "Report");
             setIsDeletedItem(true)
 
         } catch (err) {
+            CustomAlert("Error deleting report.");
             console.log(err);
         }
     }
@@ -70,37 +76,34 @@ const ReportsMobileDisplayer = () => {
             <View
                 className={"flex-row justify-between items-center flex-0.5 px-2 py-2 mx-2 my-2 shadow rounded-lg bg-slate-200"}>
                 <TouchableOpacity
-                    onPress={() =>  handleDownload(item.reportId)}
+                    onPress={() => handleDownload(item.reportId)}
                     className={"px-2"}
                 >
-                    <Feather name="download" size={24} color={"#3E86D8"} />
+                    <Feather name="download" size={24} color={"#3E86D8"}/>
                 </TouchableOpacity>
 
 
+                <View className={"px-2 py-2 mx-4"}>
+                    <Text className={"text-center"}>{item.reportId}</Text>
+
+                    <Text className={"text-center"}>
+                        {new Date(item.reportDate).toLocaleDateString('en-GB', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                        })}
+                    </Text>
+                    <Text className={"text-center"}>
+                        Report Type: {reportTypeMap.find((type) => type.key === item.reportType).value}
+                    </Text>
+                    <Text className={"text-center"}>
+                        Report Period: {reportPeriodMap.find((period) => period.key === item.reportPeriod).value}
+                    </Text>
+
+                </View>
 
 
-                    <View className={"px-2 py-2 mx-4"}>
-                        <Text className={"text-center"}>{item.reportId}</Text>
-
-                        <Text className={"text-center"}>
-                            {new Date(item.reportDate).toLocaleDateString('en-GB', {
-                                year: 'numeric',
-                                month: 'long',
-                                day: 'numeric'
-                            })}
-                        </Text>
-                        <Text className={"text-center"}>
-                            Report Type: {reportTypeMap.find((type) => type.key === item.reportType).value}
-                        </Text>
-                        <Text className={"text-center"}>
-                            Report Period: {reportPeriodMap.find((period) => period.key === item.reportPeriod).value}
-                        </Text>
-
-                    </View>
-
-
-
-                <DeleteButton onDelete={() =>  handleDelete(item.reportId)}/>
+                <DeleteButton onDelete={() => handleDelete(item.reportId)}/>
 
             </View>
         </FallingTiles>
@@ -109,7 +112,7 @@ const ReportsMobileDisplayer = () => {
     const onRefresh = useCallback(() => {
         setRefreshing(true);
         fetchData();
-        setSelectKey(prev => prev + 1 )
+        setSelectKey(prev => prev + 1)
         setSelectedType({key: -1, value: "All"});
         setRefreshing(false);
     }, []);
@@ -119,7 +122,7 @@ const ReportsMobileDisplayer = () => {
     useFocusEffect((
         useCallback(
             () => {
-                setSelectKey(prev => prev + 1 )
+                setSelectKey(prev => prev + 1)
                 setSelectedType({key: -1, value: "All"});
                 fetchData();
             }, [])
@@ -127,7 +130,7 @@ const ReportsMobileDisplayer = () => {
 
     useEffect(() => {
         fetchData();
-        setSelectKey(prev => prev + 1 )
+        setSelectKey(prev => prev + 1)
         setSelectedType({key: -1, value: "All"});
         if (isDeletedItem) setIsDeletedItem(false);
     }, [isDeletedItem]);
@@ -184,7 +187,6 @@ const ReportsMobileDisplayer = () => {
             </View>
 
 
-
             <FlatList
                 data={filteredData}
                 keyExtractor={(item) => item.reportId.toString()}
@@ -205,7 +207,7 @@ const ReportsMobileDisplayer = () => {
                         )
                     )
                 }
-                />
+            />
 
         </SafeAreaView>
     )

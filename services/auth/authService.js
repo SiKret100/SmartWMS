@@ -1,5 +1,4 @@
-import {Platform, StyleSheet, Text, View} from "react-native";
-import React from "react";
+import {Platform} from "react-native";
 import axios from "axios";
 import * as SecureStore from 'expo-secure-store';
 import {router} from "expo-router";
@@ -36,12 +35,10 @@ export default class authService {
                 }
             );
 
-            //console.log(`Otrzymano odpowiedz: ${JSON.stringify(response)}`);
 
             if (Platform.OS !== 'web') {
-                await SecureStore.setItemAsync('token', response.data.accessToken);//saving token to securestore for IOS
-                //setError("token " + token);
-                //await new Promise((resolve) => setTimeout(resolve, 1000));
+                await SecureStore.setItemAsync('token', response.data.accessToken);
+
                 router.push("/home");
             } else {
                 setError("Zalogowano");
@@ -51,7 +48,6 @@ export default class authService {
             setLoading(false);
 
         } catch (error) {
-            //console.log(`Wystapil problem: ${JSON.stringify(error)}`);
             setError(this.handleLoginStatus(error));
             setLoading(false);
         }

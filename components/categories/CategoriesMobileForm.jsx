@@ -7,6 +7,7 @@ import CancelButton from "../buttons/CancelButton";
 import crudService from "../../services/dataServices/crudService";
 import CategoryDto from "../../data/DTOs/categoryDto";
 import {router} from "expo-router";
+import CustomAlert from "../popupAlerts/TaskAlreadyTaken";
 
 const CategoriesMobileForm = ({object = {}, header, setIsModalVisible}) => {
 
@@ -22,7 +23,7 @@ const CategoriesMobileForm = ({object = {}, header, setIsModalVisible}) => {
     //FUNCTIONS================================================================================================
     const handleName = (e) => {
         const nameVar = e.nativeEvent.text;
-        nameVar.length > 0 ? setCategoryNameError(false) : setCategoryNameError(true);
+        nameVar.length >= 3 ? setCategoryNameError(false) : setCategoryNameError(true);
     }
 
     const handleEdit = async(id, form) => {
@@ -44,8 +45,8 @@ const CategoriesMobileForm = ({object = {}, header, setIsModalVisible}) => {
             }
         }
         catch(err){
+            CustomAlert("Error editing category");
            setErrors({message: err})
-
         }
     }
 
@@ -67,6 +68,7 @@ const CategoriesMobileForm = ({object = {}, header, setIsModalVisible}) => {
             router.push("/home/categories/");
         }
         catch(err){
+            CustomAlert("Error adding category");
             setErrors(err);
         }
     }

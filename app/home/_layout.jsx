@@ -100,23 +100,21 @@ const RootLayout = () => {
 
                     <Drawer.Screen
                         name='categories'
-                        redirect={userData.role === 'Employee'}
                         options={{
                             drawerLabel: 'Categories',
                             title: 'Categories',
-                            headerStyle: {backgroundColor: 'bg-slate-200'}
-
+                            headerStyle: {backgroundColor: 'bg-slate-200'},
+                            drawerItemStyle: userData.role === 'Admin' ? { height: 50 } : { height: 0 },
                         }}
                     />
 
                     <Drawer.Screen
                         name='orders'
-                        redirect={userData.role === 'Employee'}
                         options={{
                             drawerLabel: 'Orders',
                             title: 'Orders',
-                            headerStyle: {backgroundColor: 'bg-slate-200'}
-
+                            headerStyle: {backgroundColor: 'bg-slate-200'},
+                            drawerItemStyle: userData.role === 'Admin' ? { height: 50 } : { height: 0 },
                         }}
                     />
 
@@ -126,29 +124,26 @@ const RootLayout = () => {
                             drawerLabel: 'Products',
                             title: 'Products',
                             headerStyle: {backgroundColor: 'bg-slate-200'}
-
                         }}
                     />
 
                     <Drawer.Screen
                         name='reports'
-                        redirect={userData.role === 'Employee'}
                         options={{
                             drawerLabel: 'Reports',
                             title: 'Reports',
-                            headerStyle: {backgroundColor: 'bg-slate-200'}
-
+                            headerStyle: {backgroundColor: 'bg-slate-200'},
+                            drawerItemStyle: userData.role === 'Admin' ? { height: 50 } : { height: 0 },
                         }}
                     />
 
                     <Drawer.Screen
                         name='shelves'
-                        redirect={userData.role === 'Employee'}
                         options={{
                             drawerLabel: 'Shelves',
                             title: 'Shelves',
-                            headerStyle: {backgroundColor: 'bg-slate-200'}
-
+                            headerStyle: {backgroundColor: 'bg-slate-200'},
+                            drawerItemStyle: userData.role === 'Admin' ? { height: 50 } : { height: 0 },
                         }}
                     />
 
@@ -157,18 +152,17 @@ const RootLayout = () => {
                         options={{
                             drawerLabel: 'Tasks',
                             title: 'Tasks',
-                            headerStyle: {backgroundColor: 'bg-slate-200'}
-
+                            headerStyle: {backgroundColor: 'bg-slate-200'},
                         }}
                     />
 
                     <Drawer.Screen
                         name='users'
-                        redirect={userData.role === 'Employee'}
                         options={{
                             drawerLabel: 'Users',
                             title: 'Users',
-                            headerStyle: {backgroundColor: 'bg-slate-200'}
+                            headerStyle: {backgroundColor: 'bg-slate-200'},
+                            drawerItemStyle: userData.role === 'Admin' ? { height: 50 } : { height: 0 },
                         }}
                     />
 
@@ -177,10 +171,10 @@ const RootLayout = () => {
                         options={{
                             drawerLabel: 'Waybills',
                             title: 'Waybills',
-                            headerStyle: {backgroundColor: 'bg-slate-200'}
-
+                            headerStyle: {backgroundColor: 'bg-slate-200'},
                         }}
                     />
+
                 </Drawer>
             </UserDataContext.Provider>
         </GestureHandlerRootView>
