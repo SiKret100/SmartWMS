@@ -29,7 +29,7 @@ const LoginForm = () => {
     const [loading, setLoading] = useState(false);
 
     const [form, setForm] = useState({
-        email: "Employee",
+        email: "Admin",
         password: "Admin123@",
     });
 

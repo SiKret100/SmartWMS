@@ -123,7 +123,7 @@ const HomeScreen = () => {
                                 </View>
 
                                 <View className={"flex-col mx-2"}>
-                                    <Text className={"text-smartwms-blue text-2xl font-bold"}>Profile</Text>
+                                    <Text className={"text-smartwms-blue text-xl font-bold"}>Profile</Text>
                                     <Text className={"text-xl color-gray-500"}>{userData.userName}</Text>
                                 </View>
                             </View>

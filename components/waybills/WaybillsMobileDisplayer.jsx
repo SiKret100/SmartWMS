@@ -238,7 +238,7 @@ const WaybillsMobileDisplayer = () => {
                 />
             </SafeAreaView>
         ) : (
-            <View className="flex-1 mt-4">
+            <View className="flex-1 mt-4 mb-10">
                 <WebView
                     source={{html: htmlTemplate}}
                     style={{flex: 1}}
@@ -253,7 +253,7 @@ const WaybillsMobileDisplayer = () => {
                 <CustomButton
                     title={"Cancel"}
                     textStyles={"text-white"}
-                    containerStyles={"mb-2 py-6 mx-2 bg-red-500"}
+                    containerStyles={" mb-2 py-6 mx-2 bg-red-500"}
                     handlePress={() => setIsLoading(false)}
                     iconName={"x-circle"}
                 />
