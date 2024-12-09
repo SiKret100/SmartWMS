@@ -1,24 +1,18 @@
-import {SafeAreaView, Text, View, Modal, Platform, ActivityIndicator, FlatList} from "react-native";
-import {useRef, useState, useEffect, useCallback} from "react";
+import {SafeAreaView, Text, View, ActivityIndicator, FlatList} from "react-native";
+import {useState, useEffect, useCallback} from "react";
 import {useFocusEffect} from "expo-router";
-import {SelectList} from 'react-native-dropdown-select-list';
-import {ScrollView} from "react-native-gesture-handler";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import CustomButton from "../buttons/CustomButton";
 import userService from "services/dataServices/userService.js";
-import UserDto from "data/DTOs/userDto.js";
 import userTypeMap from "data/Mappers/userType.js";
 import {RefreshControl} from "react-native-gesture-handler";
 import FallingTiles from "../FallingTiles";
 import DeleteButton from "../buttons/DeleteButton";
-import EditButton from "../buttons/EditButton";
 import Feather from "react-native-vector-icons/Feather";
 import CustomSelectList from "../selects/CustomSelectList";
 
 const UserMobileDisplayer = () => {
 
     //PROPS====================================================================================================
-    const [errors, setErrors] = useState([]);
     const [selected, setSelected] = useState(undefined);
     const [loading, setLoading] = useState(false);
     const [data, setData] = useState([]);
@@ -44,22 +38,18 @@ const UserMobileDisplayer = () => {
 
                     if (parsedSelected !== -1)
                         setFilteredData(response.data.filter(record => record.role === getRole(selected)));
-                    else{
+                    else {
                         setFilteredData(response.data);
-                        set
                     }
 
                 } else
                     setFilteredData(response.data);
-                console.log("Fetched data");
-                //console.log(filteredData);
 
                 setLoading(true);
 
             })
             .catch(err => {
                 setError(err);
-                console.log(`Error ${err}`);
             });
     };
 
@@ -88,12 +78,8 @@ const UserMobileDisplayer = () => {
 
             if (savedSelected !== null && savedSelected !== undefined && savedSelected !== NaN && !isNaN(savedSelected)) {
                 const parsedSelected = parseInt(savedSelected);
-
                 setSelected(parsedSelected);
-                console.log('Selected value after loading:', savedSelected);
-
                 const foundOption = userTypeMap.find(user => user.key === parsedSelected);
-
                 setDefaultOption(foundOption)
 
             } else {
@@ -109,7 +95,6 @@ const UserMobileDisplayer = () => {
         try {
             if (selected !== undefined && selected !== null) {
                 await AsyncStorage.setItem('selectedFilter', selected.toString());
-                console.log('Selected value after saving:', selected);
 
             } else {
                 console.log('Selected is undefined or null, not saving to AsyncStorage');

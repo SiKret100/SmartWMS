@@ -1,6 +1,5 @@
 
 import "@/global.css";
-import { Stack, Link, router } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect, useState } from "react";
 import { useFonts } from "expo-font";
@@ -17,7 +16,6 @@ import CustomButton from "./buttons/CustomButton";
 import "react-native-reanimated";
 import authService from "../services/auth/authService";
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 
@@ -45,7 +43,6 @@ const LoginForm = () => {
 
 
     //USE EFFECT HOOKS=========================================================================================
-    //without that componenets are not load as well as nativewind
     useEffect(() => {
         if (loaded) {
         SplashScreen.hideAsync();
@@ -69,7 +66,6 @@ const LoginForm = () => {
             <View className="items-center justify-center w-full h-40">
 
               <Image
-                //style={{ width: "100%", height: "100%", objectFit: "contain" }}
                 className="w-full justify-center items-center h-full px-4"
                 source={require("../img/logo.png")}
               />

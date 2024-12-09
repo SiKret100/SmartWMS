@@ -1,14 +1,12 @@
 import CustomSelectList from "../selects/CustomSelectList";
-import { SafeAreaView, Text, View, Modal, Platform, ActivityIndicator, FlatList } from "react-native";
-import React, { useRef, useState, useEffect, useCallback } from "react";
-import { useFocusEffect } from "expo-router";
+import { SafeAreaView, Text, View, Platform} from "react-native";
+import React, {useState, useEffect} from "react";
 import { KeyboardAvoidingView } from "react-native";
 import CustomButton from "../buttons/CustomButton";
 import TextFormField from "../form_fields/TextFormField";
 import userTypeMap from "data/Mappers/userType.js"
 import userService from "services/dataServices/userService.js";
 import { ScrollView } from "react-native-gesture-handler";
-import FallingTiles from "../FallingTiles";
 import userErrorMessage from "../../data/ErrorMessages/userErrorMessages.jsx"
 import ErrorMessages from "components/errors/ErrorMessages.jsx";
 
@@ -42,10 +40,7 @@ const UserMobileForm = ({ object = {}, header }) => {
             const result = await userService.Add(form);
 
             if (result.errors) {
-                const newErrros = result.errors
-                console.log(`Errors: ${JSON.stringify(errors)}`)
                 setErrors((prevErrors) => ({ ...prevErrors, ...result.errors }));
-                console.log(`Błędy przechwycone: ${JSON.stringify(result.errors)}`);
             } else {
 
                 if (!errors.Description) {
@@ -121,10 +116,8 @@ const UserMobileForm = ({ object = {}, header }) => {
         try {
             const response = await userService.GetAll("Manager");
             setManagers(response.data.map((manager) => { return { key: manager.id, value: manager.userName } }));
-            console.log(`Managers: ${JSON.stringify(managers)}`);
         }
         catch (err) {
-            console.log(err);
             setErrors(err);
         }
     }
@@ -172,7 +165,6 @@ const UserMobileForm = ({ object = {}, header }) => {
                         iconsVisible={true}
                     />
 
-
                     {form.userName.length < 1 ? null : usernameError ?
 
                         <Text className="text-red-500">{userErrorMessage.userName}</Text>
@@ -190,7 +182,6 @@ const UserMobileForm = ({ object = {}, header }) => {
                         iconsVisible={true}
                     />
 
-
                     {form.password.length < 1 ? null : passwordError ?
 
 
@@ -198,8 +189,6 @@ const UserMobileForm = ({ object = {}, header }) => {
                         :
                         null
                     }
-
-
 
                     <View className="mt-6">
                         <Text
@@ -233,7 +222,6 @@ const UserMobileForm = ({ object = {}, header }) => {
                         )}
                     </View>
 
-
                     <CustomButton
                         title="Save"
                         handlePress={() => handleAdd(form)}
@@ -244,13 +232,14 @@ const UserMobileForm = ({ object = {}, header }) => {
 
                     />
 
-
                     {Object.keys(errors).length > 0 && (
                         <ErrorMessages errors={errors}/>
                     )}
                     
                 </KeyboardAvoidingView>
+
             </SafeAreaView>
+
         </ScrollView>
 
     );

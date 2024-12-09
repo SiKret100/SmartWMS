@@ -1,38 +1,30 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
     ActivityIndicator,
-    Animated,
     RefreshControl,
     SafeAreaView,
     Text,
-    TouchableOpacity,
     View,
     FlatList
 } from "react-native";
 import waybillService from "../../services/dataServices/waybillService";
 import CustomSelectList from "../selects/CustomSelectList";
-import reportTypeMap from "../../data/Mappers/reportType";
 import supplierTypeMap from "../../data/Mappers/supplierType";
 import CustomButton from "../buttons/CustomButton";
 import supplierType from "../../data/Mappers/supplierType";
 import FallingTiles from "../FallingTiles";
 import Feather from "react-native-vector-icons/Feather";
-import reportPeriodMap from "../../data/Mappers/reportPeriod";
-import DeleteButton from "../buttons/DeleteButton";
 import countryService from "../../services/dataServices/countryService";
 import orderHeaderService from "../../services/dataServices/orderHeaderService";
 import barcodeGenerator from "../../services/reports/barcodeGenerator";
 import ReportGenerator from "../../services/reports/reportGenerator";
-import allProductState from "../../data/reportTemplates/allProductState";
-import allOrderState from "../../data/reportTemplates/allOrderState";
-import allUsersTasksState from "../../data/reportTemplates/allUsersTasksState";
 import {WebView} from "react-native-webview";
-import waybills from "../../app/home/waybills";
 import waybillFile from "../../data/waybillTemplate/waybillFile";
 import CustomEditButtonFlatList from "../buttons/CustomEditButtonFlatList";
-import CustomAlert from "../popupAlerts/TaskAlreadyTaken";
+import crudService from "../../services/dataServices/crudService";
 
 const WaybillsMobileDisplayer = () => {
+
     //PROPS====================================================================================================
     const [data, setData] = useState([])
     const [selectKey, setSelectKey] = useState(0);
@@ -50,9 +42,8 @@ const WaybillsMobileDisplayer = () => {
             const result = await waybillService.GetAll();
             const enrichedResult = await Promise.all(
                 result.data.map(async waybill => {
-                    const country = await countryService.Get(waybill.countriesCountryId);
-                    const oh = await orderHeaderService.Get(waybill.orderHeadersOrderHeaderId);
-                    console.log(country.data.countryName);
+                    const country = await crudService.Get(waybill.countriesCountryId, "Country");
+                    const oh = await crudService.Get(waybill.orderHeadersOrderHeaderId, "OrderHeader");
                     return {...waybill, countryName: country.data.countryName, address: oh.data.destinationAddress};
                 })
             )
@@ -68,28 +59,22 @@ const WaybillsMobileDisplayer = () => {
 
     const handleCreateWaybill = async (data) => {
         try {
-            setIsLoading(true)
+            setIsLoading(true);
             const barcode = await barcodeGenerator.GenerateBarcode(data.barcode);
-            const waybill = {...data, barcodeImage: barcode}
-            console.log("Waybill: " + JSON.stringify(waybill, null, 2));
-
+            const waybill = {...data, barcodeImage: barcode};
             setHtmlTemplate(waybillFile(waybill));
             setRawData(waybill);
 
         } catch (err) {
             console.log(JSON.stringify(err, null, 2))
         }
-
-
     }
 
     const renderItem = ({item}) => (
 
         <FallingTiles>
 
-
             <View className={"flex-col justify-start bg-slate-200 pt-2 rounded-lg mt-5 mx-4 shadow"}>
-
 
                 <View className={"flex-row bg-blue-200  items-center mx-2 rounded-lg w-fit"}>
 
@@ -108,9 +93,7 @@ const WaybillsMobileDisplayer = () => {
                         </Text>
                     </View>
 
-
                 </View>
-
 
                 <View className={"flex-col"}>
 
@@ -132,7 +115,6 @@ const WaybillsMobileDisplayer = () => {
                                 </View>
                             </View>
 
-
                     </View>
 
                     <View className={"flex-row gap-4 p-2"}>
@@ -153,22 +135,18 @@ const WaybillsMobileDisplayer = () => {
                         </View>
                     </View>
 
-
-
-
                 </View>
-
 
                 <View className="mt-2 flex-row  justify-center items-cente">
 
                     <CustomEditButtonFlatList icon={"download"} title={"Download"}
                                               containerStyles={"flex-1 bg-green-500 rounded-b-lg"}
-                                              textStyles={"text-white"} onEdit={() => handleCreateWaybill(item)}></CustomEditButtonFlatList>
+                                              textStyles={"text-white"} onEdit={() => handleCreateWaybill(item)}
+                    />
 
                 </View>
 
             </View>
-
 
         </FallingTiles>
     );
@@ -206,13 +184,15 @@ const WaybillsMobileDisplayer = () => {
     return (
         isLoading === false ? (
             <SafeAreaView className={"flex-1 justify-start align-center"}>
+
                 <View className={"m-2"}>
+
                     <CustomSelectList
                         selectKey={selectKey}
                         typeMap={[{key: -1, value: 'All'}, ...supplierTypeMap]}
                         setSelected={setSelected}
-
                     />
+
                 </View>
 
                 <FlatList
@@ -239,10 +219,12 @@ const WaybillsMobileDisplayer = () => {
             </SafeAreaView>
         ) : (
             <View className="flex-1 mt-4 mb-10">
+
                 <WebView
                     source={{html: htmlTemplate}}
                     style={{flex: 1}}
                 />
+
                 <CustomButton
                     title={"Print Waybill"}
                     textStyles={"text-white"}
@@ -250,6 +232,7 @@ const WaybillsMobileDisplayer = () => {
                     handlePress={async () => await handleSaveWaybill()}
                     iconName={"printer"}
                 />
+
                 <CustomButton
                     title={"Cancel"}
                     textStyles={"text-white"}
@@ -257,10 +240,9 @@ const WaybillsMobileDisplayer = () => {
                     handlePress={() => setIsLoading(false)}
                     iconName={"x-circle"}
                 />
+
             </View>
         )
-
-
     )
 }
 

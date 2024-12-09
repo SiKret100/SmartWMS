@@ -1,10 +1,8 @@
-import { SafeAreaView, Text, View, Modal, Platform, ActivityIndicator, FlatList } from "react-native";
-import { useRef, useState, useEffect, useCallback } from "react";
+import {Text, View, ActivityIndicator, FlatList } from "react-native";
+import {useState, useEffect, useCallback } from "react";
 import CustomSelectList from "../selects/CustomSelectList";
 import userService from "../../services/dataServices/userService";
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import FallingTiles from "../FallingTiles";
-import { Feather } from "@expo/vector-icons";
 import { RefreshControl } from "react-native-gesture-handler";
 import { useFocusEffect } from "expo-router";
 
@@ -17,7 +15,6 @@ const UserMobileManagers = () => {
     const [managers, setManagers] = useState([]);
     const [filteredData, setFilteredData] = useState([]);
     const [selected, setSelected] = useState("")
-    const [errors, setErrors] = useState([]);
     const [err, setError] = useState("");
     const [defaultOption, setDefaultOption] = useState({ key: "", value: "Select manager..." });
     const [refreshing, setRefreshing] = useState(false);
@@ -31,19 +28,14 @@ const UserMobileManagers = () => {
             setData(response.data.reverse());
             const managersOnly = response.data.filter(user => user.role === "Manager");
             setManagers(managersOnly.map(manager => { return { key: manager.id, value: manager.userName } }))
-            console.log("Fetched data");
-            console.log(data);
             setLoading(true);
         } catch (err) {
             setError(err);
-            console.log(`Error ${err}`);
         }
     };
 
     const handleSelect = () => {
-        console.log(data);
         setFilteredData(data.filter(employee => employee.managerId === selected));
-        console.log(filteredData)
     }
 
     const renderItem = ({ item }) => (
@@ -58,6 +50,7 @@ const UserMobileManagers = () => {
                     </View>
                 </View>
             </View>
+
         </FallingTiles>
     );
 
@@ -94,7 +87,6 @@ const UserMobileManagers = () => {
                 <CustomSelectList
                     setSelected={(value) => {
                         setSelected(value)
-                        console.log(`New selected value: ${selected}`)
                     }}
                     typeMap={managers}
                     defaultOption={defaultOption}
@@ -121,7 +113,6 @@ const UserMobileManagers = () => {
                 }
             />
         </View>
-
     )
 }
 
