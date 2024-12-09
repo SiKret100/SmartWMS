@@ -1,23 +1,18 @@
-import {SafeAreaView, Text, View, Modal, Platform, ActivityIndicator, FlatList, Animated, Alert} from "react-native";
-import React, {useRef, useState, useEffect, useCallback, createContext, useContext} from "react";
-import alertService from "../../services/dataServices/alertService";
+import {SafeAreaView, Text, View, Modal, Platform, ActivityIndicator, Animated} from "react-native";
+import React, {useRef, useState, useEffect, useCallback, useContext} from "react";
 import Feather from "react-native-vector-icons/Feather";
-import {Button} from "react-native-elements";
-import DeleteButton from "../buttons/DeleteButton";
-import EditButton from "../buttons/EditButton";
 import {RefreshControl} from "react-native-gesture-handler";
 import {useFocusEffect} from "expo-router";
 import alertTypeMap from "../../data/Mappers/alertType";
 import AlertMobileForm from "components/alerts/AlertMobileForm.jsx";
-import {SelectList} from 'react-native-dropdown-select-list';
 import moment from 'moment-timezone';
 import FallingTiles from "../FallingTiles";
-import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import CustomSelectList from "../selects/CustomSelectList";
-import CustomButton from "../buttons/CustomButton";
 import {UserDataContext} from "../../app/home/_layout";
 import CustomAlert from "../popupAlerts/TaskAlreadyTaken";
 import CustomEditButtonFlatList from "../buttons/CustomEditButtonFlatList";
+import crudService from "../../services/dataServices/crudService";
 
 const AlertMobileDisplayer = () => {
 
@@ -47,8 +42,6 @@ const AlertMobileDisplayer = () => {
     const renderItem = ({item}) => (
 
         <FallingTiles>
-
-
             <View className={"flex-col justify-start bg-slate-200 pt-2 rounded-lg mt-5 mx-4 shadow"}>
 
 
@@ -106,7 +99,7 @@ const AlertMobileDisplayer = () => {
 
     const fetchData = async () => {
         setLoading(false);
-        await alertService.GetAll()
+        await crudService.GetAll("Alert")
             .then(response => {
                 setData(response.data);
                 loadSelected();
@@ -124,7 +117,6 @@ const AlertMobileDisplayer = () => {
                 } else
                     setFilteredData(response.data);
 
-                console.log("Fetched data");
                 setLoading(true);
             })
             .catch(err => {
@@ -137,10 +129,10 @@ const AlertMobileDisplayer = () => {
         try {
             if (selected !== undefined && selected !== null) {
                 await AsyncStorage.setItem('selectedFilter', selected.toString());
-                console.log('Selected value after saving:', selected);
+                // console.log('Selected value after saving:', selected);
 
             } else {
-                console.log('Selected is undefined or null, not saving to AsyncStorage');
+                // console.log('Selected is undefined or null, not saving to AsyncStorage');
             }
         } catch (error) {
             console.log('Error saving selected filter: ', error);
@@ -156,7 +148,6 @@ const AlertMobileDisplayer = () => {
                 const parsedSelected = parseInt(savedSelected);
 
                 setSelected(parsedSelected);
-                console.log('Selected value after loading:', savedSelected);
 
                 const foundOption = alertTypeMap.find(alert => alert.key === parsedSelected);
 
@@ -169,15 +160,6 @@ const AlertMobileDisplayer = () => {
         } catch (error) {
             console.log('Error loading selected filter: ', error);
         }
-    };
-
-    const handleDelete = async (id) => {
-        try {
-            await alertService.Delete(id);
-        } catch (err) {
-            console.log(err);
-        }
-        setIsDeletedItem(true);
     };
 
     const handleModalEdit = async (object) => {

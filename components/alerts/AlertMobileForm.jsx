@@ -6,10 +6,12 @@ import {SafeAreaView} from "react-native";
 import {KeyboardAvoidingView} from "react-native";
 import {Platform} from "react-native";
 import CustomButton from "../buttons/CustomButton";
-import alertService from "../../services/dataServices/alertService";
 import alertTypeMap from "../../data/Mappers/alertType";
 import CustomSelectList from "../selects/CustomSelectList";
 import CancelButton from "../buttons/CancelButton";
+import AlertDto from "../../data/DTOs/alertDto";
+import crudService from "../../services/dataServices/crudService";
+import {router} from "expo-router";
 
 const AlertMobileForm = ({object = {}, header, setIsModalVisible}) => {
 
@@ -46,7 +48,9 @@ const AlertMobileForm = ({object = {}, header, setIsModalVisible}) => {
 
     const handleEdit = async (id, form) => {
         try {
-            const result = await alertService.Update(id, form);
+            const alertDto = new AlertDto(form);
+
+            const result = await crudService.Update(id, alertDto, "Alert");
             console.log(result.errors)
             if (result.errors) {
                 setErrors(result.errors);
@@ -69,7 +73,8 @@ const AlertMobileForm = ({object = {}, header, setIsModalVisible}) => {
 
     const handleAdd = async (form) => {
         try {
-            const result = await alertService.Add(form);
+            const alertDto = new AlertDto(form);
+            const result = await crudService.Add(alertDto, "Alert");
 
             if (result.errors) {
                 setErrors(result.errors);
@@ -82,6 +87,7 @@ const AlertMobileForm = ({object = {}, header, setIsModalVisible}) => {
                     alertType: -1
                 });
                 setSelectKey((prevKey) => prevKey + 1);
+                router.push('/home/alerts');
             }
         } catch (err) {
             //console.log(err)
