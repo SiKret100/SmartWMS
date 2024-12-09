@@ -1,9 +1,8 @@
-import React, {Component, useCallback} from 'react';
+import React, {useCallback} from 'react';
 import Accordion from 'react-native-collapsible/Accordion';
 import { useState, useEffect } from "react";
-import {Text, Touchable, View, RefreshControl, Platform, Modal, Alert} from "react-native";
-import categoryService from "services/dataServices/categoryService.js";
-import {ScrollView, TouchableOpacity} from "react-native-gesture-handler";
+import {Text, View, RefreshControl, Platform, Modal, Alert} from "react-native";
+import {ScrollView} from "react-native-gesture-handler";
 import { Feather } from '@expo/vector-icons';
 import EditButton from "../buttons/EditButton";
 import {useFocusEffect} from "expo-router";
@@ -11,7 +10,7 @@ import CategoriesMobileForm from "./CategoriesMobileForm";
 import CustomButton from "../buttons/CustomButton";
 import DeleteButton from "../buttons/DeleteButton";
 import SubcategoriesMobileForm from "../subcategories/SubcategoriesMobileForm";
-import subcategoryService from "../../services/dataServices/subcategoryService";
+import crudService from "../../services/dataServices/crudService";
 
 
 const CategoriesMobileDisplayer = () => {
@@ -24,7 +23,6 @@ const CategoriesMobileDisplayer = () => {
     const [currentEditItemCategory, setCurrentEditItemCategory] = useState(null);
     const [currentEditItemSubcategory, setCurrentEditItemSubcategory] = useState(null);
     const [isModalVisibleSubcategory, setIsModalVisibleSubcategory] = useState(false);
-    const [selectKey, setSelectKey] = useState(null);
     const [categoryId, setCategoryId] = useState(null);
     const [refreshing, setRefreshing] = React.useState(false);
     const [isSubcategoryDeleted, setIsSubcategoryDeleted] = useState(false);
@@ -33,8 +31,8 @@ const CategoriesMobileDisplayer = () => {
     //FUNCTIONS================================================================================================
     const fetchData = async () => {
         setSections([]); // Resetujemy sekcje
-        await categoryService
-            .GetCategoriesWithSubcategories()
+        await crudService.
+            GetAll("Category/withSubcategories")
             .then(response => {
                 const updatedSections = response.data.map(category => ({
                     id: category.categoryId,
@@ -45,7 +43,6 @@ const CategoriesMobileDisplayer = () => {
                 const reversedSections = updatedSections.reverse();
                 setSections(reversedSections);
 
-                //console.log("Reversed Sections:", JSON.stringify(reversedSections));
             })
             .catch(err => {
                 setError(err);
@@ -56,6 +53,7 @@ const CategoriesMobileDisplayer = () => {
     const onRefresh = React.useCallback(() =>{
         setRefreshing(true);
         fetchData();
+        setActiveSections([])
         setRefreshing(false);
     }, []);
 
@@ -118,11 +116,10 @@ const CategoriesMobileDisplayer = () => {
                     style: "cancel"
                 }
             ])
-        )
+        );
     }
 
     const handleModalEditSubcategory = async (object) => {
-        console.log(object);
         setCurrentEditItemSubcategory(object)
         setIsModalVisibleSubcategory(true)
         setCategoryId(null);
@@ -144,13 +141,12 @@ const CategoriesMobileDisplayer = () => {
             createAlert('Warning','Cannot delete Categories with Subcategories assigned to them');
 
         } else {
-            console.log(`Sections: ${JSON.stringify(sections)}`);
-            console.log(`Object: ${JSON.stringify(object)}`)
-            await categoryService.Delete(object.id)
+            await crudService.Delete(object.id, "Category")
 
                 .then(response => {
                     setSections(sections.filter(category => category.id !== object.id));
                     createAlert("Info", "Category successfully deleted");
+                    setActiveSections([])
 
 
                 })
@@ -163,8 +159,7 @@ const CategoriesMobileDisplayer = () => {
 
     const handleDeleteSubcategory = async (id) => {
         try{
-            const result = await subcategoryService.Delete(id);
-            //console.log("Result from view:" + JSON.stringify(result) )
+            await crudService.Delete(id, "Subcategory");
             createAlert("Message", "Subcategory deleted")
             setIsSubcategoryDeleted(true)
         }
@@ -184,10 +179,12 @@ const CategoriesMobileDisplayer = () => {
             },[isModalVisibleCategory, isModalVisibleSubcategory])
     ))
 
-    useEffect(() => {
+    useEffect( () => {
         fetchData();
-        console.log("WYWOLANIE USUNIECIA")
-        if (isSubcategoryDeleted) setIsSubcategoryDeleted(false);
+        if (isSubcategoryDeleted) {
+            setIsSubcategoryDeleted(false);
+            setActiveSections([])
+        }
     }, [isSubcategoryDeleted]);
 
 

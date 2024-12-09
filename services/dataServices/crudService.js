@@ -28,6 +28,7 @@ export default class crudService {
     };
 
     static GetAll = async (url) => {
+        console.log("Get all crud service");
         const token = Platform.OS !== "web" ? SecureStore.getItem("token") : "";
         const config = {
             headers: {
@@ -68,4 +69,26 @@ export default class crudService {
 
         }
     };
+
+    static Delete = async(id, url) => {
+        console.log("Delete crud service");
+        const token = Platform.OS !== "web" ? SecureStore.getItem("token") : "";
+        const config = {
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+        }
+
+        try {
+
+            return await axios.delete(`${this.ip}/api/${url}/${id}`, config);
+
+        } catch(err) {
+
+            return err.response.data;
+
+        }
+
+    }
 }

@@ -1,6 +1,5 @@
-import {StyleSheet, Text, View, TouchableOpacity, Alert} from "react-native";
+import {Text, View, TouchableOpacity} from "react-native";
 import React from "react";
-import {ActivityIndicator} from "react-native";
 import Feather from "react-native-vector-icons/Feather";
 
 export default function CustomEditButtonFlatList({

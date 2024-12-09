@@ -1,8 +1,6 @@
-import {View, Text, TextInput, StyleSheet} from 'react-native';
+import {View, Text, TextInput} from 'react-native';
 import React, {useState} from 'react';
 import Feather from "react-native-vector-icons/Feather";
-import FallingTiles from '../FallingTiles';
-import CustomButton from "../buttons/CustomButton";
 
 
 const NumberFormField = ({
@@ -24,7 +22,7 @@ const NumberFormField = ({
     const smartwms_blue = "#475f9c";
 
     return (
-        < View
+        <View
             className={`space-y-2 ${otherStyles} mb-2`
             }>
             <

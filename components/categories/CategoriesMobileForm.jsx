@@ -1,39 +1,40 @@
-import {KeyboardAvoidingView, Platform, SafeAreaView, Text, View} from 'react-native'
+import {SafeAreaView, Text, View} from 'react-native'
 import TextFormField from "../form_fields/TextFormField";
-import React, {useState, useEffect} from "react";
+import React, {useState} from "react";
 import CustomButton from "../buttons/CustomButton";
-import categoryService from "../../services/dataServices/categoryService";
-import {qunit} from "globals";
 import ErrorMessages from "../errors/ErrorMessages";
 import CancelButton from "../buttons/CancelButton";
+import crudService from "../../services/dataServices/crudService";
+import CategoryDto from "../../data/DTOs/categoryDto";
+import {router} from "expo-router";
 
 const CategoriesMobileForm = ({object = {}, header, setIsModalVisible}) => {
 
     //PROPS====================================================================================================
     const [errors, setErrors] = useState({});
     const [categoryNameError, setCategoryNameError] = object?.id ? useState(false) : useState(true);
-    const[selectKey, setSelectKey] = useState(0);
+    const [selectKey, setSelectKey] = useState(0);
     const [form, setForm] = React.useState({
         categoryName: object?.title || ""
     })
 
+
     //FUNCTIONS================================================================================================
     const handleName = (e) => {
-        console.log("zmiana znaku");
         const nameVar = e.nativeEvent.text;
         nameVar.length > 0 ? setCategoryNameError(false) : setCategoryNameError(true);
     }
 
     const handleEdit = async(id, form) => {
+
         try {
-            console.log("Wywolal sie")
-            const result = await categoryService.Update(id, form);
+            const categoryDto = new CategoryDto(form);
+            const result = await crudService.Update(id, categoryDto, "Category");
+
             if(result.errors) {
-                console.log("erorry")
                 setErrors(result.errors);
             }
             else {
-                console.log("Updated")
                 setErrors({});
                 setForm({
                     categoryName: ""
@@ -50,30 +51,29 @@ const CategoriesMobileForm = ({object = {}, header, setIsModalVisible}) => {
 
     const handleAdd = async(form) => {
         try {
-            const result = await categoryService.Add(form);
-            //console.log(result.errors);
+            const categoryDto = new CategoryDto(form);
+            const result = await crudService.Add(categoryDto, "Category");
+
             if(result.errors){
                 setErrors(result.errors);
-                //console.log(`Błędy przechwycone: ${JSON.stringify(result.errors)}`);
-            }else{
+            }
+            else{
                 setErrors({})
                 setForm({
                     categoryName: ""
                 })
-
             }
+
+            router.push("/home/categories/");
         }
         catch(err){
-            //console.log(err);
             setErrors(err);
         }
     }
 
+
     return (
         <SafeAreaView className={"h-full mx-2"}>
-            {/*<KeyboardAvoidingView*/}
-            {/*    behavior="padding"*/}
-            {/*    clasName={`h-full px-4`}>*/}
 
             {header === "Edit" && (
                 <View className="flex flex-row items-center justify-between my-5">
@@ -81,7 +81,6 @@ const CategoriesMobileForm = ({object = {}, header, setIsModalVisible}) => {
                     <Text className="absolute left-1/2 transform -translate-x-1/2 my-5 text-3xl font-bold">{header}</Text>
                 </View>
             )}
-
 
             <TextFormField
                     title="Name"
@@ -111,8 +110,6 @@ const CategoriesMobileForm = ({object = {}, header, setIsModalVisible}) => {
                    <ErrorMessages errors={errors}/>
                 )}
 
-
-            {/*</KeyboardAvoidingView>*/}
         </SafeAreaView>
     )
 }

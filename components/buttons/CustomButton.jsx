@@ -32,8 +32,6 @@ export default function CustomButton({
           {" "+title}
         </Text>
 
-
-
       </View>
 
     </TouchableOpacity>

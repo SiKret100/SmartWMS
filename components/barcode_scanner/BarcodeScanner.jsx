@@ -5,17 +5,13 @@ import CancelButton from "../buttons/CancelButton";
 
 const BarcodeScanner = ({form=null, setForm=null, setIsModalVisible}) => {
     const [permission, requestPermission] = useCameraPermissions();
-    const [facing, setFacing] = useState('back');
     const [scanned, setScanned] = useState(false);
 
-
     if (!permission) {
-        // Camera permissions are still loading
         return <View />;
     }
 
     if (!permission.granted) {
-        // Camera permissions are not granted yet
         return (
             <View style={styles.container}>
                 <Text style={{ textAlign: 'center' }}>We need your permission to show the camera</Text>
@@ -32,7 +28,6 @@ const BarcodeScanner = ({form=null, setForm=null, setIsModalVisible}) => {
             console.log(data);
         }
     };
-
 
     return (
 

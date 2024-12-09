@@ -1,16 +1,11 @@
 import React, {useEffect, useState, useContext} from 'react';
-import {ActivityIndicator, FlatList, RefreshControl, SafeAreaView, Text, TouchableOpacity, View} from 'react-native'
-
-import {ScrollView} from "react-native-gesture-handler";
+import {FlatList, SafeAreaView, Text, TouchableOpacity, View} from 'react-native'
 import {UserDataContext} from "../../app/home/_layout";
 import {Feather} from "@expo/vector-icons";
 import * as Progress from "react-native-progress";
 import {router} from "expo-router";
-import CustomButton from "../buttons/CustomButton";
 import taskService from "../../services/dataServices/taskService";
 import FallingTiles from "../FallingTiles";
-import CustomEditButtonFlatList from "../buttons/CustomEditButtonFlatList";
-
 
 const HomeScreen = () => {
 
@@ -71,9 +66,7 @@ const HomeScreen = () => {
 
         <FallingTiles>
 
-
             <View className={"flex-col justify-start bg-slate-200 rounded-lg mt-5 shadow"}>
-
 
                 <TouchableOpacity onPress={() => router.push(item.route)}>
                     <View className={"flex-row bg-blue-200  items-center rounded-lg w-fit m-2"}>
@@ -87,14 +80,10 @@ const HomeScreen = () => {
 
                         </View>
 
-
                     </View>
                 </TouchableOpacity>
 
-
-
             </View>
-
 
         </FallingTiles>
     );

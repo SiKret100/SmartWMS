@@ -1,14 +1,11 @@
-import React, {useEffect, useState} from "react";
-import {KeyboardAvoidingView, Platform, SafeAreaView, Text, View} from "react-native";
+import React, {useState} from "react";
+import {KeyboardAvoidingView, SafeAreaView, Text, View} from "react-native";
 import TextFormField from "../form_fields/TextFormField";
 import CustomSelectList from "../selects/CustomSelectList";
 import CustomButton from "../buttons/CustomButton";
-import subcategoryService from "services/dataServices/subcategoryService.js";
-import * as SecureStore from "expo-secure-store";
-import CategoryDto from "../../data/DTOs/categoryDto";
-import axios from "axios";
-import {router} from "expo-router";
 import CancelButton from "../buttons/CancelButton";
+import crudService from "../../services/dataServices/crudService";
+import SubcategoryDto from "../../data/DTOs/subcategoryDto";
 
 const SubcategoryMobileForm = ({object = {}, header, setIsModalVisible, categoriesList, categoryId}) => {
 
@@ -33,6 +30,7 @@ const SubcategoryMobileForm = ({object = {}, header, setIsModalVisible, categori
 
     const defaultOption = form.categoriesCategoryId !== -1 ? categoryTypeMap.find(category => category.key == form.categoriesCategoryId) : null;
 
+
     //FUNCTIONS================================================================================================
     const handleSubcategoryName = (e) => {
         const subcategoryNameVar = e.nativeEvent.text;
@@ -44,12 +42,12 @@ const SubcategoryMobileForm = ({object = {}, header, setIsModalVisible, categori
     }
 
     const handleEdit = async (id, form) => {
-        console.log("WYWOLANIE EDIT")
         try {
-            const result = await subcategoryService.Update(id, form);
+            const subcategoryDto = new SubcategoryDto(form);
+            const result = await crudService.Update(id, subcategoryDto, "Subcategory");
+
             if(result.errors){
                 setErrors(result.errors)
-                console.log("Błędy przechwycone", JSON.stringify(result.errors));
             }else {
                 setErrors({});
                 setForm({
@@ -62,17 +60,16 @@ const SubcategoryMobileForm = ({object = {}, header, setIsModalVisible, categori
         }
         catch(err){
             setErrors(err);
-            console.log(err)
         }
     }
 
     const handleAdd = async (form) => {
         try{
-            const result = await subcategoryService.Add(form);
+            const subcategoryDto = new SubcategoryDto(form);
+            const result = await crudService.Add(form, "Subcategory");
 
             if (result.errors){
                 setErrors(result.errors)
-                console.log("Błędy przechwycone", JSON.stringify(result.errors));
             }else {
                 setErrors({});
                 setForm({
@@ -82,7 +79,6 @@ const SubcategoryMobileForm = ({object = {}, header, setIsModalVisible, categori
                 )
                 setIsModalVisible(false)
                 setSelectKey((prevKey) => prevKey + 1);
-
             }
         }
         catch(err){
@@ -90,10 +86,6 @@ const SubcategoryMobileForm = ({object = {}, header, setIsModalVisible, categori
         }
     }
 
-    //USE EFFECT HOOKS=========================================================================================
-    useEffect(() => {
-        console.log('Otrzymano obiekt:' + JSON.stringify(categoriesList));
-    }, []);
 
     return(
 

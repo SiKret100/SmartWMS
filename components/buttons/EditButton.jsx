@@ -1,4 +1,3 @@
-import { View, Text } from 'react-native'
 import React from 'react'
 import { Button } from 'react-native-elements'
 import { Feather } from '@expo/vector-icons'
