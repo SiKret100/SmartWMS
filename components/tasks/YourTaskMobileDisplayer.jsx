@@ -44,7 +44,6 @@ const YourTaskMobileDisplayer = props => {
                     barcode: taskOrderInfoResponse.data.barcode,
                     quantityAll: taskOrderInfoResponse.data.quantityAll
                 });
-                // console.log("TaskOrderInfo: " + JSON.stringify(taskOrderInfoResponse.data));
                 setShelves(taskOrderInfoResponse.data.shelves);
                 const getTaskResponse = await taskService.Get(taskId);
 

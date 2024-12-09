@@ -94,7 +94,7 @@ const TasksMobileDisplayer = () => {
                     <View className={"flex-row bg-blue-200  items-center mx-2 rounded-lg w-fit"}>
 
                         <View className="flex-row bg-smartwms-blue rounded-lg justify-center items-center p-2">
-                            <Feather color="#ffffff" className={""} name={"package"} size={45}/>
+                            <Feather color="#ffffff" className={""} name={"list"} size={45}/>
                         </View>
 
                         <View className={"flex-col mx-2"}>

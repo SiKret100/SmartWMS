@@ -84,49 +84,6 @@ const WaybillsMobileDisplayer = () => {
     }
 
     const renderItem = ({item}) => (
-        // <FallingTiles>
-        //     <View
-        //         className={"flex-row justify-between items-center flex-0.5 px-2 py-2 mx-2 my-2 shadow rounded-lg bg-slate-200"}>
-        //
-        //         <Feather color="#3E86D8" className={"m-2"} name={"file-text"} size={24}></Feather>
-        //
-        //         <View className={"px-2 py-2 mx-4"}>
-        //             <Text className={"text-center"}>Waybill ID: {item.waybillId}</Text>
-        //
-        //             <Text className={"text-center"}>
-        //                 {new Date(item.shippingDate).toLocaleDateString('en-GB', {
-        //                     year: 'numeric',
-        //                     month: 'long',
-        //                     day: 'numeric'
-        //                 })}
-        //             </Text>
-        //             <Text className={"text-center"}>
-        //                 Address: {item.address}
-        //             </Text>
-        //             <Text className={"text-center"}>
-        //                 Postal code: {item.postalCode}
-        //             </Text>
-        //             <Text className={"text-center"}>
-        //                 Supplier name: {item.supplierName}
-        //             </Text>
-        //             <Text className={"text-center"}>
-        //                 Country: {item.countryName}
-        //             </Text>
-        //             <Text className={"text-center"}>
-        //                 Barcode: {item.barcode}
-        //             </Text>
-        //
-        //         </View>
-        //
-        //         <TouchableOpacity
-        //             onPress={() => handleCreateWaybill(item)}
-        //             className={"px-2"}
-        //         >
-        //             <Feather name="download" size={24} color={"#3E86D8"}/>
-        //         </TouchableOpacity>
-        //
-        //     </View>
-        // </FallingTiles>
 
         <FallingTiles>
 
