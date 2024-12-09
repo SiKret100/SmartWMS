@@ -7,15 +7,12 @@ import CustomSelectList from "../selects/CustomSelectList";
 import allProductState from "../../data/reportTemplates/allProductState";
 import reportTypeMap from "../../data/Mappers/reportType";
 import reportPeriodMap from "../../data/Mappers/reportPeriod";
-import productService from "../../services/dataServices/productService";
 import barcodeGenerator from "../../services/reports/barcodeGenerator";
-import subcategoryService from "../../services/dataServices/subcategoryService";
 import {Feather} from "@expo/vector-icons";
 import {Divider} from "react-native-elements";
-import orderHeaderService from "../../services/dataServices/orderHeaderService";
 import allOrderState from "../../data/reportTemplates/allOrderState";
-import reportService from "../../services/dataServices/reportService";
 import allUsersTasksState from "../../data/reportTemplates/allUsersTasksState";
+import crudService from "../../services/dataServices/crudService";
 
 const ReportsMobileForm = () => {
 
@@ -32,13 +29,13 @@ const ReportsMobileForm = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [rawData, setRawData] = useState([]);
 
+
     //FUNCTIONS=============================================================================================
     const handleReportType = () => {
         form.reportType === -1 ? setTypeError(true) : setTypeError(false);
     }
 
     const handleReportPeriod = () => {
-        console.log(`Chosen period: ${form.reportPeriod}`)
         form.reportPeriod === -1 ? setPeriodError(true) : setPeriodError(false);
     }
 
@@ -48,10 +45,12 @@ const ReportsMobileForm = () => {
         switch (form.reportType) {
             case 0:
                 setForm(prev => ({...prev, reportPeriod: 0}));
-                const result = await productService.GetAll();
+
+                const result = await crudService.GetAll("Product");
+
                 const data = await Promise.all(result.data.map(async product => {
                     const generatedLink = await barcodeGenerator.GenerateBarcode(product.barcode);
-                    const subcategoryResponse = await subcategoryService.Get(product.subcategoriesSubcategoryId);
+                    const subcategoryResponse = await crudService.Get(product.subcategoriesSubcategoryId, "Subcategory");
                     const subcategoryName = subcategoryResponse.data.subcategoryName;
                     return {...product, barcode: generatedLink, subcategoriesSubcategoryId: subcategoryName};
                 }));
@@ -61,12 +60,14 @@ const ReportsMobileForm = () => {
                 break;
 
             case 2:
-                const orderHeaderResponse = await orderHeaderService.GetWithDetails();
+                const orderHeaderResponse = await crudService.GetAll("OrderHeader/withDetails");
+
                 const preparedOrderHeader = await Promise.all(
                     orderHeaderResponse.data.map(async (oh) => {
                         const preparedOrderDetails = await Promise.all(
                             oh.orderDetails.map(async (od) => {
-                                const productInfo = await productService.Get(od.productsProductId);
+                                const productInfo = await crudService.Get(od.productsProductId, "Product")
+
                                 return {...od, price: productInfo.data.price * od.quantity};
                             })
                         );
@@ -107,8 +108,9 @@ const ReportsMobileForm = () => {
                 break;
 
             case 4:
-                const usersTasks = await reportService.UsersFinishedTasks();
-                console.log("Raw users tasks: ", JSON.stringify(usersTasks.data, null, 2));
+                const usersTasks = await crudService.GetAll("Task/usersFinishedTasks")
+
+
                 endDate = new Date();
                 beginningDate = new Date(endDate);
 
@@ -131,8 +133,7 @@ const ReportsMobileForm = () => {
                         break;
                 }
 
-                console.log("Beginning date: ", beginningDate);
-                console.log("End date: ", endDate);
+
                 let filteredUsersFinishedTasks = usersTasks.data.map(user => {
                     const filteredTasks = user.tasks.filter(task =>
                         new Date(task.finishDate) >= beginningDate && new Date(task.finishDate) <= endDate
@@ -150,8 +151,6 @@ const ReportsMobileForm = () => {
                     filteredTasks: filteredUsersFinishedTasks
                 };
 
-                // console.log("Filtered users tasks: ", JSON.stringify(filteredUsersFinishedTasks,null,2));
-
                 setHtmlTemplate(allUsersTasksState(filteredUsersFinishedTasks));
                 setRawData(filteredUsersFinishedTasks);
                 break;
@@ -163,14 +162,12 @@ const ReportsMobileForm = () => {
 
         switch (form.reportType) {
             case 0:
-                console.log("Form: " + JSON.stringify(form))
                 await ReportGenerator.printToFile(allProductState, rawData, form);
                 break;
             case 2:
                 await ReportGenerator.printToFile(allOrderState, rawData, form);
                 break;
             case 4:
-                console.log("Save button")
                 await ReportGenerator.printToFile(allUsersTasksState, rawData, form);
                 break;
         }
@@ -178,7 +175,6 @@ const ReportsMobileForm = () => {
     }
 
     return (
-
 
         isLoading === false ? (
             <SafeAreaView className="justify-start align-center mx-2 px-4 py-2">
@@ -251,8 +247,6 @@ const ReportsMobileForm = () => {
             </View>
 
         )
-
-
     );
 };
 

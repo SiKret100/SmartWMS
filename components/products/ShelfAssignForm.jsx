@@ -33,6 +33,7 @@ const ShelfAssignForm = ({shelvesList, assignedShelves, setAssignedShelves, setI
     return (
 
         <View>
+
             <ScrollView className={"px-2"}>
                 <View className="flex flex-col items-start justify-between my-5 mx-5">
                     <CancelButton onPress={() => setIsModalVisible(false)} />
@@ -73,29 +74,27 @@ const ShelfAssignForm = ({shelvesList, assignedShelves, setAssignedShelves, setI
                                 setCurrentlyAssignedProductQuantity(prevQuantity => prevQuantity - parseInt(form.currentQuant));
                                 setLocalAssignedShelves(prevArr => [...prevArr, form])
                                 setIsAssignedToShelf(true)
-                                console.log("Currently assigned" + currentlyAssignedProductQuantity)
                             }
 
                             const handleMaxQuant = (e) => {
                                 const maxQuantVar = e.nativeEvent.text;
                                 setIsAssignedToShelf(false)
-                                // if(form.maxQuant.length !== 0 && form.currentQuant.length !== 0 ){
-                                //     setErrorMessage("Maximum quantity is required");
-                                // }
+
                                 const regexp = new RegExp("^[1-9]{1}\\d*$");
                                 if(regexp.test(maxQuantVar)) {
                                     const parsedMaxQuant = parseInt(maxQuantVar);
-                                    console.log(`Parsed max: ${parsedMaxQuant}`);
+
                                     if (isNaN(parsedMaxQuant)) {
                                         setMaxQuantError(true);
                                         setMaxQuantErrorMessage(shelfAssignmentErrorMessages.invalidMaxQuant);
-                                        console.log('Error: not a number');
                                     }
                                     else {
                                         const parsedCurrentQuant = parseInt(form.currentQuant);
+
                                         if(parsedMaxQuant > 0 && parsedMaxQuant <= 2147483647) {
                                             setMaxQuantError(false);
                                             setMaxQuantErrorMessage("")
+
                                             if(isNaN(parsedCurrentQuant)) {
                                                 setCurrentQuantError(true);
                                                 setCurrentQuantErrorMessage(shelfAssignmentErrorMessages.invalidCurrentQuant);
@@ -136,50 +135,45 @@ const ShelfAssignForm = ({shelvesList, assignedShelves, setAssignedShelves, setI
                                 setIsAssignedToShelf(false);
 
                                 if(alreadyAssignedShelf.length > 0){
-                                    //console.log("Znaleziono")
                                     setCurrentlyAssignedProductQuantity(prevQuantity => prevQuantity + parseInt(alreadyAssignedShelf[0].currentQuant));
                                     setLocalAssignedShelves(assignedShelves.filter(shelf => shelf.shelfId !== form.shelfId));
                                 }
+
                                 const regexp = new RegExp("^[1-9]{1}\\d*$");
+
                                 if (regexp.test(currentQuant)) {
                                     const parsedCurrentQuant = parseInt(currentQuant);
-                                    //console.log(parsedCurrentQuant);
 
                                     if (isNaN(parsedCurrentQuant)) {
                                         setCurrentQuantError(true);
                                         setCurrentQuantErrorMessage(shelfAssignmentErrorMessages.invalidCurrentQuant)
-                                        //console.log('Entered value for current quantity is not a number');
                                     } else {
                                         const parsedMaxQuant = parseInt(form.maxQuant);
+
                                         if ( parsedCurrentQuant > 0 && parsedCurrentQuant <= currentlyAssignedProductQuantity) {
                                             if(!isNaN(parsedMaxQuant)){
                                                 if(parsedCurrentQuant <= parsedMaxQuant){
                                                     setCurrentQuantError(false);
                                                     setCurrentQuantErrorMessage("");
-                                                    console.log('No error');
                                                 }
                                                 else{
                                                     setCurrentQuantError(true);
                                                     setCurrentQuantErrorMessage(shelfAssignmentErrorMessages.currentQuantToMaxQuantMismatch);
-                                                    console.log('No error');
                                                 }
                                             }
                                             else {
                                                 setCurrentQuantError(false);
                                                 setCurrentQuantErrorMessage("");
-                                                console.log('No Error');
                                             }
 
                                         }else{
                                             setCurrentQuantError(true);
                                             setCurrentQuantErrorMessage(shelfAssignmentErrorMessages.currentQuantBelowZeroOrAbovePiecesLeft);
-                                            console.log('Error');
                                         }
                                     }
                                 } else {
                                     setCurrentQuantError(true);
                                     setCurrentQuantErrorMessage(shelfAssignmentErrorMessages.invalidCurrentQuant);
-                                    console.log('Error');
                                 }
                             }
 
@@ -190,7 +184,6 @@ const ShelfAssignForm = ({shelvesList, assignedShelves, setAssignedShelves, setI
 
                                     <View key={key} className="flex flex-row bg-slate-200 p-2 rounded-lg gap-2">
 
-                                        {/* Rack Lane Level */}
                                         <View className="flex-3 justify-center pr-2">
                                             <View className="flex-row items-center justify-between">
                                                 <Text className="font-bold text-2xl text-gray-800">Lane:</Text>
@@ -257,14 +250,13 @@ const ShelfAssignForm = ({shelvesList, assignedShelves, setAssignedShelves, setI
                                     ) : null}
 
                                 </View>
-
-
                             )
                         }
                     )
                 }
 
             </ScrollView>
+
         </View>
 
     )

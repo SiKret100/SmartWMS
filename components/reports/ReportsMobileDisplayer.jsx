@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
     ActivityIndicator,
     Animated,
@@ -9,31 +9,30 @@ import {
     View,
     FlatList
 } from "react-native";
-import CustomButton from "../buttons/CustomButton";
 import reportService from "../../services/dataServices/reportService";
 import FallingTiles from "../FallingTiles";
 import Feather from "react-native-vector-icons/Feather";
 import DeleteButton from "../buttons/DeleteButton";
 import {useFocusEffect} from "expo-router";
 import CustomSelectList from "../selects/CustomSelectList";
-import orderStatusTypeMap from "../../data/Mappers/orderStatusType";
 import reportTypeMap from "../../data/Mappers/reportType";
 import reportPeriodMap from "../../data/Mappers/reportPeriod";
 
 
 const ReportsMobileDisplayer = () => {
 
+    //PROPS====================================================================================================
     const [filteredData, setFilteredData] = useState([]);
     const [refreshing, setRefreshing] = useState(false);
     const [loading, setLoading] = useState(true);
-    const [flatListHeight, setFlatListHeight] = useState(0);
-    const [defaultOption, setDefaultOption] = useState();
     const [selectKey, setSelectKey] = useState(0);
     const [selectedType, setSelectedType] = useState(undefined);
     const [selectedPeriod, setSelectedPeriod] = useState(undefined);
     const [isDeletedItem, setIsDeletedItem] = useState(false);
     const [data, setData] = useState([]);
 
+
+    //FUNCTIONS================================================================================================
     const fetchData = async () => {
         try{
             const result = await reportService.Get();
@@ -116,7 +115,7 @@ const ReportsMobileDisplayer = () => {
     }, []);
 
 
-
+    //USE EFFECT HOOKS=========================================================================================
     useFocusEffect((
         useCallback(
             () => {
@@ -159,6 +158,7 @@ const ReportsMobileDisplayer = () => {
         fetchData();
         if (isDeletedItem) setIsDeletedItem(false);
     }, [isDeletedItem]);
+
 
     return (
         <SafeAreaView className={"flex-1 justify-start align-center"}>

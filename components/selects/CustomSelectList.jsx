@@ -1,4 +1,4 @@
-import {StyleSheet, Text, View} from 'react-native'
+import {StyleSheet} from 'react-native'
 import React from 'react'
 import {SelectList} from 'react-native-dropdown-select-list'
 
@@ -45,5 +45,3 @@ const CustomSelectList = ({selectKey, setSelected, typeMap, defaultOption, other
 }
 
 export default CustomSelectList
-
-const styles = StyleSheet.create({})

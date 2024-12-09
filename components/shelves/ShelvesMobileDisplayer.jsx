@@ -22,7 +22,6 @@ const ShelvesMobileDisplayer = () => {
     const [refreshing, setRefreshing] = useState(false)
     const [activeLaneSections, setActiveLaneSections] = useState([]);
     const [activeRackSections, setActiveRackSections] = useState([]);
-    const [rackSections, setRackSections] = useState([]);
     const [errors, setErrors] = useState([]);
     const [isShelfModalVisible, setIsShelfModalVisible] = useState(false);
     const [isRackModalVisible, setIsRackModalVisible] = useState(false);
@@ -42,7 +41,6 @@ const ShelvesMobileDisplayer = () => {
                 setRawData(response.data);
                 setSections(handlePrepareSections(response.data));
 
-                //setSections(handlePrepareSection(response.data))
             })
             .catch(err => {
                 throw err

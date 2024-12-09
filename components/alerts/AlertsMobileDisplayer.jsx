@@ -139,7 +139,6 @@ const AlertMobileDisplayer = () => {
         }
     };
 
-
     const loadSelected = async () => {
         try {
             const savedSelected = await AsyncStorage.getItem('selectedFilter');
