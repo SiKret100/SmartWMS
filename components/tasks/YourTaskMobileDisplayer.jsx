@@ -4,19 +4,15 @@ import {router, useFocusEffect} from "expo-router";
 import CustomButton from "../buttons/CustomButton";
 import taskService from "../../services/dataServices/taskService";
 import {ScrollView} from "react-native-gesture-handler";
-import {Divider} from "react-native-elements";
 import {Feather} from "@expo/vector-icons";
 import BarcodeScanner from "../barcode_scanner/BarcodeScanner";
 import productService from "../../services/dataServices/productService";
 import * as Progress from "react-native-progress";
-import moment from "moment-timezone";
 
 const YourTaskMobileDisplayer = props => {
 
-
     //PROPS====================================================================================================
     const [hasUserTask, setHasUserTask] = useState(false);
-    const [userTask, setUserTask] = useState(null);
     const [product, setProduct] = useState({productName: null, barcode: null, quantityAll: null});
     const [shelves, setShelves] = useState([]);
     const [quantityCollected, setQuantityCollected] = useState(0);
@@ -26,6 +22,7 @@ const YourTaskMobileDisplayer = props => {
     const [scannedBarcode, setIsScannedBarcode] = useState({barcode: null});
     const [userTaskId, setUserTaskId] = useState(null);
     const progress = quantityAllocated > 0 ? quantityCollected / quantityAllocated : 0;
+
 
     //FUNCTIONS================================================================================================
     const fetchData = async () => {
@@ -55,8 +52,6 @@ const YourTaskMobileDisplayer = props => {
             console.log("Err from func: " + JSON.stringify(err));
         }
     }
-
-
 
 
     //USE EFFECT HOOKS=========================================================================================
@@ -104,8 +99,7 @@ const YourTaskMobileDisplayer = props => {
                     return updatedValue;
                 });
 
-                const taskResponse = await taskService.TaskUpdateQuantity(userTaskId);
-                console.log("Task response: " + JSON.stringify(taskResponse));
+                await taskService.TaskUpdateQuantity(userTaskId);
             }
         } else {
             Alert.alert('Warning', 'Wrong product', [
@@ -121,6 +115,7 @@ const YourTaskMobileDisplayer = props => {
 
 
     return (
+
         loading ? (
             <View className={"flex-1 justify-center items-center"}>
                 <ActivityIndicator size="large" color="#000"/>
@@ -232,7 +227,6 @@ const YourTaskMobileDisplayer = props => {
                     <Text className={"text-2xl font-bold"}>You have no task assigned</Text>
                 )}
 
-
                 <Modal visible={isBarcodeModalVisible}
                        animationType={Platform.OS !== "ios" ? "" : "slide"}
                        presentationStyle={Platform.OS === "ios" ? "pageSheet" : ""}
@@ -240,7 +234,6 @@ const YourTaskMobileDisplayer = props => {
                     <BarcodeScanner form={scannedBarcode} setForm={setIsScannedBarcode}
                                     setIsModalVisible={setIsBarcodeModalVisible}/>
                 </Modal>
-
 
             </ScrollView>
         )

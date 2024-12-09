@@ -60,7 +60,6 @@ export default class crudService {
         };
 
         try {
-
             return await axios.put(`${this.ip}/api/${url}/${id}`, data, config);
 
         } catch (err) {
@@ -81,6 +80,7 @@ export default class crudService {
         }
 
         try {
+
             return await axios.delete(`${this.ip}/api/${url}/${id}`, config);
 
         } catch(err) {
@@ -88,7 +88,6 @@ export default class crudService {
             throw err;
 
         }
-
     }
 
     static Get = async (id, url) => {

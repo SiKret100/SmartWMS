@@ -12,6 +12,7 @@ import ShelvesMobileForm from "./ShelvesMobileForm";
 import RacksMobileForm from "../racks/RacksMobileForm";
 import {useFocusEffect} from "expo-router";
 import rackService from "../../services/dataServices/rackService";
+import crudService from "../../services/dataServices/crudService";
 
 
 const ShelvesMobileDisplayer = () => {
@@ -35,8 +36,7 @@ const ShelvesMobileDisplayer = () => {
     //FUNCTIONS================================================================================================
     const fetchData = async () => {
         setSections([]);
-        await laneService
-            .GetAllWithRacksShelves()
+        await crudService.GetAll("Lane/getAllWithRacksShelves")
             .then(response => {
                 setRawData(response.data);
                 setSections(handlePrepareSections(response.data));
@@ -86,7 +86,6 @@ const ShelvesMobileDisplayer = () => {
 
                 <View className="flex-row space-x-2 absolute right-4">
                     <DeleteButton onDelete={() => handleDeleteLane(section)}/>
-                    {/*<EditButton onEdit={() => console.log("edit")} />*/}
                 </View>
 
             </View>
@@ -111,7 +110,6 @@ const ShelvesMobileDisplayer = () => {
 
                 <View className="flex-row space-x-2 absolute right-4">
                     <DeleteButton onDelete={() => handleDeleteRack(section) }/>
-                    {/*<EditButton onEdit={() => console.log("edit")} />*/}
                 </View>
 
             </View>
@@ -185,13 +183,10 @@ const ShelvesMobileDisplayer = () => {
 
     const handleDeleteShelf = async (shelf) => {
         if (shelf.productId !== null) {
-            console.log("Jest produkt");
             setErrors([...errors, "Cannot deleted shelf with product assigned to it"]);
         } else {
-            console.log("No product")
-            await shelfService.Delete(shelf.shelfId)
+            await crudService.Delete(shelf.shelfId, "Shelf")
                 .then(response => {
-                    console.log(`Shelf successfully deleted: ${JSON.stringify(response)}`);
                     onRefresh();
                 })
                 .catch(err => {
@@ -203,7 +198,7 @@ const ShelvesMobileDisplayer = () => {
     const handleDeleteRack = async (rack) => {
         if(rack.content.length === 0) {
             try{
-                const result = rackService.Delete(rack.rackId);
+                await crudService.Delete(rack.rackId, "Rack")
                 createAlert("Info", "Rack successfully deleted");
                 onRefresh();
             }
@@ -215,10 +210,9 @@ const ShelvesMobileDisplayer = () => {
         }
     }
 
-    const handleDeleteLane = (lane) => {
-        //console.log("Lane: " + JSON.stringify(lane))
+    const handleDeleteLane = async (lane) => {
         if(lane.content.length === 0) {
-            const result = laneService.Delete(lane.laneId);
+            await crudService.Delete(lane.laneId, "Lane");
             onRefresh();
             createAlert("Info", "Lane successfully deleted");
 
@@ -250,14 +244,6 @@ const ShelvesMobileDisplayer = () => {
         setRackModalHeader("Add")
         console.log(`Lane id: ${laneId}`);
     }
-
-    const _renderSectionTitle = (section) => {
-        return (
-            <View>
-                <Text>{section.content}</Text>
-            </View>
-        );
-    };
 
     const onRefresh = React.useCallback(() => {
         setRefreshing(true);
@@ -297,11 +283,6 @@ const ShelvesMobileDisplayer = () => {
                 underlayColor='transparent'
             />
 
-
-
-            {/*<CustomButton handlePress={() => {*/}
-            {/*    console.log(JSON.stringify(sections))*/}
-            {/*}} title="Button"/>*/}
 
             <Modal
                 visible={isShelfModalVisible}

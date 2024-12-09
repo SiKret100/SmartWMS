@@ -100,10 +100,10 @@ export default class taskService {
                 response = await axios.get(`${this.ip}/api/Task/orderInfo/${id}`, config);
             }
 
-            // console.log("From service:" + JSON.stringify(response));
+            console.log("From service:" + JSON.stringify(response));
             return response;
         } catch (err) {
-            // console.log("Error from service: " + JSON.stringify(err));
+            console.log("Error from service: " + JSON.stringify(err));
             return err.response.data;
         }
     }
@@ -131,7 +131,7 @@ export default class taskService {
             return response;
         } catch (err) {
             console.log(`Error from service: ${JSON.stringify(err)}`);
-            return err.response.data;
+            throw err.response.data;
         }
     }
 

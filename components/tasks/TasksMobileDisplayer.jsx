@@ -10,18 +10,16 @@ import {
 import taskService from "../../services/dataServices/taskService";
 import {router, useFocusEffect} from "expo-router";
 import FallingTiles from "../FallingTiles";
-
-import {Button} from "react-native-elements";
 import {Feather} from "@expo/vector-icons";
 import orderDetailService from "../../services/dataServices/orderDetailService";
 import productService from "../../services/dataServices/productService";
 import {UserDataContext} from "../../app/home/_layout";
 import CustomAlert from "../popupAlerts/TaskAlreadyTaken";
-import {TouchableOpacity} from "react-native-gesture-handler";
-import CustomButtonFlatList from "../buttons/CustomDeleteButtonFlatList";
 import CustomEditButtonFlatList from "../buttons/CustomEditButtonFlatList";
+import crudService from "../../services/dataServices/crudService";
 
 const TasksMobileDisplayer = () => {
+
     //PROPS====================================================================================================
     const [data, setData] = useState({});
     const [refreshing, setRefreshing] = useState(false);
@@ -70,8 +68,10 @@ const TasksMobileDisplayer = () => {
     const checkIfUserHasTask = async (taskId) => {
         try {
             const response = await taskService.UserTasks()
+
             if (response === "User has no tasks") {
-                const response = await taskService.TakeTask(taskId);
+                await taskService.TakeTask(taskId);
+
                 router.push("./yourTask", {relativeToDirectory: true});
 
             } else {

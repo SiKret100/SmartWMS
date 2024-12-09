@@ -1,17 +1,13 @@
 import {KeyboardAvoidingView, SafeAreaView, Text, View} from "react-native";
 import React, {useState} from "react";
-import TextFormField from "../form_fields/TextFormField";
-import CategoriesMobileForm from "../categories/CategoriesMobileForm";
 import CustomSelectList from "../selects/CustomSelectList";
 import shelfTypeMap from "../../data/Mappers/shelfType";
-import alertTypeMap from "../../data/Mappers/alertType";
-import NumberFormField from "../form_fields/NumberFormField";
 import CustomButton from "../buttons/CustomButton";
 import shelfService from "../../services/dataServices/shelfService";
-import shelfErrorMessages from "../../data/ErrorMessages/shelfErrorMessages";
 import {useEffect} from "react";
-import rackService from "../../services/dataServices/rackService";
 import CancelButton from "../buttons/CancelButton";
+import crudService from "../../services/dataServices/crudService";
+import ShelfDto from "../../data/DTOs/shelfDto";
 
 const ShelvesMobileForm = ({object = {}, header, setIsModalVisible, rackId}) => {
 
@@ -32,14 +28,15 @@ const ShelvesMobileForm = ({object = {}, header, setIsModalVisible, rackId}) => 
     //FUNCTIONS================================================================================================
     const handleEdit = async (id, form) => {
         setForm(prevForm=> setForm({...prevForm, maxQuant: parseInt(prevForm.maxQuant)}));
-        //console.log(`default option : ${JSON.stringify(defaultOption)}`);
 
         try {
+            const shelfDto = new ShelfDto(form)
+            await crudService.Update(id , shelfDto, "Shelf");
+
             const result = await shelfService.Update(id, form);
-            console.log(result.errors)
+
             if (result.errors) {
                 setErrors(result.errors);
-                console.log(`Błędy przechwycone: ${JSON.stringify(result.errors)}`);
             } else {
 
                 setErrors({});
@@ -60,10 +57,10 @@ const ShelvesMobileForm = ({object = {}, header, setIsModalVisible, rackId}) => 
 
     const handleAdd = async(form) => {
 
-        console.log(`Fomr from form: ${JSON.stringify(form)}`)
 
         try{
-            const result = await shelfService.Add(form);
+            const shelfDto = new ShelfDto(form);
+            const result = await  crudService.Post(shelfDto, "Shelf");
             if (result.errors){
                 setErrors(result.errors);
                 console.log(`Błędy przechwycone: ${JSON.stringify(result.errors)}`);
@@ -91,43 +88,17 @@ const ShelvesMobileForm = ({object = {}, header, setIsModalVisible, rackId}) => 
         form.title  === -1 ? setTitleError(true) : setTitleError(false);
     }
 
-    // const handleMaxQuantity = (e) => {
-    //     const maxQuantity = e.nativeEvent.text;
-    //
-    //     if (maxQuantity.length >= 1 && !maxQuantity.startsWith("0")) {
-    //         const parsedMaxQuantity = parseInt(maxQuantity);
-    //         console.log(parsedMaxQuantity);
-    //
-    //         if (isNaN(parsedMaxQuantity)) {
-    //             setMaxQuantError(true);
-    //             console.log('Error: not a number');
-    //         } else {
-    //             if ( parsedMaxQuantity > 0 && parsedMaxQuantity <= 2147483647 ) {
-    //                 setMaxQuantError(false);
-    //                 console.log('No error');
-    //             }else{
-    //                 setMaxQuantError(true);
-    //                 console.log('Error');
-    //             }
-    //         }
-    //     } else {
-    //         setMaxQuantError(true);
-    //         console.log('No error');
-    //     }
-    // };
 
     const getRacksLevels = async () => {
         try{
-            var result = await shelfService.GetRacksLevels(rackId);
 
-            // w resulcie mamy obiekty {"level":0}, potrzebna jest sama wartosc
+            var result = await crudService.Get(rackId, "Shelf/racksLevels");
+
             var rackLevels = result.data.map(object => object.level);
 
             console.log(`Rack levels: ${JSON.stringify(rackLevels)}`);
 
-            //uzywajac shelfTypeMap zwracamy tylko te levele ktorych jeszcze nie ma dodanych dla regalu sprawdzajac, czy dany key jest w tablicy rackLevels
             setSelectList(shelfTypeMap.filter(shelf => !rackLevels.includes(shelf.key)));
-            //console.log(`Ustawiona selectList: ${JSON.stringify(selectList)}`);
         }
         catch(err){
             console.log(err);
@@ -161,17 +132,6 @@ const ShelvesMobileForm = ({object = {}, header, setIsModalVisible, rackId}) => 
                      onSelect={() => handleTitle()}
                  />
              </View>
-
-             {/*<NumberFormField*/}
-             {/*    title="Maximum quantity"*/}
-             {/*    value={form?.maxQuant ? form.maxQuant.toString() : ''}*/}
-             {/*    handleChangeText={(e) => setForm({...form, maxQuant: e})}*/}
-             {/*    onChange={e => handleMaxQuantity(e)}*/}
-             {/*    isError={maxQuantError}*/}
-             {/*    iconsVisible={true}*/}
-             {/*    otherStyles={"mt-7"}*/}
-             {/*/>*/}
-             {/*{(maxQuantError && form.maxQuant.length > 0) ? <Text className={'text-red-600'}>{shelfErrorMessages.maxQuant}</Text> : null}*/}
 
              <CustomButton
                  title="Save"
