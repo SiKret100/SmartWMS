@@ -6,7 +6,6 @@ import CustomSelectList from "../selects/CustomSelectList";
 import CustomButton from "../buttons/CustomButton";
 import NumberFormField from "../form_fields/NumberFormField";
 import orderErrorMessages from "../../data/ErrorMessages/orderErrorMessages";
-import productErrorMessages from "../../data/ErrorMessages/productErrorMessages";
 
 const AddProductModal = ({setIsModalVisible, setAssignedProducts, productTypeMap, allProducts}) => {
 
@@ -26,7 +25,6 @@ const AddProductModal = ({setIsModalVisible, setAssignedProducts, productTypeMap
 
 
     //FUNCTIONS=============================================================================================
-
     const handleProductId = () => {
 
         if (form.productId === -1) {
@@ -71,6 +69,7 @@ const AddProductModal = ({setIsModalVisible, setAssignedProducts, productTypeMap
 
     return (
         <View>
+
             <ScrollView className={"px-2"}>
                 <View className="flex flex-col items-start justify-between my-5 mx-5">
                     <CancelButton onPress={() => setIsModalVisible(false)}/>
@@ -113,10 +112,8 @@ const AddProductModal = ({setIsModalVisible, setAssignedProducts, productTypeMap
                               textStyles={"text-white"}
                 title={"Add product"}></CustomButton>
 
-                {/*<CustomButton containerStyles={"mt-7"} handlePress={() => console.log(form)} title={"Press"}/>*/}
-
-
             </ScrollView>
+
         </View>
     )
 

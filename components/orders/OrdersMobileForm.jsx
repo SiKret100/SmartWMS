@@ -1,22 +1,19 @@
 import React, {useCallback, useEffect, useState} from "react";
-import {SafeAreaView, View, Text, Modal, Platform, FlatList, RefreshControl, ActivityIndicator} from "react-native";
+import {View, Text, Modal, Platform, FlatList, RefreshControl} from "react-native";
 import CustomButton from "../buttons/CustomButton";
 import TextFormField from "../form_fields/TextFormField";
-import {ScrollView, TouchableOpacity} from "react-native-gesture-handler";
+import {ScrollView} from "react-native-gesture-handler";
 import {Divider} from "react-native-elements";
 import orderErrorMessages from "../../data/ErrorMessages/orderErrorMessages";
 import AddProductModal from "./AddProductModal";
-import productService from "../../services/dataServices/productService";
 import {router, useFocusEffect} from "expo-router";
 import FallingTiles from "../FallingTiles";
 import EditButton from "../buttons/EditButton";
 import DeleteButton from "../buttons/DeleteButton";
 import EditProductModal from "./EditProductModal";
 import CustomSelectList from "../selects/CustomSelectList";
-import countryService from "../../services/dataServices/countryService";
-import orderHeaderService from "../../services/dataServices/orderHeaderService";
-import {post} from "axios";
 import supplierTypeMap from "../../data/Mappers/supplierType";
+import crudService from "../../services/dataServices/crudService";
 
 const OrdersMobileForm = () => {
 
@@ -31,13 +28,11 @@ const OrdersMobileForm = () => {
     const [postalCodeErrorMessage, setPostalCodeErrorMessage] = useState("");
 
     const [countryError, setCountryError] = useState(true);
-    const [countryErrorMessage, setCountryErrorMessage] = useState("");
 
     const [townError, setTownError] = useState(true);
     const [townErrorMessage, setTownErrorMessage] = useState("");
 
     const [supplierNameError, setSupplierNameError] = useState(true);
-    const [supplierNameErrorMessage, setSupplierNameErrorMessage] = useState("");
 
     const [addProductModalVisible, setAddProductModalVisible] = useState(false);
     const [isProductEditModalVisible, setIsProductEditModalVisible] = useState(false);
@@ -46,13 +41,10 @@ const OrdersMobileForm = () => {
     const [countryTypeMap, setCountryTypeMap] = useState([]);
 
     const [refreshing, setRefreshing] = useState(false);
-    const [loading, setLoading] = useState(false);
     const [currentlyEditedItem, setCurrentlyEditedItem] = useState({});
     const [selectKey, setSelectKey] = useState(0);
     const [selectKeyForSupplier, setSelectKeyForSupplier] = useState(0);
-    // const defaultOption = {key : -1, value: "Choose country..."};
     const [defaultOption, setDefaultOption] = useState({});
-    const [defaultOptionForSupplier, setDefaultOptionForSupplier] = useState({});
 
 
     const [form, setForm] = useState({
@@ -80,7 +72,7 @@ const OrdersMobileForm = () => {
 
     const fetchProducts = async () => {
         try {
-            const result = await productService.GetProductsWithQuantityAbove0();
+            const result = await crudService.GetAll("Product/quantityGtZero");
             setAllProducts(result.data);
             setProductTypeMap(result.data.map(product => ({key: product.productId, value: product.productName})));
         } catch (err) {
@@ -90,7 +82,7 @@ const OrdersMobileForm = () => {
 
     const fetchCountries = async () => {
         try {
-            const result = await countryService.GetAll();
+            const result = await crudService.GetAll("Country");
             setCountryTypeMap(result.data.map(country => ({key: country.countryId, value: country.countryName})))
         } catch (err) {
             console.log(err);
@@ -104,19 +96,13 @@ const OrdersMobileForm = () => {
 
     const onRefresh = useCallback(() => {
         setRefreshing(true);
-        //fetchData();
         setRefreshing(false);
     }, []);
 
     const handleDeleteProduct = (id) => {
         const productToRemove = allProducts.find(product => product.productId === id);
-        console.log("Assigned: " + JSON.stringify(productToRemove));
         setProductTypeMap([...productTypeMap, {key: productToRemove.productId, value: productToRemove.productName}]);
         setAssignedProducts(assignedProducts.filter(item => item.productId !== id));
-        console.log("Type map " + JSON.stringify(productTypeMap));
-        // const newAssignedProduct = assignedProducts.filter(item => item.productId !== id);
-        // setAssignedProducts(newAssignedProduct);
-        // setIsDeletedItem(true);
     }
 
     const handleCountryType = () => {
@@ -149,25 +135,12 @@ const OrdersMobileForm = () => {
             setTownErrorMessage("");
         } else {
             setTownError(true);
-            setTownErrorMessage(orderErrorMessages.wrongCountry);
+            setTownErrorMessage(orderErrorMessages.wrongTown);
         }
 
     }
 
     const handleAddOrder = async () => {
-        // const tempReq = ({
-        //     orderHeader: {
-        //         town: form.town,
-        //         address: form.address,
-        //         countryId: form.countryId,
-        //         postalCode: form.postalCode,
-        //         supplierName: form.supplierName,
-        //
-        //     },
-        //     products: assignedProducts.map(item => ({productId: item.productId, quantity: item.quantity}))
-        // })
-        //
-
         const request = ({
             orderHeader: {
                 destinationAddress: form.town + ", " + form.address
@@ -182,8 +155,10 @@ const OrdersMobileForm = () => {
 
 
         try{
-            await orderHeaderService.Add(request);
+            await crudService.Add(request,"OrderHeader/createOrder");
+
             setForm({
+
                 address: "",
                 countryId: -1,
                 postalCode: "",
@@ -201,10 +176,6 @@ const OrdersMobileForm = () => {
         catch(err){
             console.log(err);
         }
-
-        console.log("Request: " + JSON.stringify(request));
-
-
     }
 
     const renderItem = ({item}) => (
@@ -240,7 +211,6 @@ const OrdersMobileForm = () => {
             fetchProducts();
             setSelectKey(prev => prev+1);
             setDefaultOption({key: -1, value: "Choose country..."});
-            console.log("Wywolanie useFocusEffect")
         }, [])
     );
 
@@ -251,13 +221,9 @@ const OrdersMobileForm = () => {
 
     useEffect(() => {
         if (assignedProducts.length > 0) {
-            //setAssignedProductsError(false);
             const filteredProductTypeMap = productTypeMap.filter(product => assignedProducts.find(assignedProduct => assignedProduct.productId === product.key) === undefined);
-            console.log(`Przefiltrowane produkty: ${filteredProductTypeMap}`);
             setProductTypeMap(filteredProductTypeMap)
         }
-        //else setAssignedProducts(true);
-        console.log(`Przefiltorwana mapa produktow: ${JSON.stringify(productTypeMap)}`);
 
     }, [assignedProducts]);
 
@@ -266,14 +232,10 @@ const OrdersMobileForm = () => {
             setCurrentlyEditedItem({});
     }, [isProductEditModalVisible]);
 
-    // useEffect(() => {
-    //     fetchProducts();
-    //     if (isDeletedItem) setIsDeletedItem(false);
-    // }, [isDeletedItem]);
-
 
     return (
         <ScrollView>
+
             <View className={"mx-2"}>
 
                 <TextFormField
@@ -392,11 +354,6 @@ const OrdersMobileForm = () => {
                               showLoading={false}
                               textStyles={"text-white"}></CustomButton>
 
-                {/*<CustomButton title={"Get assigned products"} handlePress={() => console.log("Assigned products: " + JSON.stringify(assignedProducts))}*/}
-                {/*              containerStyles={"mt-7"} isLoading={false} showLoading={false}*/}
-                {/*              textStyles={"text-white"}></CustomButton>*/}
-
-                {/*<CustomButton handlePress={() => console.log(JSON.stringify(form))} containerStyles={"mt-7"} ></CustomButton>*/}
 
                 <Modal
                     visible={!!addProductModalVisible}
@@ -428,6 +385,7 @@ const OrdersMobileForm = () => {
                 </Modal>
 
             </View>
+
         </ScrollView>
     );
 

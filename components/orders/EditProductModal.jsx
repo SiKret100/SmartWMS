@@ -7,6 +7,7 @@ import orderErrorMessages from "../../data/ErrorMessages/orderErrorMessages";
 
 const EditProductModal = ({setIsModalVisible, setAssignedProducts, assignedProducts, object, allProducts}) => {
 
+    //PROPS====================================================================================================
     const [quantityError, setQuantityError] = useState(false);
     const [quantityErrorMessage, setQuantityErrorMessage] = useState(false);
 
@@ -15,9 +16,12 @@ const EditProductModal = ({setIsModalVisible, setAssignedProducts, assignedProdu
         quantity: object.quantity
     });
 
+
+    //FUNCTIONS=============================================================================================
     const handleQuantity = (e) => {
         const quantity = e.nativeEvent.text;
         const regexp = new RegExp("^[1-9]{1}\\d*$");
+
         if (regexp.test(quantity)) {
             const parsedQuantity = parseInt(quantity);
             const foundProduct = allProducts.find(product => product.productId === form.productId);
@@ -32,7 +36,6 @@ const EditProductModal = ({setIsModalVisible, setAssignedProducts, assignedProdu
             setQuantityError(true);
             setQuantityErrorMessage(orderErrorMessages.wrongProductQuantityFormat);
         }
-
     };
 
 
@@ -40,7 +43,6 @@ const EditProductModal = ({setIsModalVisible, setAssignedProducts, assignedProdu
         const filteredAssignedProduct = assignedProducts.filter(product => product.productId !== form.productId);
         filteredAssignedProduct.push(form);
         setAssignedProducts(filteredAssignedProduct);
-        console.log("Filtered assign product: " + JSON.stringify(filteredAssignedProduct));
         setIsModalVisible(false)
         setForm({
             productId: -1,
@@ -51,6 +53,7 @@ const EditProductModal = ({setIsModalVisible, setAssignedProducts, assignedProdu
 
     return(
         <View className={"px-2"}>
+
             <View className="flex flex-col items-start justify-between my-5 mx-5">
                 <CancelButton onPress={() => setIsModalVisible(false)}/>
                 <Text className="my-5 text-3xl font-bold">Edit assigment</Text>

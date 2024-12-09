@@ -4,8 +4,8 @@ import {UserDataContext} from "../../app/home/_layout";
 import {Feather} from "@expo/vector-icons";
 import * as Progress from "react-native-progress";
 import {router} from "expo-router";
-import taskService from "../../services/dataServices/taskService";
 import FallingTiles from "../FallingTiles";
+import crudService from "../../services/dataServices/crudService";
 
 const HomeScreen = () => {
 
@@ -48,7 +48,7 @@ const HomeScreen = () => {
     //FUNCTIONS================================================================================================
     const fetchData = async () => {
         try {
-            const userTasksResponse = await taskService.UserTasks();
+            const userTasksResponse = await crudService.GetAll("Task/usertasks");
 
             if (userTasksResponse === "User has no tasks") {
                 setHasUserTask(false);
@@ -58,7 +58,7 @@ const HomeScreen = () => {
                 setQuantityAllocated((userTasksResponse.data)[0].quantityAllocated);
             }
         } catch (err) {
-            console.log("Err from func: " + JSON.stringify(err));
+            //console.log("Err from func: " + JSON.stringify(err));
         }
     }
 
@@ -88,9 +88,10 @@ const HomeScreen = () => {
         </FallingTiles>
     );
 
+
     //USE EFFECT HOOKS=========================================================================================
-    useEffect(async () => {
-        await fetchData()
+    useEffect (() => {
+        fetchData()
             .then(_ => setLoading(false))
             .catch(err => console.log(err));
     }, []);
@@ -98,6 +99,7 @@ const HomeScreen = () => {
 
     return (
         <SafeAreaView className={"justify-start align-center"}>
+
             <View className={"mx-4"}>
 
                 <View className={"flex-row mt-2 gap-5"}>
@@ -170,9 +172,7 @@ const HomeScreen = () => {
                         )
                     }
 
-
                 </View>
-
 
                 <FlatList
                     data={views}
@@ -180,8 +180,6 @@ const HomeScreen = () => {
                     renderItem={renderItem}
                     className={"h-full px-2"}
                 />
-
-
 
             </View>
 

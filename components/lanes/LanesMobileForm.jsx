@@ -2,18 +2,20 @@ import {KeyboardAvoidingView, Text, View} from "react-native";
 import TextFormField from "../form_fields/TextFormField";
 import React, {useState, useCallback} from "react";
 import CustomButton from "../buttons/CustomButton";
-import laneService from "../../services/dataServices/laneService";
-import {useFocusEffect} from "expo-router";
+import {router, useFocusEffect} from "expo-router";
 import laneErrorMessages from "../../data/ErrorMessages/laneErrorMessages";
+import crudService from "../../services/dataServices/crudService";
+import LaneDto from "../../data/DTOs/laneDto";
 
 const LanesMobileForm = () => {
+
     //PROPS====================================================================================================
     const [form, setForm] = useState({
            laneCode: "",
     });
     const [laneCodeError, setLaneCodeError] = useState(false);
     const [errors, setErrors] = useState({});
-    const [selectKey, setSelectKey] = useState(0);//to jest po to zeby customselectlist sie restowal po edycji albo dodaniu
+    const [selectKey, setSelectKey] = useState(0);//to jest po to zeby customselectlist sie resetowal po edycji albo dodaniu
     const [lanes, setLanes] = useState([])
     const [laneCodeErrorMessage, setLaneCodeErrorMessage] = useState("");
 
@@ -46,19 +48,20 @@ const LanesMobileForm = () => {
     const handleAdd = async (form) => {
         try {
 
-            form.laneCode = form.laneCode.toUpperCase()
+            form.laneCode = form.laneCode.toUpperCase();
 
-            const result = await laneService.Add(form)
+            const laneDto = new LaneDto(form);
+            const result = await crudService.Add(laneDto, "Lane");
 
             if(result.errors){
                 setErrors(result.errors);
-                //console.log(`Błędy przechwycone: ${JSON.stringify(result.errors)}`);
             }else{
                 setErrors({})
                 setForm({
                     laneCode: ""
                 })
                 setSelectKey((prevKey) => prevKey + 1);
+                router.push("/home/shelves")
             }
         }catch(err){
             setErrors(err);
@@ -67,7 +70,7 @@ const LanesMobileForm = () => {
 
     const getAllLanes = async () => {
         try{
-            const result = await laneService.GetAllLanes();
+            const result = await crudService.GetAll("Lane");
             setLanes(result.data.map(object => object.laneCode));
         }
         catch(err){
@@ -75,15 +78,13 @@ const LanesMobileForm = () => {
         }
     }
 
-    //USE EFFECT HOOKS=========================================================================================
 
+    //USE EFFECT HOOKS=========================================================================================
     useFocusEffect(
         useCallback(() => {
             getAllLanes()
         }, [selectKey])
     );
-
-
 
 
     return(
@@ -112,9 +113,6 @@ const LanesMobileForm = () => {
                     isLoading={laneCodeError}
                     showLoading={false}
                 />
-
-
-                {/*<CustomButton title={"See lanes"} handlePress={() => console.log(lanes)}/>*/}
 
                 {Object.keys(errors).length > 0 && (
                     <View

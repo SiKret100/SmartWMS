@@ -23,7 +23,7 @@ export default class crudService {
 
         } catch (err) {
 
-            return err.response.data;
+            throw err.response.data;
         }
     };
 
@@ -43,7 +43,7 @@ export default class crudService {
 
         } catch (err) {
 
-            return err.response.data;
+            throw err.response.data;
 
         }
     };
@@ -65,7 +65,7 @@ export default class crudService {
 
         } catch (err) {
 
-            return err.response.data;
+            throw err.response.data;
 
         }
     };
@@ -81,14 +81,34 @@ export default class crudService {
         }
 
         try {
-
             return await axios.delete(`${this.ip}/api/${url}/${id}`, config);
 
         } catch(err) {
 
-            return err.response.data;
+            throw err;
 
         }
 
+    }
+
+    static Get = async (id, url) => {
+
+        const token = Platform.OS !== "web" ? SecureStore.getItem("token") : "";
+        const config = {
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+        };
+
+        try {
+
+            return await axios.get(`${this.ip}/api/${url}/${id}`, config);
+
+        } catch (err) {
+
+            return err.response.data;
+
+        }
     }
 }

@@ -1,13 +1,10 @@
 import {Platform} from "react-native";
-import {getItem} from "expo-secure-store";
 import axios from "axios";
 import * as SecureStore from "expo-secure-store";
 
 export default class orderDetailService {
     static ip = process.env.EXPO_PUBLIC_IP;
     static userDto;
-
-
 
     static GetAllByOrderHeader = async (id) => {
         const token = Platform.OS !== "web" ? SecureStore.getItem("token") : "";
@@ -26,7 +23,6 @@ export default class orderDetailService {
                 response = await axios.get(`${this.ip}/api/OrderDetail/byOrderHeader/${id}`, config);
             }
 
-            //console.log(`From service: ${JSON.stringify(response)}`);
             return response;
         } catch (err) {
             return err.response.data;
@@ -51,7 +47,6 @@ export default class orderDetailService {
                 response = await axios.get(`${this.ip}/api/OrderDetail/${id}`, config);
             }
 
-            //console.log(response);
             return response;
         } catch (err) {
             return err.response.data;

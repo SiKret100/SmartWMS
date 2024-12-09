@@ -248,33 +248,33 @@ export default class productService {
         }
     };
 
-    static GetProductsWithQuantityAbove0 = async () => {
-        const token = Platform.OS !== "web" ? SecureStore.getItem("token") : "";
-        const config = {
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-            },
-        };
-
-        try {
-            let response;
-            if (Platform.OS === "web") {
-                response = await axios.get(`${this.ip}/api/Product/quantityGtZero`);
-            } else {
-                response = await axios.get(
-                    `${this.ip}/api/Product/quantityGtZero`,
-                    config
-                );
-            }
-
-            console.log("Response from service" + JSON.stringify(response));
-            return response;
-        } catch (err) {
-            console.log("Error from service" + JSON.stringify(err));
-            return err.response.data;
-        }
-    }
+    // static GetProductsWithQuantityAbove0 = async () => {
+    //     const token = Platform.OS !== "web" ? SecureStore.getItem("token") : "";
+    //     const config = {
+    //         headers: {
+    //             "Content-Type": "application/json",
+    //             Authorization: `Bearer ${token}`,
+    //         },
+    //     };
+    //
+    //     try {
+    //         let response;
+    //         if (Platform.OS === "web") {
+    //             response = await axios.get(`${this.ip}/api/Product/quantityGtZero`);
+    //         } else {
+    //             response = await axios.get(
+    //                 `${this.ip}/api/Product/quantityGtZero`,
+    //                 config
+    //             );
+    //         }
+    //
+    //         console.log("Response from service" + JSON.stringify(response));
+    //         return response;
+    //     } catch (err) {
+    //         console.log("Error from service" + JSON.stringify(err));
+    //         return err.response.data;
+    //     }
+    // }
 
 
 }

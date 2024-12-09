@@ -1,8 +1,6 @@
 import {
-    ActionSheetIOS,
     ActivityIndicator,
-    Animated,
-    FlatList, Modal,
+    Animated, Modal,
     RefreshControl,
     SafeAreaView,
     Text,
@@ -10,30 +8,25 @@ import {
     View,
     Platform
 } from "react-native";
-import {ScrollView} from "react-native-gesture-handler";
-import {Divider} from "react-native-elements";
 import React, {useCallback, useEffect, useRef, useState} from "react";
-import CustomButton from "../buttons/CustomButton";
-import orderHeaderService from "../../services/dataServices/orderHeaderService";
 import DeleteButton from "../buttons/DeleteButton";
-import EditButton from "../buttons/EditButton";
 import FallingTiles from "../FallingTiles";
 import {useFocusEffect} from "expo-router";
 import Feather from "react-native-vector-icons/Feather";
 import orderStatusTypeMap from "../../data/Mappers/orderStatusType";
 import CustomSelectList from "../selects/CustomSelectList";
 import OrderDetailModalDisplayer from "./OrderDetailModalDisplayer";
-import orderDetailService from "../../services/dataServices/orderDetailService";
-import productService from "../../services/dataServices/productService";
+import crudService from "../../services/dataServices/crudService";
+import CustomAlert from "../popupAlerts/TaskAlreadyTaken";
 
 const OrdersMobileDisplayer = () => {
 
+    //PROPS====================================================================================================
     const [data, setData] = useState([]);
     const [currentOrderDetail, setCurrentOrderDetail] = useState({});
     const [refreshing, setRefreshing] = useState(false);
     const [loading, setLoading] = useState(true);
     const [flatListHeight, setFlatListHeight] = useState(0);
-    const [defaultOption, setDefaultOption] = useState();
     const [selected, setSelected] = useState(undefined);
     const [filteredData, setFilteredData] = useState([]);
     const [selectKey, setSelectKey] = useState(0);
@@ -41,9 +34,10 @@ const OrdersMobileDisplayer = () => {
     const [isOrderDetailModalVisible, setIsOrderDetailModalVisible] = useState(false);
 
 
+    //FUNCTIONS================================================================================================
     const fetchData = async () => {
-        try{
-            const result = await orderHeaderService.GetAll();
+        try {
+            const result = await crudService.GetAll("OrderHeader");
             const updatedData = result.data.map(order => ({
                 ...order,
                 statusName: orderStatusTypeMap.find(status => status.key === order.statusName)?.value
@@ -52,35 +46,41 @@ const OrdersMobileDisplayer = () => {
             const noCancelledOrders = updatedData.filter(order => order.statusName !== "Cancelled")
             setFilteredData(noCancelledOrders);
 
-        }catch(err) {
+        } catch (err) {
             console.log(err);
-        }
-        finally {
+        } finally {
             setLoading(false);
         }
     }
 
-    const handleDelete = async (id) => {
-        try {
-            await orderHeaderService.Delete(id);
-        } catch (err) {
-            console.log(err);
+    const handleDelete = async (item) => {
+
+        console.log(item)
+        if( item.statusName === "Planned"){
+            try {
+                await crudService.Delete(item.ordersHeaderId,"OrderHeader/cancelOrder");
+            } catch (err) {
+                console.log(err);
+                CustomAlert("You can't delete this order.")
+            }
+            setIsDeletedItem(true);
+        }else{
+            CustomAlert("You can't delete order other than planned.")
         }
-        setIsDeletedItem(true);
+
     };
 
     const handleOrderDetailDisplay = (id) => {
-        orderDetailService.GetAllByOrderHeader(id)
+        crudService.Get(id, "OrderDetail/byOrderHeader")
             .then(result => {
                 Promise.all(
                     result.data.map(order =>
-                    productService.Get(order.productsProductId)
+                        crudService.Get(order.productsProductId, "Product")
                             .then(product => ({
                                 quantity: order.quantity,
                                 productName: product.data.productName,
                             }))
                             .catch(err => {
-                                console.error(`Błąd pobierania produktu: ${err}`);
                                 return null;
                             })
                     )
@@ -89,7 +89,6 @@ const OrdersMobileDisplayer = () => {
                         const tempData = data;
                         setCurrentOrderDetail(tempData)
                         setIsOrderDetailModalVisible(true)
-                        //console.log(data)
                     })
                     .catch(err => {
                         console.log(err);
@@ -128,7 +127,7 @@ const OrdersMobileDisplayer = () => {
                 </TouchableOpacity>
 
 
-                <DeleteButton onDelete={() => (handleDelete(item.ordersHeaderId))}/>
+                <DeleteButton onDelete={() => (handleDelete(item))}/>
 
             </View>
         </FallingTiles>
@@ -138,7 +137,7 @@ const OrdersMobileDisplayer = () => {
     const onRefresh = useCallback(() => {
         setRefreshing(true);
         fetchData();
-        setSelectKey(prev => prev + 1 )
+        setSelectKey(prev => prev + 1)
         setSelected({key: -1, value: "All"});
         setRefreshing(false);
     }, []);
@@ -157,10 +156,11 @@ const OrdersMobileDisplayer = () => {
     });
 
 
+    //USE EFFECT HOOKS=========================================================================================
     useFocusEffect((
         useCallback(
             () => {
-                setSelectKey(prev => prev + 1 )
+                setSelectKey(prev => prev + 1)
                 setSelected({key: -1, value: "All"});
                 fetchData();
             }, [])
@@ -180,10 +180,11 @@ const OrdersMobileDisplayer = () => {
 
     useEffect(() => {
         fetchData();
-        setSelectKey(prev => prev + 1 )
+        setSelectKey(prev => prev + 1)
         setSelected({key: -1, value: "All"});
         if (isDeletedItem) setIsDeletedItem(false);
     }, [isDeletedItem]);
+
 
     return (
         <SafeAreaView className={"flex-1 justify-start align-center"}>
@@ -247,12 +248,13 @@ const OrdersMobileDisplayer = () => {
             {/*<CustomButton title={"Pokaz"} handlePress={() => console.log(currentOrderDetail)}/>*/}
 
             <Modal
-                visible = {isOrderDetailModalVisible}
+                visible={isOrderDetailModalVisible}
                 animationType={Platform.OS !== "ios" ? "" : "slide"}
                 presentationStyle={Platform.OS === "ios" ? "pageSheet" : ""}
                 onRequestClose={() => setIsOrderDetailModalVisible(false)}
             >
-                <OrderDetailModalDisplayer currentOrderDetail={currentOrderDetail} setIsModalVisible={setIsOrderDetailModalVisible}></OrderDetailModalDisplayer>
+                <OrderDetailModalDisplayer currentOrderDetail={currentOrderDetail}
+                                           setIsModalVisible={setIsOrderDetailModalVisible}></OrderDetailModalDisplayer>
 
             </Modal>
 

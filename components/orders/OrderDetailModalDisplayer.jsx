@@ -1,22 +1,14 @@
 import {
-    ActionSheetIOS,
-    ActivityIndicator,
-    Animated,
-    FlatList, Modal,
-    RefreshControl,
-    SafeAreaView,
     Text,
-    TouchableOpacity,
-    View,
-    Platform
+    View
 } from "react-native";
 import CancelButton from "../buttons/CancelButton";
-import CustomButton from "../buttons/CustomButton";
 import {ScrollView} from "react-native-gesture-handler";
 import {Feather} from "@expo/vector-icons";
 
 const OrderDetailModalDisplayer = ({currentOrderDetail, setIsModalVisible}) => {
     return (
+
         <View>
 
             <View className="flex flex-col items-start justify-between mt-2 px-2">
